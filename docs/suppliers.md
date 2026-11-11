@@ -44,15 +44,17 @@
 
 ### 2.2 Pet-specific local suppliers (backup or second source)
 
+> **Superseded:** the verified, country-by-country list is in [`suppliers-by-country.md`](suppliers-by-country.md). The rows below are kept for history, with corrections.
+
 | Region | Supplier | Notes |
 |---|---|---|
 | UK | **Avasam** (marketplace, about 100+ UK suppliers, Shopify app; free plan, paid from about £24.99/mo + VAT) | 2–5 business days UK/EU **(unverified)**; mixed reviews ([Embedany review 2026](https://embedany.com/blog/avasam-review-uk-dropshipping/), [Shopify app](https://apps.shopify.com/avasam)) |
 | UK | **Go Dropship** | All stock in a UK warehouse, free UK mainland delivery, no MOQ ([pet category](https://www.godropship.co.uk/pet-supplies-c241)) |
-| UK | **Pet Supply UK**, **Petplanet** | Listed in roundups; Shopify integration not confirmed ([ZIK UK suppliers](https://www.zikanalytics.com/blog/uk-dropshipping-suppliers/)) |
-| AU | **Agline / Southern Pet Supplies** | Australian B2B pet distributor; no signup or handling fees ([SaleHoo AU 2026](https://www.salehoo.com/learn/australian-dropship-suppliers)) |
-| AU | **Dropship Zone**, **Wefulfil** (Melbourne, pet focus), **Ozdingo** | Local delivery 1–7 days; Shopify apps reported. Pricing not found **(unverified)** ([Couriers&Freight AU 2026](https://www.couriersandfreight.com.au/blog/best-shopify-dropshipping-suppliers-in-australia), [Wefulfil](https://wefulfil.com.au/pet-dropshipping-supplier/)) |
-| CA | **Leading High-Quality Pet Products** (Brampton, ON) | 3–7 days within CA, no MOQ ([SaleHoo CA](https://www.salehoo.com/learn/canadian-dropship-suppliers)) |
-| CA | **inQ Boutique** | 1,400+ pet SKUs, US + CA warehouses, 3-day processing ([Doba](https://www.doba.com/blog/find-products-and-suppliers/niche-products/best-pet-dropshipping-suppliers-for-2026-39578)) |
+| UK | ~~Pet Supply UK~~, ~~Petplanet~~ | **Re-checked Nov 2026: drop both.** Pet Supply UK has no findable official site. Petplanet is a retailer that went into administration, with no dropship programme. See [`suppliers-by-country.md`](suppliers-by-country.md) |
+| AU | **Southern Pet Supplies** (formerly Agline) | Australian pet distributor in Adelaide; no signup or handling fees. **Requires an Australian ABN.** Details in [`suppliers-by-country.md`](suppliers-by-country.md) |
+| AU | **Dropshipzone**, **Ozdingo** | Local delivery 1–7 days; Dropshipzone has a Shopify app. **Wefulfil re-checked: it ships from China, not Australian stock.** Details in [`suppliers-by-country.md`](suppliers-by-country.md) |
+| CA | ~~Leading High-Quality Pet Products~~ | **Re-checked Nov 2026: drop.** This is SaleHoo's anonymised listing for Pet Science Ltd (Brampton), which excludes online-only stores. See [`suppliers-by-country.md`](suppliers-by-country.md) for what works in Canada |
+| CA | ~~inQ Boutique~~ | **Re-checked Nov 2026:** its Doba listings ship from the **US only**, so treat it as a US supplier |
 | US | **TopDawg** | US pet-strong marketplace; free tier to view wholesale prices; paid tiers about $35–$200/mo **(conflicting figures)**; fees billed outside Shopify ([Shopify app](https://apps.shopify.com/topdawg), [Embedany review](https://embedany.com/blog/topdawg-review-us-dropshipping)) |
 
 ### 2.3 Shopify integration, pricing, fees, branding, samples
@@ -97,7 +99,7 @@ Costs are in **USD per unit** to the end customer, before tax, payment fees (abo
 
 | Product | US | CA | UK | AU | EU |
 |---|---|---|---|---|---|
-| 1 Calming bed | Easy (CJ US, Faire) | From US warehouse | Easy (CJ UK, Avasam) | Medium (CJ AU stock varies; Agline) | Easy (CJ DE, BigBuy, AliExpress Local+) |
+| 1 Calming bed | Easy (CJ US, Faire) | From US warehouse | Easy (CJ UK, Avasam) | Medium (CJ AU stock varies; Dropshipzone, Southern Pet) | Easy (CJ DE, BigBuy, AliExpress Local+) |
 | 2 Slicker brush | Easy | From US | Easy | Easy–Medium | Easy |
 | 3 Fountain ⚡ | Easy (FCC/UL adapter) | From US. Needs cUL/CSA adapter | **Medium**: needs UK plug (BS 1363) or USB-only | **Hard**: needs RCM/EESS-registered adapter via an AU responsible supplier | Medium: EU plug, CE (LVD/EMC/RoHS) |
 | 4 Lick mat | Easy | From US | Easy | Easy | Easy |
@@ -155,7 +157,7 @@ Also: Malta corporate registration, EORI number (needed for EU imports), and inc
 - CJ **Canada** warehouse existence and location; CJ **UK/AU** delivery-day figures; whether the CJ Shopify app has a per-country warehouse-priority setting.
 - CJ custom-packaging prices and MOQs; CJ sample policy.
 - DSers per-destination-country supplier mapping.
-- BigBuy, Avasam, TopDawg, AutoDS, Dropship Zone and Wefulfil pricing (third-party figures conflict or are missing).
+- BigBuy and AutoDS pricing (third-party figures conflict or are missing). Avasam, TopDawg and Dropshipzone pricing is now confirmed in `suppliers-by-country.md`.
 - All per-product wholesale and shipping costs in §3.1. They are estimates from factory listings, wholesale sites and reviewer examples, not live CJ quotes, because supplier dashboards require login.
 - US/CA/AU electrical-certification details (§4.1) are from general regulatory knowledge, not 2026 primary sources.
 - Current US tariff rates on China-origin pet goods.

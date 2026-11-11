@@ -20,7 +20,22 @@
 | **Canada** | **Costway CA** · **Aosom CA (PawHut)** · **DropCommerce** / **AppScenic** (filter: ships from Canada) | DropCommerce ✅, AppScenic ✅ | ⚠️ Unclear; some Canadian suppliers want a GST/HST number | No Canadian pet-specialist dropshipper accepts new online stores. Products 2, 3, 4, 6, 8 have no confirmed local source |
 | **UK** | **Avasam** (marketplace) · **MH Star / Aosom UK (PawHut)**: fountain + feeder · **Go Dropship** (cheap, blind) · **Gor Pets** (beds) | Avasam ✅ | ⚠️ Gor Pets requires UK VAT + EORI. You need UK VAT registration anyway (from first UK sale) | Products 2, 4, 8 have no confirmed UK dropshipper |
 | **Australia** | **Dropshipzone** (biggest, accepts overseas businesses) · **Southern Pet Supplies** (pet specialist, needs ABN) · **iDropship** | Dropshipzone ✅, iDropship (Hawker) ✅ | ✅ Dropshipzone (confirm). ❌ Southern Pet & Ozdingo need an Australian ABN | Few truly blind/own-brand options |
-| **EU / Malta** | *See EU section* | | | |
+| **EU / Malta** | **Warmako** (NL; fountains, lick mats, wands, Kurgo bottle) · **Petdiscount** (NL; ships to 25 EU countries, blind) · **Van der Meer** (NL/BE/DE) · **Alizoo + Droplo** (PL) | Van der Meer (via GoGetters), Droplo ✅, Warmako (via Droppery) | ✅ Mostly, with a VIES-valid MT VAT number. ❌ Spanish/Italian suppliers want a local tax ID | **Malta itself:** no supplier confirms dropship delivery to Malta; no Maltese wholesaler dropships |
+
+### Which local supplier covers which product
+
+Plain name = item seen on the supplier's site. *(likely)* = the category exists but the exact item isn't confirmed. **—** = no local dropshipper found, so use CJ's local warehouse. In the US, **TopDawg** probably has all 8 through its marketplace; check SKU by SKU.
+
+| Product | 🇺🇸 US | 🇨🇦 CA | 🇬🇧 UK | 🇦🇺 AU | 🇪🇺 EU |
+|---|---|---|---|---|---|
+| 1 Calming bed | Pet Stores USA *(likely)*, PetDropShipper *(likely)* | Costway CA (calming couch bed) | Gor Pets (calming/round) | Dropshipzone (calming beds) | Petdiscount, Warmako (box beds), Hectolove |
+| 2 Slicker brush | Pet Wholesale USA, Pet Stores USA *(likely)* | — | — | Southern Pet, Flea Circus *(likely)* | Van der Meer *(likely)* |
+| 3 Fountain | PetDropShipper (Drinkwell) | — | MH Star / PawHut | Dropshipzone, Flea Circus | Warmako (Drinkwell), Ikonka (USB) |
+| 4 Lick mat | Pet Wholesale USA *(likely)* | — | — | Southern Pet (LickiMat), Flea Circus | Warmako (Quest), Van der Meer *(likely)* |
+| 5 Auto feeder | Pet Stores USA, PetDropShipper | Aosom CA (PawHut) | MH Star / PawHut | Dropshipzone, Southern Pet (gravity) | Prodac (Spain only) |
+| 6 Feather wand | Pet Wholesale USA *(likely)*, PetDropShipper *(likely)* | — | — | Ozdingo, Flea Circus (lures) | Warmako (District 70) |
+| 7 Cooling mat | Pet Stores USA (cooling beds) | Aosom CA (cooling cot) | Go Dropship (self-cooling mat) | Ozdingo | — |
+| 8 Travel bottle | Pet Stores USA *(likely)*, Pet Wholesale USA *(likely)* | — | — | Ozdingo | Warmako (Kurgo Gourd) |
 
 **Bottom line:** in every market, **local pet-specialist dropshippers are rare** and most sell other people's brands (KONG, LickiMat, PetSafe, PawHut), not unbranded products you can sell as WaggleKin. The realistic setup is:
 1. **CJdropshipping local warehouses** for the WaggleKin-branded basics (brush, lick mat, wand, bottle), as `suppliers.md` recommends.
@@ -297,7 +312,148 @@ What *does* work from Canadian stock:
 
 ## 🇪🇺 European Union & Malta
 
-*In progress: being re-researched (the first pass ran out of web searches).*
+**Two things to know first:**
+- **Malta is the weak point.** No Maltese pet business dropships; they all supply local shops only. Most EU dropshippers either don't list Malta (Petdiscount, vidaXL, Hertwill) or haven't confirmed it. **Get a written Malta shipping quote before you switch the Malta market on.**
+- **You need a VIES-valid Maltese VAT number** (registered under **Article 10**, not the Article 11 small-business scheme). Almost every EU supplier checks it. Selling from NL, DE or PL stock to consumers in other EU countries brings **OSS** reporting; see `suppliers.md` §4.2.
+
+Unlike the US/UK/AU, the **Netherlands and Poland have real pet-specialist wholesalers that dropship**.
+
+### 🇳🇱 Warmako ⭐ best product match (dropship route unconfirmed)
+- **Site:** [warmako.com](https://www.warmako.com/en/) · Rotterdam (Van Nelle Factory); own warehouse; dispatched within 48h.
+- **Pet range:** 5,000+ branded dog and cat items (PetSafe, Kurgo, KONG, Scruffs, District 70, Almo Nature…). Its product list confirms:
+  - **3**: PetSafe Drinkwell and ceramic fountains, plus filters
+  - **4**: Quest lick mats
+  - **6**: District 70 wand toys
+  - **8**: Kurgo Gourd H2O bottle and bowl
+  - **1**: box beds, not donut style
+
+  No slicker brush, automatic feeder or cooling mat.
+- **Shopify:** via the **Droppery** app; Warmako's stock was connected to it. Warmako used to pay the Droppery fee for retailers it onboarded. **That blog page now returns 404, so confirm dropshipping still runs.**
+- **Cost:** wholesale shipping to **Malta is €40, free over €500** (B2B orders). Dropship parcel fees unknown.
+- **Apply:** [register your shop](https://www.warmako.com/en/pages/registreer-jouw-winkel). Needs:
+  - a valid VAT number
+  - registration as a pet-supplies point of sale
+  - an active webshop they can review
+
+  No Amazon/Bol/Kaufland. Contact info@warmako.com, +31 10 311 8400.
+
+### 🇳🇱 Petdiscount ⭐ widest EU delivery
+- **Site:** [petdiscount.nl/en](https://petdiscount.nl/en/) · Emmen, NL; B2B pet wholesaler (Witjes, 35+ years). Private label also offered.
+- **Pet range:** vet beds, plush mats and crate covers (**1**), KONG and cat toys (**6**). Fountains, feeders, lick mats, cooling mats, brushes and bottles were not seen.
+- **Shopify:** none. You order through your account or an Excel order form; no feed or API.
+- **Cost:** one price per parcel (processing + shipping, ex VAT). The 2022 English table is likely out of date; the current Dutch page says **€12.99 NL/BE**, other countries differ. 2022 table for reference:
+
+  | Countries | Per parcel (2022) |
+  |---|---|
+  | NL, BE, DE, AT, DK, LU | €9.99 |
+  | FR | €11.99 |
+  | FI, IT, SE | €15.99 |
+  | PL, PT, ES, CZ | €19.99 |
+  | IE | €21.99 |
+  | BG, HR, EE, HU, LV, LT, RO, SK, SI | €24.99 |
+  | GR | €32.99 |
+
+  **Malta and Cyprus are not listed.** Payment in advance. **No returns accepted on dropship orders**, so returns come to you.
+- **Blind:** ✅ ships under your name, no invoices or flyers.
+- **Apply:** [register-dealer](https://petdiscount.nl/en/register-dealer) → tick "I want to use dropshipping". **Malta is in the country list.** An older rule said dropship is only for customers who also buy stock, so ask.
+
+### 🇳🇱 Van der Meer Dierentotaal (NL/BE/DE only)
+- **Site:** [vandermeerrotterdam.nl/dropshipment](https://vandermeerrotterdam.nl/dropshipment/) · Rotterdam; one of the largest Dutch pet cash & carry wholesalers; ~10,000 branded items.
+- **Pet range:** likely **1, 2, 4, 6**; possibly 3 and 7 (catalogue behind login).
+- **Shopify:** ✅ via the **GoGetters** app (billed separately). XML/CSV over FTP; stock updates every 30 min.
+- **Cost:** **€30/mo** (3-month minimum). Per-parcel rates are in a linked doc that wasn't readable. **€500/mo minimum purchases after 6 months**, or dropshipping is switched off.
+- **Delivery:** **only NL, BE and DE**. NL next day; DE within 2 working days.
+- **Blind:** ✅ blank box, no packing slip; label shows your company name.
+- **Apply:** [klant-worden](https://vandermeerrotterdam.nl/klant-worden/) → business type "Dropshipper". Needs a VIES-valid VAT number and a company register extract (an MBR extract for Malta). Brand restrictions apply to marketplaces only.
+
+### 🇵🇱 Alizoo (pet wholesaler)
+- **Site:** [alizoo.pl](https://alizoo.pl/) · Wałcz, Poland.
+- **Pet range:** dog and cat beds, bowls, collars, harnesses, toys (**1, 6**, maybe 2, 4).
+- **Shopify:** via **Droplo** (see below); also BaseLinker, Sky-Shop, Selesto.
+- **Cost:** Polish shipping 9–12 PLN net. **Other EU countries quoted individually.** Dropship orders get top priority.
+- **Blind:** you can send your own shipping label (etykiety@alizoo.pl).
+- **Apply:** dropshipping@alizoo.pl, +48 512 765 316.
+
+### 🇵🇱 Zoologis (pet B2B platform)
+- **Site:** [b2b.zoologis.pl](https://b2b.zoologis.pl/) · Helenów (Warsaw).
+- **Pet range:** food, accessories, grooming (**2, 6**, maybe 1).
+- **Dropship terms (Aug 2026):**
+  - Dropship orders must be flagged as such.
+  - No wholesale invoice or Zoologis marketing material in the parcel.
+  - Your own label must be attached when ordering.
+  - Carriers: DPD, InPost.
+- **Caveat:** non-Polish delivery isn't stated, so ask (kontakt@zoologis.pl).
+
+### 🇵🇱 Droplo (Shopify connector to Polish/EU wholesalers)
+- **Site:** [droplo.com](https://droplo.com/) · [Shopify app](https://apps.shopify.com/droplo-b2b-dropshipping-eu) launched Dec 2024, no reviews yet.
+- **What it is:** connects Shopify to EU wholesalers (PL, CZ, SK, DE, NL, IT, FR…), **including Alizoo**. It also mixes in AliExpress, so filter by EU source.
+- **Cost:** Basic **$79/year**, Premium **$249/year** (live order and stock sync).
+
+### 🇵🇱 Ikonka (fountains only)
+- **Site:** [ikonka.eu](https://www.ikonka.eu/hurtownia-dropshipping) · Białystok; up to 7,000 parcels a day.
+- **Pet range:** ~18 items, but includes **USB water fountains with filters (1.8 / 2 / 2.4 L): product 3**, plus cushion beds.
+- **Integration:** XML feed (paid yearly), API, BaseLinker.
+- **Delivery:** same day if paid by 11:00. **International parcels only on your own carrier label**, quoted individually.
+
+### 🇵🇱 Hectolove (premium beds)
+- **Site:** [hectolove.com](https://hectolove.com/) · Swarzędz; Polish-made orthopedic dog beds (**1**, premium, not donut style).
+- **Delivery:** EU by DPD (90 PLN retail rate).
+- **Apply:** email kontakt@hectolove.com. Products are Hectolove-branded.
+
+### 🇩🇪 ZooDrop (low confidence)
+- **Site:** [zoodrop.de](https://www.zoodrop.de/) · German pet dropshipper; €6.49/order handling within Germany *(from search snippets; the site blocks bots)*.
+- **Caveat:** *(3rd-party)* needs a German business registration (Gewerbeanmeldung) to see prices. Likely Germany-only.
+
+### 🇪🇸 Dropea: Malta-registered company, but sells into ES/IT/PT
+- **Site:** [dropea.com](https://www.dropea.com/) · operated by **Dropea Limited, Birkirkara, Malta**, so contracting and VAT are simple.
+- **What it is:** a cash-on-delivery dropship platform selling into **Spain, Italy and Portugal**, with a pet category (2,000+ products in total).
+- **Shopify:** ✅ Dropea app (5.0★, 5 reviews).
+- **Cost:** no monthly fee; per delivered order (rate not published).
+- **Caveats:** **doesn't deliver in Malta**, and it is built around COD, so check that prepaid orders work.
+
+### 🇪🇸 Prodac (Spain + Portugal)
+- **Site:** [prodac.es/content/8-dropshipping](https://www.prodac.es/content/8-dropshipping) · Málaga; pet wholesaler since 1992.
+- **Pet range:** automatic feeders (**5**), beds (**1**), brushes (**2**).
+- **Delivery:** mainland Spain 24–48h; islands and Portugal quoted. Ships under your store name.
+- **Apply:** **needs Spanish tax registration (Modelo 036/037)**, so it's only useful if you register in Spain.
+
+### Pan-EU generalists (pet furniture only)
+- **vidaXL** ([b2b.vidaxl.com](https://b2b.vidaxl.com/)): Venlo, NL; ships to 24 EU countries, **not Malta**.
+  - **Cost:** €30/mo **per delivery country**, plus $29/mo for the Shopify app (2.2★).
+  - **Range:** pet beds, pens, cages, cat trees (**1**).
+  - **Branding:** you must name vidaXL as the brand.
+- **Costway EU** ([costway.it/dropshipping](https://www.costway.it/dropshipping)): Italy-focused.
+  - **Range:** ~640 pet items, mostly cat trees and dog sofas (**1**).
+  - **Cost:** 2–6% discount; CSV feed; manual orders; **Italy only**.
+- **Aosom / PawHut EU** (IT/DE/PT sites): low confidence.
+  - **Apply:** needs a local tax ID (Italian P.IVA).
+  - **Caveat:** Aosom sells PawHut on zooplus itself, so you'd compete with the brand owner.
+
+### 🇲🇹 Malta: local options (not dropshippers)
+None of these advertise dropshipping. They supply Maltese pet shops. **Borg Cardona & Co** ([zoo.mt](https://zoo.mt)) carries **PetSafe, Kurgo, Scruffs and KONG**, the closest match to your catalogue. It's worth a call to negotiate **local fulfilment for Malta orders**. Others from directories:
+- Serolf Trading Agency (Pembroke)
+- Idea Natur 2000 (Sta Venera, +356 2147 0291)
+- M A Imports (Fgura)
+- Nygaard Imports (Mqabba)
+
+**Dropped after checking (EU):**
+
+| Supplier | Why dropped |
+|---|---|
+| Freedog (ES) | Good range, but only wholesale accounts for shops, needs a Spanish tax ID. One email asking about dropshipping is worth it |
+| Kerbl, Nobby, Duvo+, Wolters, TecTake, Deuba | No dropship programme found |
+| PolZoo, Molos (PL) | Genuine pet dropshippers, but **Poland-only delivery** |
+| DOGG B2B (CZ) | Wholesale only |
+| ISO Trade, Malatec (PL) | No dropship programme, or site blocked |
+| Droppery as a standalone source | Pivoted to home and living; only useful as Warmako's connector |
+| Hertwill | Almost no pet range, no Malta |
+| Tomtop | ~25 pet SKUs in its German warehouse; blind shipping defaults to China |
+| Octopia (Cdiscount) | Pet range not shown |
+| 01Supply | Defunct |
+| Mabelpiel | Leather collars only |
+| Borg Cardona, Glad Enterprises, D 'n' R Imports (MT) | Local distributors, no dropshipping |
+
+**EU gaps:** self-cleaning slicker brush (**2**), automatic feeder (**5**, except Prodac in Spain) and cooling gel mat (**7**) have no confirmed EU pet-specialist source. Use **CJ's EU warehouses (DE/PL)** or **BigBuy** for these, as `suppliers.md` recommends.
 
 ---
 
@@ -308,10 +464,20 @@ What *does* work from Canadian stock:
    - TopDawg (US): free browse tier
    - Avasam (UK): free tier
    - Costway CA/UK
-2. **Email these with the same questions** (do you accept a Malta-registered company; blind shipping; fees; certificates for fountains/feeders):
+   - Petdiscount (EU)
+2. **Email these with the same questions** (do you accept a Malta-registered company; blind shipping; fees; certificates for fountains/feeders; **do you deliver to Malta**):
    - Pet Wholesale USA, Pet Stores USA, PetDropShipper
    - MH Star UK, Aosom CA
    - Southern Pet Supplies, Flea Circus
-   - HugglePets (beds)
-3. **Register for tax where suppliers require it:** UK VAT + EORI (needed anyway), an Australian ABN (unlocks Southern Pet and Ozdingo), and a US state resale certificate (unlocks Pet Wholesale USA).
-4. **Fill the gaps with CJ local warehouses** (products 2, 4, 6, 8 everywhere; most of Canada).
+   - Warmako, Van der Meer, Alizoo
+   - HugglePets (beds), Freedog
+3. **Call Borg Cardona (zoo.mt)** about fulfilling Malta orders locally.
+4. **Register for tax where suppliers require it:**
+   - a VIES-valid Maltese VAT number (Article 10): unlocks most EU suppliers
+   - UK VAT + EORI: needed anyway
+   - an Australian ABN: unlocks Southern Pet and Ozdingo
+   - a US state resale certificate: unlocks Pet Wholesale USA
+5. **Fill the gaps with CJ local warehouses:**
+   - products 2, 4, 6, 8 everywhere
+   - 2, 5, 7 in the EU
+   - most of Canada
