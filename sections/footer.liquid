@@ -1,0 +1,76 @@
+<footer class="site-footer">
+  <div class="page-width">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <p class="site-footer__logo">{{ shop.name }}</p>
+        {%- if section.settings.tagline != blank -%}<p class="eyebrow eyebrow--gold">{{ section.settings.tagline }}</p>{%- endif -%}
+        {%- if section.settings.text != blank -%}<div class="site-footer__text">{{ section.settings.text }}</div>{%- endif -%}
+      </div>
+      <div class="site-footer__menus">
+        {%- for block in section.blocks -%}
+          <div class="site-footer__menu" {{ block.shopify_attributes }}>
+            <p class="site-footer__heading">{{ block.settings.heading | default: block.settings.menu.title }}</p>
+            <ul>
+              {%- for link in block.settings.menu.links -%}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+      {%- if section.settings.show_payment_icons -%}
+        <ul class="payment-list" aria-label="Payment methods">
+          {%- for type in shop.enabled_payment_types -%}
+            {%- liquid
+              case type
+                when 'master'
+                  assign label = 'Mastercard'
+                when 'american_express'
+                  assign label = 'Amex'
+                when 'paypal'
+                  assign label = 'PayPal'
+                when 'apple_pay'
+                  assign label = 'Apple Pay'
+                when 'google_pay'
+                  assign label = 'Google Pay'
+                when 'shopify_pay'
+                  assign label = 'Shop Pay'
+                else
+                  assign label = type | replace: '_', ' ' | capitalize
+              endcase
+            -%}
+            <li class="payment-chip">{{ label }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <p>Region: {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})</p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-footer",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Pet supplies for the whole pack" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Shipping to the United States, United Kingdom, Canada and Australia.</p>" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment methods", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    }
+  ]
+}
+{% endschema %}

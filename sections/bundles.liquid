@@ -1,0 +1,62 @@
+<section class="section bundles">
+  <div class="page-width">
+    {%- if section.settings.heading != blank -%}<h2 class="section__title">{{ section.settings.heading }}</h2>{%- endif -%}
+    {%- if section.settings.subheading != blank -%}<p class="section__sub">{{ section.settings.subheading }}</p>{%- endif -%}
+
+    <div class="bundle-grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign link = block.settings.link
+          if block.settings.product != blank
+            assign link = block.settings.product.url
+          endif
+          assign cta = block.settings.cta
+          if block.settings.product != blank and cta contains '[PRICE]'
+            assign price = block.settings.product.price | money
+            assign cta = cta | replace: '[PRICE]', price
+          elsif cta contains '[PRICE]'
+            assign cta = 'Shop now'
+          endif
+        -%}
+        <a href="{{ link | default: '#' }}" class="bundle-card bundle-card--{{ block.settings.color }}" {{ block.shopify_attributes }}>
+          <span class="eyebrow">{{ block.settings.eyebrow }}</span>
+          <span class="bundle-card__title">{{ block.settings.title }}</span>
+          <span class="bundle-card__text">{{ block.settings.text }}</span>
+          <span class="bundle-card__cta">{{ cta }} &rarr;</span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bundles",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Bundle the pack, save 15%" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Starter kits for new arrivals and busy multi-pet homes." }
+  ],
+  "blocks": [
+    {
+      "type": "bundle",
+      "name": "Bundle",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Label", "default": "5 items" },
+        { "type": "text", "id": "title", "label": "Title", "default": "New Puppy Kit" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "product", "id": "product", "label": "Bundle product", "info": "Optional. Fills [PRICE] in the link text with this product's price." },
+        { "type": "url", "id": "link", "label": "Link (if no product)" },
+        { "type": "text", "id": "cta", "label": "Link text", "default": "From [PRICE]", "info": "Use [PRICE] for the bundle product's price." },
+        { "type": "select", "id": "color", "label": "Colour", "default": "peach", "options": [
+          { "value": "peach", "label": "Peach" },
+          { "value": "mint", "label": "Mint" },
+          { "value": "yellow", "label": "Yellow" },
+          { "value": "pink", "label": "Pink" }
+        ] }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Bundles" }]
+}
+{% endschema %}

@@ -1,0 +1,51 @@
+{%- comment -%}
+  Outputs "illustration-name|background" for a product without photos.
+  A product tag like "illo:fountain" or "bg:mint" overrides the guess from its handle.
+{%- endcomment -%}
+{%- liquid
+  assign key = ''
+  assign bg = ''
+  for tag in product.tags
+    assign t = tag | downcase
+    if t contains 'illo:'
+      assign key = t | remove: 'illo:' | strip
+    elsif t contains 'bg:'
+      assign bg = t | remove: 'bg:' | strip
+    endif
+  endfor
+  assign h = product.handle
+  if key == ''
+    if h contains 'donut' or h contains 'bed'
+      assign key = 'donut-bed'
+    elsif h contains 'brush' or h contains 'deshed'
+      assign key = 'brush'
+    elsif h contains 'fountain'
+      assign key = 'fountain'
+    elsif h contains 'lick'
+      assign key = 'lick-mat'
+    elsif h contains 'feeder'
+      assign key = 'feeder'
+    elsif h contains 'wand' or h contains 'feather'
+      assign key = 'feather-wand'
+    elsif h contains 'gel' or h contains 'cooling'
+      assign key = 'gel-mat'
+    elsif h contains 'bottle'
+      assign key = 'bottle'
+    else
+      assign key = 'paw'
+    endif
+  endif
+  if bg == ''
+    case key
+      when 'brush', 'feeder'
+        assign bg = 'mint'
+      when 'fountain', 'feather-wand'
+        assign bg = 'yellow'
+      when 'lick-mat', 'bottle'
+        assign bg = 'pink'
+      else
+        assign bg = 'peach'
+    endcase
+  endif
+-%}
+{{- key }}|{{ bg -}}

@@ -1,0 +1,77 @@
+<section class="hero">
+  <div class="page-width hero__grid">
+    <div class="hero__content">
+      {%- if section.settings.eyebrow != blank -%}<p class="eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h1 class="hero__title">{{ section.settings.heading }}</h1>
+      {%- if section.settings.text != blank -%}<div class="hero__text">{{ section.settings.text }}</div>{%- endif -%}
+      <div class="btn-row">
+        {%- for block in section.blocks -%}
+          <a href="{{ block.settings.link | default: '#' }}" class="btn btn--{{ block.settings.style }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="hero__visual">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1200 | image_tag: class: 'hero__image', sizes: '(min-width: 990px) 45vw, 100vw', widths: '600, 900, 1200', loading: 'eager' }}
+      {%- else -%}
+        {% render 'illustration', name: 'hero-pets' %}
+      {%- endif -%}
+
+      {%- if section.settings.chip_title != blank -%}
+        <a class="float-chip float-chip--top" href="{{ section.settings.chip_link | default: '#' }}">
+          <span class="play-dot">{% render 'icon', name: 'play', icon_size: 14 %}</span>
+          <span>
+            <span class="float-chip__eyebrow">{{ section.settings.chip_eyebrow }}</span>
+            <strong>{{ section.settings.chip_title }}</strong>
+          </span>
+        </a>
+      {%- endif -%}
+      {%- if section.settings.badge_title != blank -%}
+        <div class="float-chip float-chip--bottom">
+          <span>
+            <span class="float-chip__eyebrow">{{ section.settings.badge_eyebrow }}</span>
+            <strong>{{ section.settings.badge_title }}</strong>
+          </span>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Pet supplies for the whole pack" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Everything your cats & dogs need. Plus a show they’d star in." },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Comfy beds, clever feeders, toys and grooming gear — picked for multi-pet homes and shipped to your door.</p>" },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional. Replaces the cat & dog illustration." },
+    { "type": "header", "content": "Top chip" },
+    { "type": "text", "id": "chip_eyebrow", "label": "Chip label", "default": "WaggleKin TV" },
+    { "type": "text", "id": "chip_title", "label": "Chip title", "default": "New episode every Friday" },
+    { "type": "url", "id": "chip_link", "label": "Chip link" },
+    { "type": "header", "content": "Bottom badge" },
+    { "type": "text", "id": "badge_eyebrow", "label": "Badge label", "default": "Bundle & save" },
+    { "type": "text", "id": "badge_title", "label": "Badge title", "default": "15% off 3+ items" }
+  ],
+  "blocks": [
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "select", "id": "style", "label": "Style", "default": "orange", "options": [
+          { "value": "orange", "label": "Orange" },
+          { "value": "teal", "label": "Teal" },
+          { "value": "outline", "label": "Outline" },
+          { "value": "navy", "label": "Navy" }
+        ] }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

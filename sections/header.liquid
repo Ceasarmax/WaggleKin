@@ -1,0 +1,67 @@
+<header class="site-header">
+  <div class="page-width site-header__inner">
+    <button class="site-header__toggle icon-btn" type="button" aria-controls="MobileNav" aria-expanded="false" data-nav-toggle>
+      <span class="visually-hidden">{{ 'general.menu' | t }}</span>
+      {% render 'icon', name: 'menu' %}
+    </button>
+
+    <a href="{{ routes.root_url }}" class="site-logo" aria-label="{{ shop.name }}">
+      {%- if settings.logo != blank -%}
+        {{ settings.logo | image_url: width: 520 | image_tag: width: settings.logo_width, alt: shop.name, loading: 'eager', class: 'site-logo__img' }}
+      {%- else -%}
+        <span class="site-logo__mark">{% render 'illustration', name: 'logo-mark' %}</span>
+        <span class="site-logo__text">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    <nav class="site-nav" aria-label="Main">
+      <ul class="site-nav__list" id="MobileNav">
+        {%- for link in section.settings.menu.links -%}
+          {%- assign highlight = false -%}
+          {%- if section.settings.highlight_last and forloop.last -%}{%- assign highlight = true -%}{%- endif -%}
+          <li>
+            <a href="{{ link.url }}" class="site-nav__link{% if link.active %} is-active{% endif %}{% if highlight %} site-nav__link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a href="{{ routes.search_url }}" class="icon-btn" data-search-toggle>
+        <span class="visually-hidden">{{ 'general.search' | t }}</span>
+        {% render 'icon', name: 'search' %}
+      </a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{{ routes.account_url }}" class="icon-btn">
+          <span class="visually-hidden">{{ 'general.account' | t }}</span>
+          {% render 'icon', name: 'account' %}
+        </a>
+      {%- endif -%}
+      <a href="{{ routes.cart_url }}" class="cart-pill">
+        <span class="visually-hidden">{{ 'general.cart' | t }}</span>
+        {% render 'icon', name: 'bag', icon_size: 16 %}
+        <span class="cart-pill__count" data-cart-count>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="search-drawer" data-search-drawer hidden>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="page-width search-drawer__form">
+      <input type="hidden" name="type" value="product">
+      <label for="HeaderSearch" class="visually-hidden">{{ 'general.search' | t }}</label>
+      <input id="HeaderSearch" class="input" type="search" name="q" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off">
+      <button type="submit" class="btn btn--navy">{{ 'general.search' | t }}</button>
+    </form>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "highlight_last", "label": "Highlight last menu item (e.g. WaggleKin TV)", "default": true }
+  ]
+}
+{% endschema %}

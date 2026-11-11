@@ -1,0 +1,23 @@
+{%- layout none -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{{ 'gift_card.title' | t }} &ndash; {{ shop.name }}</title>
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ content_for_header }}
+  </head>
+  <body class="template-gift-card">
+    <main class="section">
+      <div class="page-width page-width--narrow text-center">
+        <p class="eyebrow">{{ shop.name }}</p>
+        <h1 class="section__title">{{ gift_card.balance | money }}</h1>
+        <p>{{ 'gift_card.use_code' | t }}</p>
+        <p class="gift-card__code">{{ gift_card.code | format_code }}</p>
+        {%- if gift_card.pass_url -%}<a href="{{ gift_card.pass_url }}"><img src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" width="120" height="40" alt="Add to Apple Wallet"></a>{%- endif -%}
+        <p><a href="{{ shop.url }}" class="btn btn--orange">{{ 'general.continue_shopping' | t }}</a></p>
+      </div>
+    </main>
+  </body>
+</html>

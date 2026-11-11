@@ -1,0 +1,24 @@
+{%- comment -%} Line icons. Usage: {% render 'icon', name: 'search' %} {%- endcomment -%}
+<svg class="icon icon--{{ name }}" viewBox="0 0 24 24" width="{{ icon_size | default: 20 }}" height="{{ icon_size | default: 20 }}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {%- case name -%}
+    {%- when 'search' -%}<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>
+    {%- when 'account' -%}<circle cx="12" cy="8" r="4"/><path d="M4.5 20c1.4-3.6 4.2-5.5 7.5-5.5s6.1 1.9 7.5 5.5"/>
+    {%- when 'bag' -%}<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6.5a3 3 0 016 0V8"/>
+    {%- when 'menu' -%}<path d="M4 7h16M4 12h16M4 17h16"/>
+    {%- when 'close' -%}<path d="M6 6l12 12M18 6L6 18"/>
+    {%- when 'truck' -%}<path d="M2.5 6.5h11v9h-11z"/><path d="M13.5 9.5h4l3 3v3h-7"/><circle cx="6.5" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/>
+    {%- when 'return' -%}<path d="M20 12a8 8 0 11-2.3-5.7"/><path d="M20 4v4.5h-4.5"/>
+    {%- when 'lock' -%}<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 018 0v2.5"/>
+    {%- when 'heart' -%}<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0112 7.3a4.3 4.3 0 017.5 2.5C19.5 15.4 12 20 12 20z"/>
+    {%- when 'play' -%}<path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/>
+    {%- when 'arrow' -%}<path d="M5 12h14M13 6l6 6-6 6"/>
+    {%- when 'bed' -%}<path d="M3.5 17.5v-6a1.5 1.5 0 011.5-1.5h14a1.5 1.5 0 011.5 1.5v6"/><path d="M3 17.5h18"/><path d="M6 10V8.5A1.5 1.5 0 017.5 7h9A1.5 1.5 0 0118 8.5V10"/>
+    {%- when 'toy' -%}<circle cx="12" cy="12" r="8"/><path d="M4.5 10c5 2 10 2 15 0M4.5 14c5-2 10-2 15 0"/>
+    {%- when 'feeding' -%}<path d="M3.5 11h17l-2 7.5h-13z"/><path d="M8 11l2-4h4l2 4"/>
+    {%- when 'grooming' -%}<path d="M3.5 7.5h17v3h-17z"/><path d="M5.5 10.5v6M8.5 10.5v6M11.5 10.5v6M14.5 10.5v6M17.5 10.5v6"/>
+    {%- when 'travel' -%}<rect x="3.5" y="8" width="17" height="11.5" rx="2.5"/><path d="M9 8V6h6v2"/><path d="M3.5 13h17"/>
+    {%- when 'walk' -%}<circle cx="6.5" cy="6.5" r="2.5"/><path d="M8.3 8.3l9.2 9.2"/><path d="M15.5 19.5l2-2 2 2-2 2z"/>
+    {%- when 'paw' -%}<ellipse cx="12" cy="15.5" rx="4.2" ry="3.5"/><circle cx="6.5" cy="11" r="1.7"/><circle cx="9.5" cy="7.5" r="1.7"/><circle cx="14.5" cy="7.5" r="1.7"/><circle cx="17.5" cy="11" r="1.7"/>
+    {%- else -%}<circle cx="12" cy="12" r="8"/>
+  {%- endcase -%}
+</svg>

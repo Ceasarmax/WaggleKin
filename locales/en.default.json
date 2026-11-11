@@ -1,0 +1,77 @@
+{
+  "general": {
+    "tagged_with": "tagged \"{{ tags }}\"",
+    "search": "Search",
+    "account": "Account",
+    "cart": "Cart",
+    "menu": "Menu",
+    "close": "Close",
+    "shop_all": "Shop all",
+    "continue_shopping": "Continue shopping",
+    "home": "Home",
+    "page_not_found": "Page not found",
+    "page_not_found_text": "This page wandered off. Let's get you back to the pack."
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "play_video": "Play video"
+  },
+  "products": {
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "unavailable": "Unavailable",
+    "sale": "Sale",
+    "save_percent": "Save {{ percent }}%",
+    "regular_price": "Regular price",
+    "sale_price": "Sale price",
+    "quantity": "Quantity",
+    "added": "Added to cart",
+    "view_cart": "View cart",
+    "from_price": "From {{ price }}"
+  },
+  "collections": {
+    "empty": "No products here yet — check back soon.",
+    "products_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
+    "sort_by": "Sort by"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty.",
+    "subtotal": "Subtotal",
+    "checkout": "Check out",
+    "remove": "Remove",
+    "update": "Update",
+    "taxes_and_shipping": "Taxes and shipping calculated at checkout.",
+    "note": "Order note"
+  },
+  "search": {
+    "placeholder": "Search for beds, toys, fountains…",
+    "results_for": "Results for “{{ terms }}”",
+    "no_results": "No results found for “{{ terms }}”."
+  },
+  "newsletter": {
+    "placeholder": "you@email.com",
+    "success": "You're in! Check your inbox for your 10% off code.",
+    "label": "Email"
+  },
+  "blogs": {
+    "read_more": "Read more",
+    "back": "Back to the blog"
+  },
+  "password": {
+    "enter": "Enter",
+    "password": "Password",
+    "opening_soon": "Opening soon",
+    "enter_with_password": "Enter using password"
+  },
+  "gift_card": {
+    "title": "Your gift card",
+    "use_code": "Use this code at checkout"
+  },
+  "customers": {
+    "login": "Log in"
+  }
+}

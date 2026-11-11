@@ -1,0 +1,20 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "settings": {
+        "text": "Free shipping on orders over $49 · Shipping to the US, UK, Canada & Australia · 30-day happy-pet returns"
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu",
+        "highlight_last": true
+      }
+    }
+  },
+  "order": ["announcement", "header"]
+}

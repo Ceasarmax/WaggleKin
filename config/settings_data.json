@@ -1,0 +1,16 @@
+{
+  "current": "Default",
+  "presets": {
+    "Default": {
+      "color_navy": "#1F2A44",
+      "color_orange": "#F18C2B",
+      "color_teal": "#2DB3A3",
+      "color_cream": "#FFF7EF",
+      "color_peach": "#FDEBD7",
+      "color_gold": "#F5C842",
+      "color_rust": "#B5561A",
+      "logo_width": 150,
+      "cart_ajax": true
+    }
+  }
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "WaggleKin",
+    "theme_version": "1.0.0",
+    "theme_author": "WaggleKin",
+    "theme_documentation_url": "https://wagglekin.com",
+    "theme_support_url": "https://wagglekin.com"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      { "type": "color", "id": "color_navy", "label": "Navy (text, dark sections)", "default": "#1F2A44" },
+      { "type": "color", "id": "color_orange", "label": "Orange (primary buttons, dog)", "default": "#F18C2B" },
+      { "type": "color", "id": "color_teal", "label": "Teal (secondary, cat)", "default": "#2DB3A3" },
+      { "type": "color", "id": "color_cream", "label": "Cream (page background)", "default": "#FFF7EF" },
+      { "type": "color", "id": "color_peach", "label": "Peach (panels)", "default": "#FDEBD7" },
+      { "type": "color", "id": "color_gold", "label": "Gold (accent labels on dark)", "default": "#F5C842" },
+      { "type": "color", "id": "color_rust", "label": "Rust (eyebrow text, dog ears)", "default": "#B5561A" }
+    ]
+  },
+  {
+    "name": "Logo & favicon",
+    "settings": [
+      { "type": "image_picker", "id": "logo", "label": "Logo image", "info": "Leave empty to use the built-in cat & dog mark with the store name." },
+      { "type": "range", "id": "logo_width", "label": "Logo width", "min": 80, "max": 260, "step": 5, "unit": "px", "default": 150 },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon" }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      { "type": "checkbox", "id": "cart_ajax", "label": "Add to cart without leaving the page", "default": true }
+    ]
+  }
+]

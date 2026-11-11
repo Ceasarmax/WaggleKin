@@ -1,0 +1,87 @@
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  capture illo
+    render 'product-illustration-key', product: product
+  endcapture
+  assign illo_parts = illo | strip | split: '|'
+-%}
+<section class="section product-page">
+  <div class="page-width product-page__grid">
+    <div class="product-gallery">
+      {%- if product.media.size > 0 -%}
+        <div class="product-gallery__main product-card__media--{{ illo_parts[1] }}">
+          {{ product.featured_media | image_url: width: 1200 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '600, 900, 1200', loading: 'eager', data-main-image: true }}
+        </div>
+        {%- if product.media.size > 1 -%}
+          <ul class="product-gallery__thumbs">
+            {%- for media in product.media -%}
+              {%- if media.media_type == 'image' -%}
+                <li><button type="button" data-thumb="{{ media | image_url: width: 1200 }}">{{ media | image_url: width: 160 | image_tag: loading: 'lazy' }}</button></li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      {%- else -%}
+        <div class="product-gallery__main product-card__media--{{ illo_parts[1] }}">
+          {% render 'illustration', name: illo_parts[0] %}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="product-info">
+      {%- if product.type != blank -%}<p class="product-card__type">{{ product.type }}</p>{%- endif -%}
+      <h1 class="product-info__title">{{ product.title }}</h1>
+      <div class="product-info__price" data-product-price>{% render 'price', product: product, variant: variant %}</div>
+
+      {%- form 'product', product, class: 'product-form js-add-to-cart', data-product-form: '' -%}
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            <fieldset class="product-form__option">
+              <legend>{{ option.name }}</legend>
+              <div class="pill-group">
+                {%- for value in option.values -%}
+                  <label class="pill">
+                    <input type="radio" name="option-{{ forloop.parentloop.index0 }}" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %} data-option-input>
+                    <span>{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+        {%- endunless -%}
+        <input type="hidden" name="id" value="{{ variant.id }}" data-variant-id>
+        <div class="product-form__row">
+          <label class="visually-hidden" for="Quantity">{{ 'products.quantity' | t }}</label>
+          <input id="Quantity" class="input input--qty" type="number" name="quantity" value="1" min="1">
+          <button type="submit" class="btn btn--orange btn--lg" data-add-button {% unless variant.available %}disabled{% endunless %}>
+            {%- if variant.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
+          </button>
+        </div>
+        {{ form | payment_button }}
+      {%- endform -%}
+
+      <div class="product-info__description rte">{{ product.description }}</div>
+
+      <ul class="product-info__perks">
+        <li>{% render 'icon', name: 'truck' %} {{ section.settings.perk_1 }}</li>
+        <li>{% render 'icon', name: 'return' %} {{ section.settings.perk_2 }}</li>
+        <li>{% render 'icon', name: 'lock' %} {{ section.settings.perk_3 }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="application/json" data-product-json>
+    {{ product.variants | json }}
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    { "type": "text", "id": "perk_1", "label": "Perk 1", "default": "Free shipping over $49" },
+    { "type": "text", "id": "perk_2", "label": "Perk 2", "default": "30-day happy-pet returns" },
+    { "type": "text", "id": "perk_3", "label": "Perk 3", "default": "Secure checkout" }
+  ]
+}
+{% endschema %}

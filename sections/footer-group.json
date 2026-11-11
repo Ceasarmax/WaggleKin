@@ -1,0 +1,21 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "shop": { "type": "menu", "settings": { "heading": "Shop", "menu": "footer-shop" } },
+        "help": { "type": "menu", "settings": { "heading": "Help", "menu": "footer-help" } },
+        "brand": { "type": "menu", "settings": { "heading": "WaggleKin", "menu": "footer-wagglekin" } }
+      },
+      "block_order": ["shop", "help", "brand"],
+      "settings": {
+        "tagline": "Pet supplies for the whole pack",
+        "text": "<p>Shipping to the United States, United Kingdom, Canada and Australia.</p>",
+        "show_payment_icons": true
+      }
+    }
+  },
+  "order": ["footer"]
+}

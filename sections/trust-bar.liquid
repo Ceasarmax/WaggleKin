@@ -1,0 +1,42 @@
+<section class="trust-bar">
+  <ul class="page-width trust-bar__list">
+    {%- for block in section.blocks -%}
+      <li class="trust-bar__item" {{ block.shopify_attributes }}>
+        <span class="trust-bar__icon trust-bar__icon--{{ block.settings.color }}">{% render 'icon', name: block.settings.icon, icon_size: 22 %}</span>
+        <span>
+          <strong>{{ block.settings.title }}</strong>
+          <small>{{ block.settings.text }}</small>
+        </span>
+      </li>
+    {%- endfor -%}
+  </ul>
+</section>
+
+{% schema %}
+{
+  "name": "Trust bar",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "truck", "options": [
+          { "value": "truck", "label": "Truck" },
+          { "value": "return", "label": "Return" },
+          { "value": "lock", "label": "Lock" },
+          { "value": "heart", "label": "Heart" },
+          { "value": "paw", "label": "Paw" }
+        ] },
+        { "type": "select", "id": "color", "label": "Icon colour", "default": "teal", "options": [
+          { "value": "teal", "label": "Teal" },
+          { "value": "orange", "label": "Orange" }
+        ] },
+        { "type": "text", "id": "title", "label": "Title", "default": "Free shipping" },
+        { "type": "text", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Trust bar" }]
+}
+{% endschema %}
