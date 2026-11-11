@@ -24,6 +24,11 @@
     });
   });
 
+  // Country selector: switch market as soon as a country is picked
+  document.querySelectorAll('[data-country-select]').forEach((select) => {
+    select.addEventListener('change', () => select.form.submit());
+  });
+
   // Toast
   const toast = document.getElementById('CartToast');
   let toastTimer;

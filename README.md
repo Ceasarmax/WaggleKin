@@ -30,6 +30,14 @@ Tip: make the collections **automated** on product tags (e.g. `dogs` = tag is `D
 - **Badges:** add a tag `badge:Bestseller` or `badge:New`. Products with a compare-at price automatically show "Save X%".
 - **No photos yet?** Cards show a brand illustration picked from the product handle (bed, brush, fountain, lick mat, feeder, wand, gel mat, bottle). Override with tags `illo:fountain` and `bg:mint` / `bg:peach` / `bg:yellow` / `bg:pink`. Once you upload product photos, they replace the illustration.
 
+## Markets & country selector
+
+Active Shopify Markets: **United States (USD), Canada (CAD), United Kingdom (GBP), Australia (AUD)**. Malta is set to draft.
+The header (desktop), the mobile menu and the footer show a country/currency selector listing the active markets. Switching updates prices and currency.
+Turn it off in the theme editor (Header / Footer → "Show country/currency selector").
+
+Each market's checkout needs a shipping zone (Settings → Shipping and delivery). Product availability per market lives in Settings → Markets → (market) → Products.
+
 ## Section notes
 
 - **WaggleKin TV:** paste a YouTube or Vimeo URL to make the play button work (the video loads only on click). Choose up to 4 "products in this episode".

@@ -1,0 +1,27 @@
+{%- comment -%}
+  Country / currency selector. Switches the visitor's Shopify Market.
+  Usage: {% render 'country-selector', id: 'Header', style: 'compact' %}
+  style: 'compact' (header pill) or 'full' (footer / mobile menu)
+{%- endcomment -%}
+{%- if localization.available_countries.size > 1 -%}
+  {%- assign form_id = id | append: 'CountryForm' -%}
+  {%- assign form_class = 'country-selector country-selector--' | append: style -%}
+  {%- form 'localization', id: form_id, class: form_class -%}
+    <label for="{{ id }}CountrySelect" class="{% if style == 'compact' %}visually-hidden{% else %}country-selector__label{% endif %}">{{ 'localization.country_label' | t }}</label>
+    <span class="country-selector__field">
+      <select id="{{ id }}CountrySelect" name="country_code" class="country-selector__select" data-country-select>
+        {%- for country in localization.available_countries -%}
+          <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+            {%- if style == 'compact' -%}
+              {{ country.iso_code }} · {{ country.currency.iso_code }} {{ country.currency.symbol }}
+            {%- else -%}
+              {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+            {%- endif -%}
+          </option>
+        {%- endfor -%}
+      </select>
+      <svg class="country-selector__chevron" viewBox="0 0 12 8" width="10" height="7" aria-hidden="true" focusable="false"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <noscript><button type="submit" class="btn btn--sm btn--navy">{{ 'localization.update' | t }}</button></noscript>
+  {%- endform -%}
+{%- endif -%}

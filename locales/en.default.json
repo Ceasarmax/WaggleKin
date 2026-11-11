@@ -73,5 +73,9 @@
   },
   "customers": {
     "login": "Log in"
+  },
+  "localization": {
+    "country_label": "Country/region",
+    "update": "Update"
   }
 }

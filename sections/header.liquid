@@ -23,10 +23,16 @@
             <a href="{{ link.url }}" class="site-nav__link{% if link.active %} is-active{% endif %}{% if highlight %} site-nav__link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
           </li>
         {%- endfor -%}
+        {%- if section.settings.show_country_selector -%}
+          <li class="site-nav__country">{% render 'country-selector', id: 'MobileNav', style: 'full' %}</li>
+        {%- endif -%}
       </ul>
     </nav>
 
     <div class="site-header__actions">
+      {%- if section.settings.show_country_selector -%}
+        <div class="site-header__country">{% render 'country-selector', id: 'Header', style: 'compact' %}</div>
+      {%- endif -%}
       <a href="{{ routes.search_url }}" class="icon-btn" data-search-toggle>
         <span class="visually-hidden">{{ 'general.search' | t }}</span>
         {% render 'icon', name: 'search' %}
@@ -61,7 +67,8 @@
   "class": "section-header",
   "settings": [
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
-    { "type": "checkbox", "id": "highlight_last", "label": "Highlight last menu item (e.g. WaggleKin TV)", "default": true }
+    { "type": "checkbox", "id": "highlight_last", "label": "Highlight last menu item (e.g. WaggleKin TV)", "default": true },
+    { "type": "checkbox", "id": "show_country_selector", "label": "Show country/currency selector", "info": "Lists the countries in your active Shopify Markets.", "default": true }
   ]
 }
 {% endschema %}

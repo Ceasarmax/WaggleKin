@@ -47,7 +47,11 @@
           {%- endfor -%}
         </ul>
       {%- endif -%}
-      <p>Region: {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})</p>
+      {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
+        {% render 'country-selector', id: 'Footer', style: 'full' %}
+      {%- else -%}
+        <p>Region: {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})</p>
+      {%- endif -%}
     </div>
   </div>
 </footer>
@@ -60,7 +64,8 @@
   "settings": [
     { "type": "text", "id": "tagline", "label": "Tagline", "default": "Pet supplies for the whole pack" },
     { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Shipping to the United States, United Kingdom, Canada and Australia.</p>" },
-    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment methods", "default": true }
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment methods", "default": true },
+    { "type": "checkbox", "id": "show_country_selector", "label": "Show country/currency selector", "default": true }
   ],
   "blocks": [
     {

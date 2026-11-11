@@ -12,9 +12,13 @@
       "type": "header",
       "settings": {
         "menu": "main-menu",
-        "highlight_last": true
+        "highlight_last": true,
+        "show_country_selector": true
       }
     }
   },
-  "order": ["announcement", "header"]
+  "order": [
+    "announcement",
+    "header"
+  ]
 }

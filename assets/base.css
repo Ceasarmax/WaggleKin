@@ -133,6 +133,24 @@ ul { list-style: none; margin: 0; padding: 0; }
 .search-drawer { border-top: 1px solid var(--color-line); background: #fff; padding: 16px 0; }
 .search-drawer__form { display: flex; gap: 10px; }
 
+/* Country selector */
+.country-selector { display: flex; align-items: center; gap: 10px; margin: 0; }
+.country-selector__label { font-size: 12px; font-weight: 600; }
+.country-selector__field { position: relative; display: inline-flex; align-items: center; }
+.country-selector__select {
+  appearance: none; -webkit-appearance: none;
+  font: inherit; font-size: 13px; font-weight: 600; color: inherit;
+  padding: 7px 30px 7px 14px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--color-line); background: transparent;
+}
+.country-selector__chevron { position: absolute; right: 12px; pointer-events: none; }
+.country-selector--compact .country-selector__select { border-color: #E4D6C6; background: #fff; }
+.country-selector--compact .country-selector__select:hover { border-color: var(--color-navy); }
+.site-footer .country-selector__select { border-color: rgba(255,255,255,.35); color: #fff; }
+.site-footer .country-selector__select option { color: var(--color-navy); }
+.site-header__country { margin-right: 4px; }
+.site-nav__country { display: none; }
+
 /* Hero */
 .hero { padding: clamp(32px, 5vw, 48px) 0 clamp(40px, 5vw, 48px); }
 .hero__grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
@@ -346,6 +364,9 @@ span.tv__play:hover { transform: none; }
 }
 @media (max-width: 989px) {
   .site-header__toggle { display: inline-flex; }
+  .site-header__country { display: none; }
+  .site-nav__country { display: block; padding: 14px 0 4px; }
+  .site-nav__country .country-selector { justify-content: space-between; }
   .site-nav { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border-bottom: 1px solid var(--color-line); display: none; }
   .site-nav.is-open { display: block; }
   .site-nav__list { flex-direction: column; gap: 0; padding: 8px var(--gutter) 16px; }
