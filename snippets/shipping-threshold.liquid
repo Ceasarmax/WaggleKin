@@ -1,0 +1,19 @@
+{%- comment -%}
+  Outputs the free-shipping threshold for the visitor's country, e.g. "£39".
+  Set per country in Theme settings → Shipping: "US:$49, CA:C$69, GB:£39, AU:A$75".
+  Usage: {%- capture threshold -%}{% render 'shipping-threshold' %}{%- endcapture -%}
+{%- endcomment -%}
+{%- liquid
+  assign result = settings.free_shipping_default
+  assign country_code = localization.country.iso_code | upcase
+  assign entries = settings.free_shipping_thresholds | split: ','
+  for entry in entries
+    assign parts = entry | strip | split: ':'
+    assign code = parts[0] | strip | upcase
+    if code == country_code and parts[1] != blank
+      assign result = parts[1] | strip
+      break
+    endif
+  endfor
+-%}
+{{- result -}}

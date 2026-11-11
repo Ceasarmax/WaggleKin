@@ -10,7 +10,9 @@
       "color_gold": "#F5C842",
       "color_rust": "#B5561A",
       "logo_width": 150,
-      "cart_ajax": true
+      "cart_ajax": true,
+      "free_shipping_thresholds": "US:$49, CA:C$69, GB:£39, AU:A$75",
+      "free_shipping_default": "$49"
     }
   }
 }

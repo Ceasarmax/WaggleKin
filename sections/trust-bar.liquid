@@ -1,11 +1,12 @@
+{%- capture threshold -%}{% render 'shipping-threshold' %}{%- endcapture -%}
 <section class="trust-bar">
   <ul class="page-width trust-bar__list">
     {%- for block in section.blocks -%}
       <li class="trust-bar__item" {{ block.shopify_attributes }}>
         <span class="trust-bar__icon trust-bar__icon--{{ block.settings.color }}">{% render 'icon', name: block.settings.icon, icon_size: 22 %}</span>
         <span>
-          <strong>{{ block.settings.title }}</strong>
-          <small>{{ block.settings.text }}</small>
+          <strong>{{ block.settings.title | replace: '[threshold]', threshold }}</strong>
+          <small>{{ block.settings.text | replace: '[threshold]', threshold }}</small>
         </span>
       </li>
     {%- endfor -%}

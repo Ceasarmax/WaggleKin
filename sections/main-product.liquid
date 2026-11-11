@@ -1,3 +1,4 @@
+{%- capture threshold -%}{% render 'shipping-threshold' %}{%- endcapture -%}
 {%- liquid
   assign variant = product.selected_or_first_available_variant
   capture illo
@@ -63,9 +64,9 @@
       <div class="product-info__description rte">{{ product.description }}</div>
 
       <ul class="product-info__perks">
-        <li>{% render 'icon', name: 'truck' %} {{ section.settings.perk_1 }}</li>
-        <li>{% render 'icon', name: 'return' %} {{ section.settings.perk_2 }}</li>
-        <li>{% render 'icon', name: 'lock' %} {{ section.settings.perk_3 }}</li>
+        <li>{% render 'icon', name: 'truck' %} {{ section.settings.perk_1 | replace: '[threshold]', threshold }}</li>
+        <li>{% render 'icon', name: 'return' %} {{ section.settings.perk_2 | replace: '[threshold]', threshold }}</li>
+        <li>{% render 'icon', name: 'lock' %} {{ section.settings.perk_3 | replace: '[threshold]', threshold }}</li>
       </ul>
     </div>
   </div>
@@ -79,7 +80,7 @@
 {
   "name": "Product",
   "settings": [
-    { "type": "text", "id": "perk_1", "label": "Perk 1", "default": "Free shipping over $49" },
+    { "type": "text", "id": "perk_1", "label": "Perk 1", "default": "Free shipping over [threshold]" },
     { "type": "text", "id": "perk_2", "label": "Perk 2", "default": "30-day happy-pet returns" },
     { "type": "text", "id": "perk_3", "label": "Perk 3", "default": "Secure checkout" }
   ]

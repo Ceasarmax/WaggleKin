@@ -36,6 +36,8 @@ Active Shopify Markets: **United States (USD), Canada (CAD), United Kingdom (GBP
 The header (desktop), the mobile menu and the footer show a country/currency selector listing the active markets. Switching updates prices and currency.
 Turn it off in the theme editor (Header / Footer → "Show country/currency selector").
 
+**Free-shipping threshold per country:** write `[threshold]` in the announcement bar, trust bar or product perks. It's replaced with the visitor's amount from Theme settings → Shipping (`US:$49, CA:C$69, GB:£39, AU:A$75`). Keep it in sync with the rates in Settings → Shipping and delivery.
+
 Each market's checkout needs a shipping zone (Settings → Shipping and delivery). Product availability per market lives in Settings → Markets → (market) → Products.
 
 ## Section notes

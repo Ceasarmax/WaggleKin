@@ -22,7 +22,7 @@
     "trust": {
       "type": "trust-bar",
       "blocks": {
-        "t1": { "type": "item", "settings": { "icon": "truck", "color": "teal", "title": "Free shipping over $49", "text": "US · UK · CA · AU" } },
+        "t1": { "type": "item", "settings": { "icon": "truck", "color": "teal", "title": "Free shipping over [threshold]", "text": "US · UK · CA · AU" } },
         "t2": { "type": "item", "settings": { "icon": "return", "color": "teal", "title": "30-day happy-pet returns", "text": "Not a fan? Send it back" } },
         "t3": { "type": "item", "settings": { "icon": "lock", "color": "teal", "title": "Secure checkout", "text": "Shop Pay, PayPal, Apple Pay, cards" } },
         "t4": { "type": "item", "settings": { "icon": "heart", "color": "teal", "title": "Made for multi-pet homes", "text": "Cat- and dog-tested picks" } }
