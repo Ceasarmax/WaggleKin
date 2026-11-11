@@ -1,13 +1,47 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero",
       "blocks": {
-        "btn_dogs": { "type": "button", "settings": { "label": "Shop dogs", "link": "shopify://collections/dogs", "style": "orange" } },
-        "btn_cats": { "type": "button", "settings": { "label": "Shop cats", "link": "shopify://collections/cats", "style": "teal" } },
-        "btn_tv": { "type": "button", "settings": { "label": "Watch WaggleKin TV", "link": "shopify://pages/wagglekin-tv", "style": "outline" } }
+        "btn_dogs": {
+          "type": "button",
+          "settings": {
+            "label": "Shop dogs",
+            "link": "shopify://collections/dogs",
+            "style": "orange"
+          }
+        },
+        "btn_cats": {
+          "type": "button",
+          "settings": {
+            "label": "Shop cats",
+            "link": "shopify://collections/cats",
+            "style": "teal"
+          }
+        },
+        "btn_tv": {
+          "type": "button",
+          "settings": {
+            "label": "Watch WaggleKin TV",
+            "link": "shopify://pages/wagglekin-tv",
+            "style": "outline"
+          }
+        }
       },
-      "block_order": ["btn_dogs", "btn_cats", "btn_tv"],
+      "block_order": [
+        "btn_dogs",
+        "btn_cats",
+        "btn_tv"
+      ],
       "settings": {
         "eyebrow": "Pet supplies for the whole pack",
         "heading": "Everything your cats & dogs need. Plus a show they’d star in.",
@@ -22,27 +56,136 @@
     "trust": {
       "type": "trust-bar",
       "blocks": {
-        "t1": { "type": "item", "settings": { "icon": "truck", "color": "teal", "title": "Free shipping over [threshold]", "text": "US · UK · CA · AU" } },
-        "t2": { "type": "item", "settings": { "icon": "return", "color": "teal", "title": "30-day happy-pet returns", "text": "Not a fan? Send it back" } },
-        "t3": { "type": "item", "settings": { "icon": "lock", "color": "teal", "title": "Secure checkout", "text": "Shop Pay, PayPal, Apple Pay, cards" } },
-        "t4": { "type": "item", "settings": { "icon": "heart", "color": "teal", "title": "Made for multi-pet homes", "text": "Cat- and dog-tested picks" } }
+        "t1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "color": "teal",
+            "title": "Free shipping over [threshold]",
+            "text": "US · UK · CA · AU"
+          }
+        },
+        "t2": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "color": "teal",
+            "title": "30-day happy-pet returns",
+            "text": "Not a fan? Send it back"
+          }
+        },
+        "t3": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "color": "teal",
+            "title": "Secure checkout",
+            "text": "Shop Pay, PayPal, Apple Pay, cards"
+          }
+        },
+        "t4": {
+          "type": "item",
+          "settings": {
+            "icon": "heart",
+            "color": "teal",
+            "title": "Made for multi-pet homes",
+            "text": "Cat- and dog-tested picks"
+          }
+        }
       },
-      "block_order": ["t1", "t2", "t3", "t4"]
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "settings": {}
     },
     "shop_by_pet": {
       "type": "shop-by-pet",
       "blocks": {
-        "dogs": { "type": "pet", "settings": { "title": "For dogs", "subtitle": "Beds, walks, chews & more", "collection": "dogs", "illustration": "dog-back", "color": "orange" } },
-        "cats": { "type": "pet", "settings": { "title": "For cats", "subtitle": "Fountains, scratchers, toys & more", "collection": "cats", "illustration": "cat-back", "color": "teal" } },
-        "beds": { "type": "category", "settings": { "title": "Beds", "collection": "beds", "icon": "bed" } },
-        "toys": { "type": "category", "settings": { "title": "Toys", "collection": "toys", "icon": "toy" } },
-        "feeding": { "type": "category", "settings": { "title": "Feeding", "collection": "feeding", "icon": "feeding" } },
-        "grooming": { "type": "category", "settings": { "title": "Grooming", "collection": "grooming", "icon": "grooming" } },
-        "travel": { "type": "category", "settings": { "title": "Travel", "collection": "travel", "icon": "travel" } },
-        "walk": { "type": "category", "settings": { "title": "Walk", "collection": "walk", "icon": "walk" } }
+        "dogs": {
+          "type": "pet",
+          "settings": {
+            "title": "For dogs",
+            "subtitle": "Beds, walks, chews & more",
+            "collection": "dogs",
+            "illustration": "dog-back",
+            "color": "orange"
+          }
+        },
+        "cats": {
+          "type": "pet",
+          "settings": {
+            "title": "For cats",
+            "subtitle": "Fountains, scratchers, toys & more",
+            "collection": "cats",
+            "illustration": "cat-back",
+            "color": "teal"
+          }
+        },
+        "beds": {
+          "type": "category",
+          "settings": {
+            "title": "Beds",
+            "collection": "beds",
+            "icon": "bed"
+          }
+        },
+        "toys": {
+          "type": "category",
+          "settings": {
+            "title": "Toys",
+            "collection": "toys",
+            "icon": "toy"
+          }
+        },
+        "feeding": {
+          "type": "category",
+          "settings": {
+            "title": "Feeding",
+            "collection": "feeding",
+            "icon": "feeding"
+          }
+        },
+        "grooming": {
+          "type": "category",
+          "settings": {
+            "title": "Grooming",
+            "collection": "grooming",
+            "icon": "grooming"
+          }
+        },
+        "travel": {
+          "type": "category",
+          "settings": {
+            "title": "Travel",
+            "collection": "travel",
+            "icon": "travel"
+          }
+        },
+        "walk": {
+          "type": "category",
+          "settings": {
+            "title": "Walk",
+            "collection": "walk",
+            "icon": "walk"
+          }
+        }
       },
-      "block_order": ["dogs", "cats", "beds", "toys", "feeding", "grooming", "travel", "walk"],
-      "settings": { "heading": "Shop by pet" }
+      "block_order": [
+        "dogs",
+        "cats",
+        "beds",
+        "toys",
+        "feeding",
+        "grooming",
+        "travel",
+        "walk"
+      ],
+      "settings": {
+        "heading": "Shop by pet"
+      }
     },
     "favourites": {
       "type": "featured-products",
@@ -60,7 +203,11 @@
         "heading": "The pack has a lot to say.",
         "text": "<p>Our talking-pet sitcom, with new episodes every week on YouTube, TikTok and Instagram. Spotted something in the show? Shop it below.</p>",
         "episode_label": "Episode 1 · [Episode title]",
-        "products": ["calming-donut-bed", "interactive-feather-wand", "whisper-quiet-water-fountain"],
+        "products": [
+          "calming-donut-bed-placeholder",
+          "interactive-feather-wand",
+          "whisper-quiet-water-fountain"
+        ],
         "button_label": "Shop the episode",
         "button_link": "shopify://collections/pack-favourites"
       }
@@ -68,11 +215,45 @@
     "bundles": {
       "type": "bundles",
       "blocks": {
-        "puppy": { "type": "bundle", "settings": { "eyebrow": "5 items", "title": "New Puppy Kit", "text": "Bed, lick mat, chew toys, travel bottle and a deshedding brush.", "link": "shopify://collections/dogs", "cta": "From [PRICE]", "color": "peach" } },
-        "kitten": { "type": "bundle", "settings": { "eyebrow": "5 items", "title": "New Kitten Kit", "text": "Water fountain, feather wand, scratcher, bed and a grooming brush.", "link": "shopify://collections/cats", "cta": "From [PRICE]", "color": "mint" } },
-        "whole": { "type": "bundle", "settings": { "eyebrow": "Build your own", "title": "Whole Pack Bundle", "text": "Pick any 3 or more items for your cats and dogs — 15% off automatically.", "link": "/collections/all", "cta": "Start building", "color": "yellow" } }
+        "puppy": {
+          "type": "bundle",
+          "settings": {
+            "eyebrow": "5 items",
+            "title": "New Puppy Kit",
+            "text": "Bed, lick mat, chew toys, travel bottle and a deshedding brush.",
+            "link": "shopify://collections/dogs",
+            "cta": "From [PRICE]",
+            "color": "peach"
+          }
+        },
+        "kitten": {
+          "type": "bundle",
+          "settings": {
+            "eyebrow": "5 items",
+            "title": "New Kitten Kit",
+            "text": "Water fountain, feather wand, scratcher, bed and a grooming brush.",
+            "link": "shopify://collections/cats",
+            "cta": "From [PRICE]",
+            "color": "mint"
+          }
+        },
+        "whole": {
+          "type": "bundle",
+          "settings": {
+            "eyebrow": "Build your own",
+            "title": "Whole Pack Bundle",
+            "text": "Pick any 3 or more items for your cats and dogs — 15% off automatically.",
+            "link": "/collections/all",
+            "cta": "Start building",
+            "color": "yellow"
+          }
+        }
       },
-      "block_order": ["puppy", "kitten", "whole"],
+      "block_order": [
+        "puppy",
+        "kitten",
+        "whole"
+      ],
       "settings": {
         "heading": "Bundle the pack, save 15%",
         "subheading": "Starter kits for new arrivals and busy multi-pet homes."
@@ -97,5 +278,14 @@
       }
     }
   },
-  "order": ["hero", "trust", "shop_by_pet", "favourites", "tv", "bundles", "quiz", "newsletter"]
+  "order": [
+    "hero",
+    "trust",
+    "shop_by_pet",
+    "favourites",
+    "tv",
+    "bundles",
+    "quiz",
+    "newsletter"
+  ]
 }
