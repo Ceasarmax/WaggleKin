@@ -33,7 +33,8 @@
   - `ship:global` means CJ China warehouse, 7–14 business days, at lower prices. These products appear in the **Value Picks** collection.
   - Both collections are automatic and in the main menu.
   - The theme shows a matching delivery badge on product cards and product pages (`snippets/delivery-badge.liquid`). The day ranges can be edited in Theme settings → Shipping.
-- **Shipping profiles:** "CJdropshipping - US" (US zone only: $5.99, free over $49) is for US-warehouse products published through CJ. China-shipped items use the General profile.
+- **China products are kept separate (12 Nov):** every category collection now has a second rule, "NOT tagged `ship:global`". That covers Dogs, Cats, Beds, Toys, Feeding, Grooming, Travel, Walk, Pack favourites, New arrivals and Bundles. So the main shop shows fast US-shipped products only, and China-shipped products appear only in **Value Picks**. Any new category collection must get the same exclusion rule. For the 200-product launch, US-warehouse items take priority and China items are capped at about 25%.
+- **Shipping profiles:** CJ also created "Profile" (CJ location, US: Standard $5.99, free over $49; the free tier was added via the API). CJ now uses it when publishing. "CJdropshipping - US" (US zone only: $5.99, free over $49) is for US-warehouse products published through CJ. China-shipped items use the General profile.
 - **Theme branch:** the live theme deploys from GitHub branch `claude/cool-ride-76foiz`. Theme changes on other branches only go live once merged into it.
 
 ## Before launch
