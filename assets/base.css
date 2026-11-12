@@ -156,8 +156,8 @@ ul { list-style: none; margin: 0; padding: 0; }
 .hero__grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
 .hero__title { font-size: clamp(38px, 5.2vw, 60px); line-height: 1.04; margin-bottom: 22px; }
 .hero__text { font-size: 17px; color: var(--color-muted); max-width: 46ch; margin-bottom: 28px; }
-.hero__visual { position: relative; background: var(--color-peach); border-radius: var(--radius-lg); padding: 56px 40px 44px; display: flex; align-items: center; justify-content: center; min-height: 340px; }
-.hero__visual .illo--hero { width: min(46%, 250px); }
+.hero__visual { position: relative; background: var(--color-peach); border-radius: var(--radius-lg); padding: 84px 40px 44px; display: flex; align-items: center; justify-content: center; min-height: 340px; }
+.hero__visual .illo--hero { width: min(68%, 340px); }
 .hero__image { width: 100%; border-radius: var(--radius); object-fit: cover; }
 .float-chip { position: absolute; display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 14px; padding: 10px 16px; box-shadow: var(--shadow); text-decoration: none; font-size: 13px; line-height: 1.3; }
 .float-chip strong { display: block; font-weight: 700; }
@@ -221,7 +221,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .tv__grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: clamp(28px, 4vw, 48px); align-items: center; }
 .tv__player { position: relative; background: var(--color-teal); border-radius: var(--radius-lg); aspect-ratio: 16 / 9; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .tv__poster { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-.tv__poster .illo--tv { width: 46%; }
+.tv__poster .illo--tv { width: 54%; }
 .tv__poster-img { width: 100%; height: 100%; object-fit: cover; }
 .tv__player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .tv__label { position: absolute; top: 14px; left: 14px; z-index: 1; background: var(--color-navy); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 8px; }
