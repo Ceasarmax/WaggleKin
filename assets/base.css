@@ -423,3 +423,5 @@ span.tv__play:hover { transform: none; }
   .site-nav__submenu { position: static; min-width: 0; padding: 4px 0 8px 12px; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
   .site-nav__sublink { padding: 10px 0; white-space: normal; }
 }
+.site-nav__list { align-items: center; }
+.site-nav__link { line-height: 1.4; }
