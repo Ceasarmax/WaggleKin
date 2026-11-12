@@ -37,6 +37,22 @@
 - **Shipping profiles:** CJ also created "Profile" (CJ location, US: Standard $5.99, free over $49; the free tier was added via the API). CJ now uses it when publishing. "CJdropshipping - US" (US zone only: $5.99, free over $49) is for US-warehouse products published through CJ. China-shipped items use the General profile.
 - **Theme branch:** the live theme deploys from GitHub branch `claude/cool-ride-76foiz`. Theme changes on other branches only go live once merged into it.
 
+## Catalogue status (12 Nov 2026, evening)
+
+- **153 products live:**
+  - 76 `ship:us`, in Fast US Shipping (80 in that collection).
+  - 77 `ship:global`, in Value Picks (79 in that collection).
+- **China share is about 50%, above the ~25% target.** Trim it, or add US stock, before ads start.
+- **Apparel: 33 live.** The Apparel collection shows only the 9 US-shipped ones. The other 24 are China-shipped and appear in Value Picks.
+- **Christmas items shipping from China** (tagged `season:holiday` + `ship:global`) need an order cut-off of about **30 Nov** to arrive by Christmas. Set them to draft after that date.
+- **Rain vest.** Only pink, size L, is linked: CJ lists the other colours and sizes under separate products.
+- **Drafts (34) include:**
+  - 25 Syncee rope toys.
+  - 5 safety holds.
+  - The wheelchair and soft crate (CJ rejected them for empty SKUs).
+  - The heartbeat plush.
+  - The lick mat.
+
 ## Pet food and treats (planned, 12 Nov 2026)
 
 The owner approved both **US-made treats and chews** and **full dry/wet food**. Neither comes from CJ: both go through a US pet distributor's Shopify app.
