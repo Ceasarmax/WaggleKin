@@ -37,9 +37,31 @@
 - **Shipping profiles:** CJ also created "Profile" (CJ location, US: Standard $5.99, free over $49; the free tier was added via the API). CJ now uses it when publishing. "CJdropshipping - US" (US zone only: $5.99, free over $49) is for US-warehouse products published through CJ. China-shipped items use the General profile.
 - **Theme branch:** the live theme deploys from GitHub branch `claude/cool-ride-76foiz`. Theme changes on other branches only go live once merged into it.
 
+## Pet food and treats (planned, 12 Nov 2026)
+
+The owner approved both **US-made treats and chews** and **full dry/wet food**. Neither comes from CJ: both go through a US pet distributor's Shopify app.
+- **First choice: TopDawg.** The owner installs the app, creates the account and imports products as drafts.
+- **Fallback: PetDropShipper** ($109/mo, food-focused, but its Shopify app is rated poorly).
+- **Never source edible products from China.**
+
+Once the products are imported:
+- **Pricing.** Same check against the market (Chewy, Amazon, Walmart), but the brand's minimum advertised price comes first. Expect thin food margins (about 15–25%); treats run about 30–40%.
+- **Food shipping.** Food gets its **own weight-based shipping profile**. Large bags must not ride on "free shipping over $49". Import only bags under about 6 lb, plus wet-food multipacks.
+- **Tags.** `ship:us`, plus a new `Food & Treats` tag, so food and treats appear in the Fast US Shipping section.
+- **Collections.** **Dog Food & Treats** and **Cat Food & Treats** (each excluding `ship:global`), added under Dogs and Cats in the main menu.
+- **Copy.** Keep the brand's own label wording; make no health claims.
+
+## Syncee drafts (not live)
+
+There are 25 Monli / Knotty Pawz rope toys, tagged `KNOT`, imported through the Syncee app.
+- **Price.** Syncee priced them at cost +10%, which loses money after shipping. They need repricing with the supplier's real shipping cost and origin.
+- **Tags.** Their keyword tags need replacing with tier and category tags before they go live.
+
 ## Before launch
 
 - Check every description against the samples (dimensions, materials, the brush's self-cleaning mechanism).
 - Decide the lick-mat price (€19.99 suggested) and ask CJ to confirm the set contains 2 mats.
-- Switch the store currency to USD if the US LLC goes ahead, and re-enter prices.
+- ~~Switch the store currency to USD.~~ Done. The first table above still shows the original € prices; the live prices are in USD.
+- Clear the 5 products tagged `hold:safety-check` (they need the supplier's UL/FCC/battery/button-cell certificates) before publishing them.
+- Remove `review:pending` from each product once you have checked it in the admin.
 - Syncee and Spocket have no official Claude connector. Import Syncee products via its Shopify app, then set them up here.
