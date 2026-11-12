@@ -16,6 +16,7 @@
     "menu": "Menu",
     "close": "Close",
     "shop_all": "Shop all",
+    "shop_all_named": "Shop all {{ title }}",
     "continue_shopping": "Continue shopping",
     "home": "Home",
     "page_not_found": "Page not found",

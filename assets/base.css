@@ -407,3 +407,19 @@ span.tv__play:hover { transform: none; }
 .delivery-badge--global { background: var(--color-yellow); color: var(--color-navy); }
 .delivery-badge__note { margin: -4px 0 16px; font-size: 13px; color: var(--color-muted); }
 .product-info .delivery-badge { font-size: 13.5px; padding: 6px 12px; margin-top: 12px; }
+
+/* Dropdown menus (menu items with child links) */
+.site-nav__dropdown { position: relative; }
+.site-nav__dropdown > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.site-nav__dropdown > summary::-webkit-details-marker { display: none; }
+.site-nav__caret { width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s ease; }
+.site-nav__dropdown[open] .site-nav__caret { transform: rotate(-135deg) translateY(-1px); }
+.site-nav__submenu { position: absolute; top: calc(100% + 10px); left: -16px; z-index: 40; min-width: 220px; display: grid; gap: 2px; padding: 10px; background: #fff; border: 1px solid var(--color-line); border-radius: 14px; box-shadow: var(--shadow); }
+.site-nav__sublink { display: block; padding: 8px 10px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.site-nav__sublink:hover, .site-nav__sublink.is-active { background: var(--color-peach); }
+.site-nav__sublink--all { font-weight: 700; }
+@media (max-width: 989px) {
+  .site-nav__dropdown > summary { display: flex; justify-content: space-between; width: 100%; padding: 12px 0; border-bottom: 1px solid var(--color-line); }
+  .site-nav__submenu { position: static; min-width: 0; padding: 4px 0 8px 12px; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+  .site-nav__sublink { padding: 10px 0; white-space: normal; }
+}

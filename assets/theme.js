@@ -13,6 +13,23 @@
     });
   });
 
+  // Dropdown menus: hover to open on desktop, only one open at a time, close on outside click / Escape
+  const dropdowns = Array.from(document.querySelectorAll('[data-nav-dropdown]'));
+  const desktop = window.matchMedia('(min-width: 990px)');
+  dropdowns.forEach((dd) => {
+    dd.addEventListener('toggle', () => {
+      if (dd.open) dropdowns.forEach((other) => { if (other !== dd) other.open = false; });
+    });
+    dd.parentElement.addEventListener('mouseenter', () => { if (desktop.matches) dd.open = true; });
+    dd.parentElement.addEventListener('mouseleave', () => { if (desktop.matches) dd.open = false; });
+  });
+  document.addEventListener('click', (event) => {
+    dropdowns.forEach((dd) => { if (dd.open && !dd.contains(event.target)) dd.open = false; });
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') dropdowns.forEach((dd) => { dd.open = false; });
+  });
+
   // Search drawer
   document.querySelectorAll('[data-search-toggle]').forEach((link) => {
     link.addEventListener('click', (event) => {

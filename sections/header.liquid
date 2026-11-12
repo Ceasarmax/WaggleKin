@@ -19,9 +19,27 @@
         {%- for link in section.settings.menu.links -%}
           {%- assign highlight = false -%}
           {%- if section.settings.highlight_last and forloop.last -%}{%- assign highlight = true -%}{%- endif -%}
-          <li>
-            <a href="{{ link.url }}" class="site-nav__link{% if link.active %} is-active{% endif %}{% if highlight %} site-nav__link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
-          </li>
+          {%- if link.links.size > 0 -%}
+            <li class="site-nav__item site-nav__item--parent">
+              <details class="site-nav__dropdown" data-nav-dropdown>
+                <summary class="site-nav__link{% if link.active or link.child_active %} is-active{% endif %}{% if highlight %} site-nav__link--highlight{% endif %}">
+                  {{ link.title }}<span class="site-nav__caret" aria-hidden="true"></span>
+                </summary>
+                <ul class="site-nav__submenu">
+                  {%- if link.url contains '/collections/' -%}
+                    <li><a href="{{ link.url }}" class="site-nav__sublink site-nav__sublink--all">{{ 'general.shop_all_named' | t: title: link.title }}</a></li>
+                  {%- endif -%}
+                  {%- for child in link.links -%}
+                    <li><a href="{{ child.url }}" class="site-nav__sublink{% if child.active %} is-active{% endif %}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            </li>
+          {%- else -%}
+            <li class="site-nav__item">
+              <a href="{{ link.url }}" class="site-nav__link{% if link.active %} is-active{% endif %}{% if highlight %} site-nav__link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+            </li>
+          {%- endif -%}
         {%- endfor -%}
         {%- if section.settings.show_country_selector -%}
           <li class="site-nav__country">{% render 'country-selector', id: 'MobileNav', style: 'full' %}</li>
