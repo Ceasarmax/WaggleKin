@@ -119,8 +119,15 @@ Once the products are imported:
 - **What failed.** Everything else: TopDawg's wholesale price is about 58% of retail, we pay real shipping plus a fee on every order, and Chewy and brand sites sell at or below TopDawg's suggested retail. Canine Caviar food bags work out at a 4–10% margin; the boxes are 35–50-piece wholesale displays.
 - **What TopDawg overwrites.** Its sync **overwrites price and title** edits made in Shopify within minutes, so prices must be set in TopDawg's Import List. **Tags and Draft status stick.**
 - **Shipping profile.** TopDawg created its own shipping profile, "Delivery Profile - Free - 17552", with **free shipping worldwide**. It was changed to Standard $5.99 below $49 and free from $49.
-- **Current state.** **All 47 TopDawg products are Draft.** The "Dog Treats & Chews" and "Cat Treats" collections exist but are unpublished and empty.
-- **Recommendation.** Downgrade TopDawg to the free plan and remove the products in TopDawg. Its treats don't earn enough to cover $49.99/month.
+- **Owner's decision (12 Nov, night).** Sell at TopDawg's suggested retail (MSRP), which is the price TopDawg syncs into Shopify.
+  - **45 in-stock products are live.** The 2 out-of-stock ones stay Draft: Beloved Pets calcium bones and the Artullano cat flea treatment.
+  - **Tags.** Each live product is tagged `ship:us`, `topdawg-fulfilled`, `review:pending` and `Dogs` (Dr. Becker's Bites also get `Cats`). Food items get `Food`; everything else gets `Treats & Chews`. ChewMax items get `Made in USA`, the Loving Pets treats get `Training`, and the puppy food gets `Puppy & Kitten`.
+  - **Collections.** **Dog Food** (8), **Dog Treats & Chews** (37) and **Cat Treats** (2) are published and in the main menu: Dogs → Food / Treats & Chews, and Cats → Treats.
+  - **Per-order profit at MSRP.** Counting the $5.99 the customer pays on orders under $49, almost every variant makes a profit. A single turkey foot ($2.99) breaks even, and the $6.99 ChewMax jerky and the Bully Skinz make about $0.65 an order.
+- **To fix in TopDawg's Import List.** TopDawg overwrites these in Shopify, so they must be edited on TopDawg's side:
+  - titles with codes such as "SCP" and "LP";
+  - the Dr. Becker's text about diabetes and allergies;
+  - garbled "??" characters in the Woof Nific descriptions.
 
 ## Syncee drafts (not live)
 
