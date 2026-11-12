@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "tv": {
@@ -7,13 +16,27 @@
         "heading": "The pack has a lot to say.",
         "text": "<p>Our talking-pet sitcom, with new episodes every week on YouTube, TikTok and Instagram. Spotted something in the show? Shop it below.</p>",
         "episode_label": "Episode 1 · [Episode title]",
-        "products": ["calming-donut-bed", "interactive-feather-wand", "whisper-quiet-water-fountain"],
+        "products": [
+          "calming-donut-bed",
+          "interactive-feather-wand",
+          "whisper-quiet-water-fountain"
+        ],
         "button_label": "Shop the episode",
         "button_link": "shopify://collections/pack-favourites"
       }
     },
-    "main": { "type": "main-page", "settings": {} },
-    "newsletter": { "type": "newsletter", "settings": {} }
+    "main": {
+      "type": "main-page",
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {}
+    }
   },
-  "order": ["tv", "main", "newsletter"]
+  "order": [
+    "tv",
+    "main",
+    "newsletter"
+  ]
 }
