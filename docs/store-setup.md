@@ -37,9 +37,24 @@
 - **Shipping profiles:** CJ also created "Profile" (CJ location, US: Standard $5.99, free over $49; the free tier was added via the API). CJ now uses it when publishing. "CJdropshipping - US" (US zone only: $5.99, free over $49) is for US-warehouse products published through CJ. China-shipped items use the General profile.
 - **Theme branch:** the live theme deploys from GitHub branch `claude/cool-ride-76foiz`. Theme changes on other branches only go live once merged into it.
 
+## Fix: everything showed "sold out" (12 Nov 2026, night)
+
+**Symptom.** The live site showed every product as sold out, and add-to-cart returned "already sold out", even though the admin listed every product as available.
+
+**Cause.** The **United States market had no market-level shipping**: `Market.delivery.shipping` was null, while the draft Malta market had it enabled. Shopify treats products as unbuyable in a market it can't ship to.
+
+**Fix.** Ran `marketUpdate(United States, delivery.shipping.isEnabled = true)`. No market-level rates were added: the delivery-profile rates still apply ($5.99, free from $49).
+
+**Verified on wagglekin.com after the fix:**
+- 153 of 153 products can be bought.
+- Add-to-cart works.
+- A New York address gets "Standard Shipping $5.99".
+
+**Don't undo this.** If a new market is ever activated, check that its shipping is enabled too.
+
 ## Catalogue status (12 Nov 2026, evening)
 
-- **153 products live:**
+- **153 products live** (all buyable after the sold-out fix above):
   - 76 `ship:us`, in Fast US Shipping (80 in that collection).
   - 77 `ship:global`, in Value Picks (79 in that collection).
 - **China share is about 50%, above the ~25% target.** Trim it, or add US stock, before ads start.
@@ -91,6 +106,21 @@ Once the products are imported:
   - **Cat food:** all 16 groups were out of stock.
   - **Lickable cat treats:** none.
 - **Verdict:** use TopDawg for **treats and chews**. Full **food** would need a different distributor, or should wait.
+
+### TopDawg import results (12 Nov 2026, night)
+
+- **What arrived.** The owner imported 47 products: 30 from the shortlist, plus 16 Canine Caviar items and 1 flea treatment.
+- **Review method.** Each product was checked against the market (Chewy, Amazon, Walmart and brand sites), costed with shipping plus a $1.75 fee, and re-checked by a second reviewer.
+- **What passed.** Only **4** clear the 25% margin floor at a competitive price:
+  - Woof Nific collagen sticks
+  - Woof Nific "bully" sticks (the reviewer suspects these may really be collagen sticks)
+  - ChewMax turkey feet, 18-count
+  - ChewMax duck feet, 3 lb
+- **What failed.** Everything else: TopDawg's wholesale price is about 58% of retail, we pay real shipping plus a fee on every order, and Chewy and brand sites sell at or below TopDawg's suggested retail. Canine Caviar food bags work out at a 4–10% margin; the boxes are 35–50-piece wholesale displays.
+- **What TopDawg overwrites.** Its sync **overwrites price and title** edits made in Shopify within minutes, so prices must be set in TopDawg's Import List. **Tags and Draft status stick.**
+- **Shipping profile.** TopDawg created its own shipping profile, "Delivery Profile - Free - 17552", with **free shipping worldwide**. It was changed to Standard $5.99 below $49 and free from $49.
+- **Current state.** **All 47 TopDawg products are Draft.** The "Dog Treats & Chews" and "Cat Treats" collections exist but are unpublished and empty.
+- **Recommendation.** Downgrade TopDawg to the free plan and remove the products in TopDawg. Its treats don't earn enough to cover $49.99/month.
 
 ## Syncee drafts (not live)
 
