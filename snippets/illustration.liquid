@@ -1,48 +1,9 @@
 {%- comment -%}
   Brand illustrations as inline SVG.
   Usage: {% render 'illustration', name: 'hero-pets' %}
-  hero-pets and tv-bubbles show Daisy (golden) and Casper (cream), the WaggleKin TV stars.
   Names: hero-pets, dog-back, cat-back, tv-bubbles, logo-mark,
          donut-bed, brush, fountain, lick-mat, feeder, feather-wand, gel-mat, bottle, paw
 {%- endcomment -%}
-{%- if name == 'hero-pets' or name == 'tv-bubbles' -%}
-  {%- capture casper_head -%}
-    <g fill="#F1E3CF" stroke="#CDB28C" stroke-linejoin="round">
-      <path d="M-58 -38 L-102 -168 L-18 -72 Z" stroke-width="20"/>
-      <path d="M58 -38 L102 -168 L18 -72 Z" stroke-width="20"/>
-      <ellipse cx="0" cy="0" rx="76" ry="70" stroke-width="8"/>
-    </g>
-    <g fill="#F1E3CF" stroke="#F1E3CF" stroke-linejoin="round">
-      <path d="M-58 -38 L-102 -168 L-18 -72 Z" stroke-width="12"/>
-      <path d="M58 -38 L102 -168 L18 -72 Z" stroke-width="12"/>
-      <ellipse cx="0" cy="0" rx="76" ry="70" stroke-width="0"/>
-    </g>
-    <path d="M-54 -58 L-89 -148 L-33 -80 Z" fill="#F2C2B4"/>
-    <path d="M54 -58 L89 -148 L33 -80 Z" fill="#F2C2B4"/>
-    <ellipse cx="0" cy="-40" rx="10" ry="26" fill="#FFFCF6"/>
-    <ellipse cx="0" cy="40" rx="40" ry="40" fill="#FAF2E6"/>
-    <path d="M-44 -24 L-16 -15 M44 -24 L16 -15" stroke="#B8946B" stroke-width="6" stroke-linecap="round"/>
-    <circle cx="-28" cy="-2" r="9" fill="#3A2520"/><circle cx="28" cy="-2" r="9" fill="#3A2520"/>
-    <circle cx="-25" cy="-5" r="3" fill="#fff"/><circle cx="31" cy="-5" r="3" fill="#fff"/>
-    <ellipse cx="0" cy="56" rx="16" ry="12" fill="#4E3430"/>
-    <path d="M-14 76 Q0 82 14 76" fill="none" stroke="#4E3430" stroke-width="4" stroke-linecap="round"/>
-  {%- endcapture -%}
-  {%- capture daisy_head -%}
-    <circle cx="0" cy="0" r="76" fill="#E4A55A" stroke="#C47F33" stroke-width="6"/>
-    <ellipse cx="0" cy="30" rx="40" ry="30" fill="#F2CB92"/>
-    <ellipse cx="5" cy="52" rx="9" ry="11" fill="#E8708E"/>
-    <circle cx="-28" cy="-8" r="8" fill="#2A1D18"/><circle cx="28" cy="-8" r="8" fill="#2A1D18"/>
-    <circle cx="-25" cy="-4" r="2.5" fill="#fff"/><circle cx="31" cy="-4" r="2.5" fill="#fff"/>
-    <path d="M-37 -8 A9 9 0 0 1 -19 -8 Z M19 -8 A9 9 0 0 1 37 -8 Z" fill="#D4914A"/>
-    <path d="M-38 -8 L-18 -8 M18 -8 L38 -8 M-38 -9 l-9 -5 M38 -9 l9 -5" stroke="#2A1D18" stroke-width="3" stroke-linecap="round"/>
-    <ellipse cx="0" cy="18" rx="14" ry="10" fill="#241815"/>
-    <path d="M-16 38 Q-8 46 0 40 Q8 46 16 38" fill="none" stroke="#241815" stroke-width="3" stroke-linecap="round"/>
-    <ellipse cx="-68" cy="8" rx="26" ry="50" transform="rotate(16 -68 8)" fill="#C98739" stroke="#B0722B" stroke-width="4"/>
-    <ellipse cx="68" cy="8" rx="26" ry="50" transform="rotate(-16 68 8)" fill="#C98739" stroke="#B0722B" stroke-width="4"/>
-    <path d="M-24 -66 L-20 -92 L-9 -78 L0 -98 L9 -78 L20 -92 L24 -66 Z" fill="#F5C842" stroke="#D8A82B" stroke-width="2" stroke-linejoin="round"/>
-    <circle cx="0" cy="-80" r="4.5" fill="#EC5C86"/>
-  {%- endcapture -%}
-{%- endif -%}
 {%- case name -%}
   {%- when 'logo-mark' -%}
     <svg class="illo illo--logo-mark" viewBox="0 0 660 720" aria-hidden="true" focusable="false">
@@ -58,48 +19,17 @@
       <path d="M200 528 C186 610 230 652 296 652 C338 652 368 626 386 600" fill="none" stroke="#F18C2B" stroke-width="52" stroke-linecap="round"/>
     </svg>
   {%- when 'hero-pets' -%}
-    {%- comment -%} Daisy (golden, princess) and Casper (cream, big ears, bodyguard) {%- endcomment -%}
-    <svg class="illo illo--hero" viewBox="60 20 540 560" aria-hidden="true" focusable="false">
-      <ellipse cx="318" cy="556" rx="250" ry="10" fill="#1F2A44" opacity="0.08"/>
-      <path d="M282 505 C335 500 352 455 335 418" fill="none" stroke="#CDB28C" stroke-width="30" stroke-linecap="round"/>
-      <g fill="#F1E3CF" stroke="#CDB28C" stroke-width="8">
-        <rect x="162" y="250" width="76" height="110"/>
-        <ellipse cx="200" cy="430" rx="98" ry="118"/>
-        <rect x="154" y="440" width="34" height="100" rx="17"/>
-        <rect x="212" y="440" width="34" height="100" rx="17"/>
-        <ellipse cx="171" cy="540" rx="22" ry="12"/>
-        <ellipse cx="229" cy="540" rx="22" ry="12"/>
-      </g>
-      <path d="M282 505 C335 500 352 455 335 418" fill="none" stroke="#F1E3CF" stroke-width="22" stroke-linecap="round"/>
-      <g fill="#F1E3CF">
-        <rect x="162" y="250" width="76" height="110"/>
-        <ellipse cx="200" cy="430" rx="98" ry="118"/>
-      </g>
-      <ellipse cx="200" cy="400" rx="50" ry="76" fill="#FAF2E6"/>
-      <g fill="#F1E3CF" stroke="#DCC6A6" stroke-width="3">
-        <rect x="154" y="440" width="34" height="100" rx="17"/>
-        <rect x="212" y="440" width="34" height="100" rx="17"/>
-      </g>
-      <g fill="#FAF2E6" stroke="#DCC6A6" stroke-width="3">
-        <ellipse cx="171" cy="540" rx="22" ry="12"/>
-        <ellipse cx="229" cy="540" rx="22" ry="12"/>
-      </g>
-      <g transform="translate(200 215)">{{ casper_head }}</g>
-      <path d="M505 495 C565 480 575 430 548 402" fill="none" stroke="#C47F33" stroke-width="36" stroke-linecap="round"/>
-      <path d="M505 495 C565 480 575 430 548 402" fill="none" stroke="#E4A55A" stroke-width="28" stroke-linecap="round"/>
-      <ellipse cx="430" cy="458" rx="88" ry="92" fill="#E4A55A" stroke="#C47F33" stroke-width="6"/>
-      <ellipse cx="430" cy="440" rx="46" ry="60" fill="#F0C27F"/>
-      <g fill="#E4A55A" stroke="#C47F33" stroke-width="4">
-        <rect x="392" y="462" width="30" height="80" rx="15"/>
-        <rect x="438" y="462" width="30" height="80" rx="15"/>
-      </g>
-      <g fill="#F0C27F" stroke="#C47F33" stroke-width="4">
-        <ellipse cx="407" cy="542" rx="20" ry="11"/>
-        <ellipse cx="453" cy="542" rx="20" ry="11"/>
-      </g>
-      <g transform="translate(430 300)">{{ daisy_head }}</g>
-      <rect x="374" y="370" width="112" height="16" rx="8" fill="#EC5C86"/>
-      <circle cx="430" cy="394" r="8" fill="#F5C842" stroke="#D8A82B" stroke-width="2"/>
+    <svg class="illo illo--hero" viewBox="0 0 660 720" aria-hidden="true" focusable="false">
+      <circle cx="463" cy="435" r="190" fill="#F18C2B"/>
+      <circle cx="463" cy="120" r="112" fill="#F18C2B"/>
+      <ellipse cx="352" cy="140" rx="40" ry="88" transform="rotate(16 352 140)" fill="#C0601B"/>
+      <ellipse cx="574" cy="140" rx="40" ry="88" transform="rotate(-16 574 140)" fill="#C0601B"/>
+      <path d="M68 28 L162 102 L254 28 L240 170 L84 170 Z" fill="#2DB3A3" stroke="#2DB3A3" stroke-width="20" stroke-linejoin="round"/>
+      <circle cx="162" cy="228" r="103" fill="#2DB3A3"/>
+      <ellipse cx="162" cy="472" rx="150" ry="176" fill="var(--color-peach)"/>
+      <ellipse cx="162" cy="472" rx="142" ry="168" fill="#2DB3A3"/>
+      <path d="M432 520 C440 600 420 662 345 668" fill="none" stroke="#2DB3A3" stroke-width="44" stroke-linecap="round"/>
+      <path d="M200 528 C186 610 230 652 296 652 C338 652 368 626 386 600" fill="none" stroke="#F18C2B" stroke-width="52" stroke-linecap="round"/>
     </svg>
   {%- when 'dog-back' -%}
     <svg class="illo illo--pet" viewBox="0 0 200 260" aria-hidden="true" focusable="false">
@@ -118,12 +48,16 @@
     </svg>
   {%- when 'tv-bubbles' -%}
     <svg class="illo illo--tv" viewBox="0 0 440 340" aria-hidden="true" focusable="false">
-      <rect x="14" y="70" width="196" height="180" rx="42" fill="#FFF7EF"/>
-      <path d="M60 240 L34 306 L104 246 Z" fill="#FFF7EF"/>
-      <g transform="translate(112 172) scale(0.62)">{{ casper_head }}</g>
-      <rect x="226" y="128" width="196" height="176" rx="42" fill="#FDEBD7"/>
-      <path d="M376 296 L408 336 L344 300 Z" fill="#FDEBD7"/>
-      <g transform="translate(324 222) scale(0.62)">{{ daisy_head }}</g>
+      <path d="M40 20 L92 64 L148 64 L190 20 L196 96 C214 112 222 136 222 160 C222 210 180 236 128 236 L110 236 L52 290 L68 232 C30 220 4 196 4 158 C4 120 22 92 40 80 Z" fill="#FFF7EF"/>
+      <circle cx="84" cy="150" r="11" fill="#1F2A44"/>
+      <circle cx="148" cy="150" r="11" fill="#1F2A44"/>
+      <rect x="196" y="140" width="210" height="160" rx="34" fill="#F18C2B"/>
+      <path d="M332 296 L392 336 L368 286 Z" fill="#F18C2B"/>
+      <path d="M228 128 C200 136 188 180 200 214 C226 214 244 190 248 160 Z" fill="#B5561A"/>
+      <path d="M378 128 C406 136 418 180 406 214 C380 214 362 190 358 160 Z" fill="#B5561A"/>
+      <circle cx="270" cy="202" r="10" fill="#1F2A44"/>
+      <circle cx="336" cy="202" r="10" fill="#1F2A44"/>
+      <ellipse cx="303" cy="238" rx="17" ry="12" fill="#1F2A44"/>
     </svg>
   {%- when 'donut-bed' -%}
     <svg class="illo illo--product" viewBox="0 0 200 140" aria-hidden="true" focusable="false">
