@@ -25,6 +25,17 @@
 4. **US-only fountain.** The market catalog **"International (no US-only items)"** covers Canada, UK, Australia and Malta. It contains every product except the fountain and adds new products automatically. An unused catalog publication from setup remains; it's harmless.
 5. Duplicate copies made during setup (`calming-donut-bed-duplicate`, `quiet-pet-water-fountain-2-5-l`, `3-in-1-dog-travel-water-bottle-duplicate`) are **archived**. They're safe to delete.
 
+## US-only market and delivery tiers (12 Nov 2026)
+
+- **Markets:** only the **United States** is active. Canada, UK and Australia are switched to draft, and Malta was already draft. Store currency is **USD**.
+- **Two delivery tiers, set by product tag:**
+  - `ship:us` means CJ US warehouse, 3–7 business days. These products appear in the **Fast US Shipping** collection.
+  - `ship:global` means CJ China warehouse, 7–14 business days, at lower prices. These products appear in the **Value Picks** collection.
+  - Both collections are automatic and in the main menu.
+  - The theme shows a matching delivery badge on product cards and product pages (`snippets/delivery-badge.liquid`). The day ranges can be edited in Theme settings → Shipping.
+- **Shipping profiles:** "CJdropshipping - US" (US zone only: $5.99, free over $49) is for US-warehouse products published through CJ. China-shipped items use the General profile.
+- **Theme branch:** the live theme deploys from GitHub branch `claude/cool-ride-76foiz`. Theme changes on other branches only go live once merged into it.
+
 ## Before launch
 
 - Check every description against the samples (dimensions, materials, the brush's self-cleaning mechanism).
