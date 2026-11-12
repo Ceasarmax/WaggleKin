@@ -67,6 +67,31 @@ Once the products are imported:
 - **Collections.** **Dog Food & Treats** and **Cat Food & Treats** (each excluding `ship:global`), added under Dogs and Cats in the main menu.
 - **Copy.** Keep the brand's own label wording; make no health claims.
 
+### TopDawg connection (researched 12 Nov 2026)
+
+- **Connected.** The TopDawg app is installed on Shopify. It created the fulfilment location "TopDawg Fulfillment (UID 17552)", so synced products route orders to TopDawg.
+- **No usable API.** TopDawg's API is a Premier-only add-on ($139.99–199.99/mo) on a *separate* "Custom Integration" membership. Support issues the token, and there are no public docs. It isn't worth it for this store.
+- **No scraping.** TopDawg's Terms forbid robots and scrapers on its site, so the assistant does not script the TopDawg site or dashboard.
+- **How we work with it:**
+  1. The owner adds products to the import list in the TopDawg dashboard (or downloads the Favorites CSV for review).
+  2. The owner clicks "Add to Store".
+  3. The assistant does everything after that in Shopify: pricing against market and MAP, tags, collections, shipping profile and copy.
+- **Plan needed.** The free Start-Up plan cannot even add products to the import list, so the Shopify integration needs **Business** ($49.99/mo, or $419.88/yr).
+  - The 7-day trial is for Business Monthly only. It needs a card and converts to paid unless you downgrade.
+  - Upgrade the **Shopify** integration, not the "Custom Integration" that TopDawg creates at sign-up.
+- **Costs per order:** wholesale price + actual carrier shipping (USPS/UPS/FedEx, priced by weight) + an order fee ($1.50 on the annual Business plan; the monthly fee is not published). We pay this even when the customer gets free shipping, so prices must cover it.
+- **Shipping and returns:**
+  - Ships in about 2 business days; delivery in 2–5.
+  - Returns follow each supplier's policy and need an RMA from TopDawg. The retailer pays return costs, and refunds come back as TopDawg credit.
+- **MAP:** enforced. A violation gets 7 days to fix, then suspension.
+- **Orders:** sync into TopDawg automatically or via "Request Fulfillment" on the Shopify order; TopDawg's docs conflict. Check this on the first order.
+- **Range (public catalogue, 12 Nov):**
+  - **Treats and chews:** decent. About 600 SKUs, including ChewMax (made in USA), Redbarn, bully sticks, yak and buffalo chews, and Savannah ostrich chews. Many listings are case packs.
+  - **Food:** weak. Niche brands only (Canine Caviar, Forza10, Pet Wonder freeze-dried). There are no mainstream brands (Purina, Hill's, Blue Buffalo and so on).
+  - **Cat food:** all 16 groups were out of stock.
+  - **Lickable cat treats:** none.
+- **Verdict:** use TopDawg for **treats and chews**. Full **food** would need a different distributor, or should wait.
+
 ## Syncee drafts (not live)
 
 There are 25 Monli / Knotty Pawz rope toys, tagged `KNOT`, imported through the Syncee app.
