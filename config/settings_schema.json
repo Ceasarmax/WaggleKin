@@ -99,6 +99,26 @@
         "id": "free_shipping_default",
         "label": "Threshold for other countries",
         "default": "$49"
+      },
+      {
+        "type": "header",
+        "content": "Delivery times"
+      },
+      {
+        "type": "paragraph",
+        "content": "Tag products ship:us (US warehouse) or ship:global (international warehouse) to show a delivery badge and include them in the Fast US Shipping / Value Picks collections."
+      },
+      {
+        "type": "text",
+        "id": "delivery_days_us",
+        "label": "US warehouse delivery",
+        "default": "3–7"
+      },
+      {
+        "type": "text",
+        "id": "delivery_days_global",
+        "label": "International warehouse delivery",
+        "default": "7–14"
       }
     ]
   },

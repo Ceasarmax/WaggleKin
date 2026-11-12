@@ -42,6 +42,7 @@
       <p class="product-card__type">{{ product.type }}</p>
     {%- endif -%}
     <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    {% render 'delivery-badge', product: product %}
     <div class="product-card__footer">
       {% render 'price', product: product %}
       {%- if variant.available -%}

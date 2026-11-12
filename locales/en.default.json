@@ -27,7 +27,12 @@
     "quantity": "Quantity",
     "added": "Added to cart",
     "view_cart": "View cart",
-    "from_price": "From {{ price }}"
+    "from_price": "From {{ price }}",
+    "ship_us": "Fast US shipping",
+    "ship_global": "Value pick: ships internationally",
+    "business_days": "business days",
+    "ship_us_note": "In stock in our US warehouse, so it reaches you fast.",
+    "ship_global_note": "Shipped from our international warehouse. It takes a little longer to arrive, which is why it costs less."
   },
   "collections": {
     "empty": "No products here yet — check back soon.",

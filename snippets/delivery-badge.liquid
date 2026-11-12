@@ -1,0 +1,28 @@
+{%- comment -%}
+  Shows where a product ships from and how long delivery takes.
+  Driven by product tags: "ship:us" (US warehouse) or "ship:global" (international warehouse).
+  Day ranges are set in Theme settings → Shipping.
+  Usage: {% render 'delivery-badge', product: product %}            (compact, for cards)
+         {% render 'delivery-badge', product: product, full: true %} (with explainer, for product page)
+{%- endcomment -%}
+{%- liquid
+  assign ship = ''
+  if product.tags contains 'ship:us'
+    assign ship = 'us'
+  elsif product.tags contains 'ship:global'
+    assign ship = 'global'
+  endif
+-%}
+{%- if ship == 'us' -%}
+  <p class="delivery-badge delivery-badge--us">
+    {% render 'icon', name: 'truck', icon_size: 16 %}
+    <span><strong>{{ 'products.ship_us' | t }}</strong> · {{ settings.delivery_days_us }} {{ 'products.business_days' | t }}</span>
+  </p>
+  {%- if full -%}<p class="delivery-badge__note">{{ 'products.ship_us_note' | t }}</p>{%- endif -%}
+{%- elsif ship == 'global' -%}
+  <p class="delivery-badge delivery-badge--global">
+    {% render 'icon', name: 'paw', icon_size: 16 %}
+    <span><strong>{{ 'products.ship_global' | t }}</strong> · {{ settings.delivery_days_global }} {{ 'products.business_days' | t }}</span>
+  </p>
+  {%- if full -%}<p class="delivery-badge__note">{{ 'products.ship_global_note' | t }}</p>{%- endif -%}
+{%- endif -%}
