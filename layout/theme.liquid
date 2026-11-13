@@ -80,6 +80,7 @@
     <div class="toast" id="CartToast" role="status" aria-live="polite" hidden></div>
 
     {%- if template.name == 'index' -%}
+      {%- capture search_target -%}{{ request.origin }}{{ routes.search_url }}?q={search_term_string}&type=product{%- endcapture -%}
       <script type="application/ld+json">
         {
           "@context": "https://schema.org",
@@ -99,7 +100,7 @@
           "url": {{ request.origin | append: routes.root_url | json }},
           "potentialAction": {
             "@type": "SearchAction",
-            "target": {{ request.origin | append: routes.search_url | append: '?q={search_term_string}&type=product' | json }},
+            "target": {{ search_target | json }},
             "query-input": "required name=search_term_string"
           }
         }
