@@ -75,7 +75,7 @@
       timer = setTimeout(() => {
         if (controller) controller.abort();
         controller = window.AbortController ? new AbortController() : null;
-        const url = `${routes.predictiveSearch}?q=${encodeURIComponent(q)}&section_id=predictive-search&resources[type]=product,collection,query&resources[limit]=6&resources[options][unavailable_products]=last`;
+        const url = `${routes.predictiveSearch}?q=${encodeURIComponent(q)}&section_id=predictive-search&resources[type]=product,collection,query&resources[limit]=6&resources[limit_scope]=each&resources[options][unavailable_products]=last`;
         fetch(url, controller ? { signal: controller.signal } : {})
           .then((r) => r.text())
           .then((html) => {
