@@ -1,7 +1,7 @@
 {%- comment -%}
   "Complete your order" picks for the cart drawer and cart page.
   theme.js requests this file through Shopify's Product Recommendations API:
-  /recommendations/products?section_id=cart-upsell&product_id=<newest item>&limit=8&intent=related
+  /recommendations/products?section_id=cart-upsell&product_id=<newest item>&limit=8&intent=complementary
   Picks must be: in stock, not already in the cart, for the same pet as the cart, US-shipped unless the
   cart already has Value Picks, not food, and a sensible add-on price (roughly the amount still needed
   for free shipping, $35 max). Shopify's picks are used first when they qualify, then products from the

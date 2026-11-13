@@ -337,7 +337,7 @@
       const productId = box.dataset.productId;
       if (!productId || box.dataset.loadedFor === productId) return;
       box.dataset.loadedFor = productId;
-      fetch(recUrl(productId, 'related', 8, 'cart-upsell'))
+      fetch(recUrl(productId, 'complementary', 8, 'cart-upsell'))
         .then((r) => r.text())
         .then((html) => {
           const upsell = parseHTML(html).querySelector('[data-upsell-body]');
