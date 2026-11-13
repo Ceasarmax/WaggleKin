@@ -11,6 +11,17 @@
     assign pct = cart.total_price | times: 100 | divided_by: threshold_cents
   endif
 -%}
+{%- liquid
+  assign has_cj = false
+  assign has_td = false
+  for item in cart.items
+    if item.product.tags contains 'topdawg-fulfilled'
+      assign has_td = true
+    else
+      assign has_cj = true
+    endif
+  endfor
+-%}
 {%- if threshold_cents > 0 -%}
   <div class="free-ship{% if remaining <= 0 %} free-ship--done{% endif %}">
     <p class="free-ship__text">
@@ -24,5 +35,8 @@
     <div class="free-ship__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ pct }}" aria-label="{{ 'cart.free_shipping_progress' | t }}">
       <span style="width: {{ pct }}%"></span>
     </div>
+    {%- if has_cj and has_td and remaining > 0 -%}
+      <p class="free-ship__note">{{ 'cart.two_warehouses_html' | t: amount: remaining_money }}</p>
+    {%- endif -%}
   </div>
 {%- endif -%}

@@ -12,7 +12,14 @@
   assign cart_has_global = false
   assign has_cat = false
   assign has_dog = false
+  assign has_td = false
+  assign has_cj = false
   for item in cart.items
+    if item.product.tags contains 'topdawg-fulfilled'
+      assign has_td = true
+    else
+      assign has_cj = true
+    endif
     assign in_cart = in_cart | append: ',' | append: item.product_id | append: ','
     if item.product.tags contains 'ship:global'
       assign cart_has_global = true
@@ -103,6 +110,18 @@
           endif
           if rec.tags contains 'Food'
             assign skip_rec = true
+          endif
+          # Items from another warehouse ship (and are charged) separately under the free-shipping
+          # threshold, so only suggest same-warehouse items until the cart qualifies for free shipping.
+          if remaining > 0
+            if has_cj and has_td == false and rec.tags contains 'topdawg-fulfilled'
+              assign skip_rec = true
+            endif
+            if has_td and has_cj == false
+              unless rec.tags contains 'topdawg-fulfilled'
+                assign skip_rec = true
+              endunless
+            endif
           endif
           if rec.price_min > price_cap
             assign skip_rec = true

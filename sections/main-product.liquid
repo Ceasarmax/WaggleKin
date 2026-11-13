@@ -56,7 +56,7 @@
                   endif
                 -%}
                 {%- capture media_alt -%}{% render 'media-alt', media: media, product: product %}{%- endcapture -%}
-                <li class="product-gallery__slide{% if is_active %} is-active{% endif %}" data-media-id="{{ media.id }}">
+                <li class="product-gallery__slide{% if is_active %} is-active{% endif %}" data-media-id="{{ media.id }}" data-zoom-src="{{ media | image_url: width: 2000 }}">
                   {%- if is_active -%}
                     {{ media | image_url: width: 1400 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '500, 700, 1000, 1400', loading: 'eager', fetchpriority: 'high', alt: media_alt }}
                   {%- else -%}
@@ -66,6 +66,7 @@
               {%- endif -%}
             {%- endfor -%}
           </ul>
+          <button type="button" class="product-gallery__zoom" data-zoom-open aria-label="{{ 'products.zoom' | t }}">{% render 'icon', name: 'search', icon_size: 18 %}</button>
           {%- if image_count > 1 -%}
             <p class="product-gallery__counter" aria-hidden="true"><span data-gallery-index>1</span> / {{ image_count }}</p>
             <ul class="product-gallery__thumbs" aria-label="{{ 'products.thumbnails' | t }}">
@@ -158,7 +159,20 @@
               <span>{{ 'products.arrives' | t }} <strong data-delivery-range></strong></span>
             </p>
           {%- endif -%}
-          <p class="product-info__free-ship">{{ section.settings.perk_1 | replace: '[threshold]', threshold }}</p>
+          {%- liquid
+            assign fs_threshold = settings.free_shipping_amount | times: 100
+            assign fs_remaining = fs_threshold | minus: cart.total_price
+          -%}
+          <p class="product-info__free-ship">
+            {%- if cart.item_count > 0 and fs_threshold > 0 and fs_remaining > 0 -%}
+              {%- assign fs_money = fs_remaining | money -%}
+              {{ 'products.free_ship_remaining_html' | t: amount: fs_money }}
+            {%- elsif cart.item_count > 0 and fs_threshold > 0 -%}
+              {{ 'products.free_ship_unlocked' | t }}
+            {%- else -%}
+              {{ section.settings.perk_1 | replace: '[threshold]', threshold }}
+            {%- endif -%}
+          </p>
         </div>
 
         <ul class="product-info__perks">
@@ -204,6 +218,13 @@
       </div>
     </div>
   </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="{{ 'products.gallery' | t }}">
+    <button type="button" class="lightbox__close icon-btn" data-lightbox-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-step="-1" aria-label="{{ 'products.previous_image' | t }}">&larr;</button>
+    <img class="lightbox__img" data-lightbox-img alt="">
+    <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-step="1" aria-label="{{ 'products.next_image' | t }}">&rarr;</button>
+  </dialog>
 
   <div class="sticky-atc" data-sticky-atc aria-hidden="true" hidden>
     <div class="sticky-atc__inner">
@@ -273,7 +294,7 @@
 {
   "name": "Product",
   "settings": [
-    { "type": "text", "id": "perk_1", "label": "Shipping line", "default": "Free US shipping on orders over [threshold]" },
+    { "type": "text", "id": "perk_1", "label": "Shipping line", "default": "Free US shipping on orders over [threshold] · $5.99 otherwise" },
     { "type": "text", "id": "perk_2", "label": "Perk 1", "default": "30-day happy-pet returns" },
     { "type": "text", "id": "perk_3", "label": "Perk 2", "default": "Secure checkout with Shop Pay, Apple Pay & cards" }
   ],

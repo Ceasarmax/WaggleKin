@@ -545,6 +545,37 @@
     productForm.addEventListener('touchstart', warm, { passive: true });
   }
 
+  // Zoom: open the current photo full-size (button, or click/tap on the photo); arrows step through photos
+  const lightbox = document.querySelector('[data-lightbox]');
+  if (lightbox && slidesWrap && typeof lightbox.showModal === 'function') {
+    const lbImg = lightbox.querySelector('[data-lightbox-img]');
+    let lbIndex = 0;
+    const slidesList = () => Array.from(slidesWrap.children).filter((s) => s.dataset.zoomSrc);
+    const showLb = (i) => {
+      const slides = slidesList();
+      if (!slides.length) return;
+      lbIndex = (i + slides.length) % slides.length;
+      const img = slides[lbIndex].querySelector('img');
+      lbImg.src = slides[lbIndex].dataset.zoomSrc;
+      lbImg.alt = img ? img.alt : '';
+    };
+    const openLb = () => {
+      const slides = slidesList();
+      const active = slidesWrap.querySelector('.is-active') || slides[0];
+      showLb(Math.max(0, slides.indexOf(active)));
+      lightbox.showModal();
+    };
+    document.querySelectorAll('[data-zoom-open]').forEach((b) => b.addEventListener('click', openLb));
+    slidesWrap.addEventListener('click', (event) => { if (event.target.closest('.product-gallery__slide')) openLb(); });
+    lightbox.querySelectorAll('[data-lightbox-step]').forEach((b) => b.addEventListener('click', () => showLb(lbIndex + parseInt(b.dataset.lightboxStep, 10))));
+    lightbox.querySelector('[data-lightbox-close]').addEventListener('click', () => lightbox.close());
+    lightbox.addEventListener('click', (event) => { if (event.target === lightbox) lightbox.close(); });
+    lightbox.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') showLb(lbIndex + 1);
+      if (event.key === 'ArrowLeft') showLb(lbIndex - 1);
+    });
+  }
+
   // Quantity steppers
   document.querySelectorAll('[data-qty]').forEach((wrap) => {
     const input = wrap.querySelector('input');

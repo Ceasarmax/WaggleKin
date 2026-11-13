@@ -666,3 +666,21 @@ html.has-sticky-atc .toast { bottom: 88px; }
 @media (max-width: 640px) { .contact-form__row { grid-template-columns: 1fr; } }
 .payment-icons--footer { margin-top: 0; }
 .payment-icons--footer .payment-icon { width: 36px; height: 23px; }
+
+/* Zoom + lightbox */
+.product-gallery__slide { cursor: zoom-in; }
+.product-gallery__zoom { position: absolute; top: 12px; left: 12px; z-index: 2; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--color-line); background: rgba(255,255,255,.92); color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.lightbox { width: min(96vw, 1100px); max-height: 94vh; padding: 0; border: 0; border-radius: var(--radius); background: #fff; overflow: hidden; }
+.lightbox::backdrop { background: rgba(31,42,68,.75); }
+.lightbox__img { width: 100%; height: min(88vh, 1000px); object-fit: contain; }
+.lightbox__close { position: absolute; top: 10px; right: 10px; z-index: 1; background: #fff; box-shadow: var(--shadow); }
+.lightbox__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: #fff; box-shadow: var(--shadow); font-size: 20px; cursor: pointer; color: var(--color-navy); }
+.lightbox__nav--prev { left: 10px; }
+.lightbox__nav--next { right: 10px; }
+.free-ship__note { font-size: 12.5px; color: var(--color-navy); opacity: .85; }
+
+/* Mobile product page: swipe gallery + counter (no thumbnail rows), so title, price and Add to cart come up sooner */
+@media (max-width: 989px) {
+  .product-gallery__thumbs { display: none; }
+  .product-page .breadcrumbs { margin-bottom: 10px; }
+}
