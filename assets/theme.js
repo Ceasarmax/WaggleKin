@@ -341,6 +341,12 @@
         if (useDrawer && data.sections) {
           renderDrawer(data.sections[DRAWER_SECTION]);
           openDrawer();
+          // the re-rendered drawer carries the new count/total, so the header updates even if /cart.js is slow
+          const fresh = parseHTML(data.sections[DRAWER_SECTION]).querySelector('[data-cart-drawer]');
+          if (fresh && fresh.dataset.itemCount) {
+            setCartCount(parseInt(fresh.dataset.itemCount, 10));
+            refreshFreeShipLine(parseInt(fresh.dataset.total, 10));
+          }
         } else {
           showToast(`${escapeHtml(added.product_title || strings.added)} &middot; <a href="${routes.cart}">${escapeHtml(strings.viewCart)}</a>`);
         }

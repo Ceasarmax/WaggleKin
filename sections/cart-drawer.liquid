@@ -3,7 +3,7 @@
   Section Rendering API (?sections=cart-drawer) after every add / quantity change.
 {%- endcomment -%}
 {%- if settings.cart_ajax -%}
-<div class="cart-drawer" id="CartDrawer" data-cart-drawer>
+<div class="cart-drawer" id="CartDrawer" data-cart-drawer data-item-count="{{ cart.item_count }}" data-total="{{ cart.total_price }}">
   <div class="cart-drawer__overlay" data-cart-close></div>
   <div class="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle" tabindex="-1" data-cart-panel>
     <div class="cart-drawer__head">
