@@ -204,11 +204,11 @@
         "text": "<p>Our talking-pet sitcom starring a very opinionated cat and a very enthusiastic dog. Episode 1 is coming soon to YouTube, TikTok and Instagram. Meanwhile, shop the cast's favourite gear below.</p>",
         "episode_label": "Episode 1 · Coming soon",
         "products": [
-          "calming-donut-bed",
-          "interactive-feather-wand",
+          "felt-cat-cottage-bed-with-hanging-ball",
+          "3-tier-spinning-puzzle-feeder-for-dogs",
           "whisper-quiet-water-fountain"
         ],
-        "button_label": "Shop the episode",
+        "button_label": "Shop pack favourites",
         "button_link": "shopify://collections/pack-favourites"
       }
     },
