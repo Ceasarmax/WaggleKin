@@ -1,61 +1,120 @@
 {%- comment -%}
-  "Complete the order" picks for the cart drawer and cart page.
+  "Complete your order" picks for the cart drawer and cart page.
   theme.js requests this file through Shopify's Product Recommendations API:
-  /recommendations/products?section_id=cart-upsell&product_id=<last item>&limit=6&intent=related
-  Products already in the cart are skipped. If Shopify has no picks yet, it falls back to the
-  "Pack favourites" collection.
+  /recommendations/products?section_id=cart-upsell&product_id=<newest item>&limit=8&intent=related
+  Picks must be: in stock, not already in the cart, for the same pet as the cart, US-shipped unless the
+  cart already has Value Picks, not food, and a sensible add-on price (roughly the amount still needed
+  for free shipping, $35 max). Shopify's picks are used first when they qualify, then products from the
+  newest item's category, then the pet's main collection / Pack favourites.
 {%- endcomment -%}
 {%- liquid
   assign in_cart = ''
+  assign cart_has_global = false
+  assign has_cat = false
+  assign has_dog = false
   for item in cart.items
     assign in_cart = in_cart | append: ',' | append: item.product_id | append: ','
-  endfor
-  assign shown = 0
-  assign shown_ids = ''
-  assign cart_has_global = false
-  for item in cart.items
     if item.product.tags contains 'ship:global'
       assign cart_has_global = true
     endif
+    if item.product.tags contains 'Cats'
+      assign has_cat = true
+    endif
+    if item.product.tags contains 'Dogs'
+      assign has_dog = true
+    endif
   endfor
+
+  assign threshold_cents = settings.free_shipping_amount | times: 100
+  assign remaining = threshold_cents | minus: cart.total_price
+  assign price_cap = 3500
+  if remaining > 0
+    assign price_cap = remaining | plus: 1500
+    if price_cap < 1500
+      assign price_cap = 1500
+    endif
+    if price_cap > 3500
+      assign price_cap = 3500
+    endif
+  endif
+
+  assign skip_handles = 'frontpage,all,fast-us-shipping,value-picks,new-arrivals,pack-favourites,holiday-shop,gifts,bundles,dogs,cats'
+  assign category = nil
+  assign first_item = cart.items.first
+  for c in first_item.product.collections
+    unless skip_handles contains c.handle
+      assign category = c
+      break
+    endunless
+  endfor
+
+  if has_cat and has_dog == false
+    assign species_pool = collections['cats'].products
+  elsif has_dog and has_cat == false
+    assign species_pool = collections['dogs'].products
+  else
+    assign species_pool = collections['pack-favourites'].products
+  endif
+
+  assign shown = 0
+  assign shown_ids = ''
 -%}
 <div data-upsell-body>
   <h3 class="cart-upsell__title">{{ 'cart.upsell_heading' | t }}</h3>
   <ul class="mini-list">
-    {%- if recommendations.performed and recommendations.products_count > 0 -%}
-      {%- for rec in recommendations.products -%}
-        {%- assign key = ',' | append: rec.id | append: ',' -%}
+    {%- for pass in (1..4) -%}
+      {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
+      {%- liquid
+        case pass
+          when 1
+            if recommendations.performed
+              assign pool = recommendations.products
+            else
+              assign pool = nil
+            endif
+          when 2
+            assign pool = category.products
+          when 3
+            assign pool = species_pool
+          else
+            assign pool = collections['pack-favourites'].products
+        endcase
+      -%}
+      {%- for rec in pool -%}
+        {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
         {%- liquid
+          assign key = ',' | append: rec.id | append: ','
           assign skip_rec = false
+          if in_cart contains key or shown_ids contains key or rec.available == false
+            assign skip_rec = true
+          endif
           if cart_has_global == false and rec.tags contains 'ship:global'
             assign skip_rec = true
           endif
-        -%}
-        {%- unless in_cart contains key or shown_ids contains key or rec.available == false or skip_rec -%}
-          <li>{% render 'mini-product', product: rec %}</li>
-          {%- assign shown = shown | plus: 1 -%}
-          {%- assign shown_ids = shown_ids | append: key -%}
-          {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
-        {%- endunless -%}
-      {%- endfor -%}
-    {%- endif -%}
-    {%- if shown < 3 -%}
-      {%- for rec in collections['pack-favourites'].products -%}
-        {%- assign key = ',' | append: rec.id | append: ',' -%}
-        {%- liquid
-          assign skip_rec = false
-          if cart_has_global == false and rec.tags contains 'ship:global'
+          if has_cat and has_dog == false
+            unless rec.tags contains 'Cats'
+              assign skip_rec = true
+            endunless
+          endif
+          if has_dog and has_cat == false
+            unless rec.tags contains 'Dogs'
+              assign skip_rec = true
+            endunless
+          endif
+          if rec.tags contains 'Food'
+            assign skip_rec = true
+          endif
+          if rec.price_min > price_cap
             assign skip_rec = true
           endif
         -%}
-        {%- unless in_cart contains key or shown_ids contains key or rec.available == false or skip_rec -%}
+        {%- unless skip_rec -%}
           <li>{% render 'mini-product', product: rec %}</li>
           {%- assign shown = shown | plus: 1 -%}
           {%- assign shown_ids = shown_ids | append: key -%}
-          {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
         {%- endunless -%}
       {%- endfor -%}
-    {%- endif -%}
+    {%- endfor -%}
   </ul>
 </div>
 

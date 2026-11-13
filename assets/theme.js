@@ -299,8 +299,8 @@
     const limit = recSection.dataset.limit || 4;
     const body = recSection.querySelector('[data-recommendations-body]');
 
-    // "You may also like": swap the same-category fallback for Shopify's related picks when available
-    fetch(recUrl(productId, 'related', limit, sectionId))
+    // "You may also like": optionally swap the same-category picks for Shopify's related picks
+    if (recSection.dataset.useShopify === 'true') fetch(recUrl(productId, 'related', limit, sectionId))
       .then((r) => r.text())
       .then((html) => {
         const related = parseHTML(html).querySelector('[data-recommendations-related]');
@@ -362,19 +362,35 @@
   const counter = document.querySelector('[data-gallery-index]');
   const mobile = window.matchMedia('(max-width: 989px)');
 
+  function preloadMedia(mediaId) {
+    if (!slidesWrap || !mediaId) return null;
+    const target = Array.from(slidesWrap.children).find((s) => s.dataset.mediaId === String(mediaId));
+    const img = target && target.querySelector('img');
+    if (img && img.loading === 'lazy') img.loading = 'eager';
+    return img;
+  }
+
   function showMedia(mediaId, opts) {
     if (!slidesWrap || !mediaId) return;
     const slides = Array.from(slidesWrap.children);
     const target = slides.find((s) => s.dataset.mediaId === String(mediaId));
     if (!target) return;
+    // Keep the current photo on screen until the new one has loaded (no blank flash on desktop)
+    const img = preloadMedia(mediaId);
+    if (img && !img.complete && !mobile.matches && !(opts && opts.loaded)) {
+      let done = false;
+      const finish = () => { if (!done) { done = true; showMedia(mediaId, Object.assign({}, opts, { loaded: true })); } };
+      img.addEventListener('load', finish, { once: true });
+      img.addEventListener('error', finish, { once: true });
+      setTimeout(finish, 1500);
+      return;
+    }
     slides.forEach((s) => s.classList.toggle('is-active', s === target));
     thumbs.forEach((t) => {
       const on = t.dataset.mediaId === String(mediaId);
       t.classList.toggle('is-active', on);
       if (on) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current');
     });
-    const img = target.querySelector('img');
-    if (img && img.loading === 'lazy') img.loading = 'eager';
     if (counter) counter.textContent = String(slides.indexOf(target) + 1);
     if (mobile.matches) {
       slidesWrap.scrollTo({ left: target.offsetLeft - slidesWrap.offsetLeft, behavior: opts && opts.instant ? 'auto' : 'smooth' });
@@ -513,6 +529,20 @@
     });
 
     markAvailability();
+
+    // Start loading a variant's photo as soon as the shopper points at / touches its option
+    const warm = (event) => {
+      const input = event.target.closest('.pill') && event.target.closest('.pill').querySelector('[data-option-input]');
+      if (!input) return;
+      const fs = input.closest('[data-option-position]');
+      const pos = fs ? parseInt(fs.dataset.optionPosition, 10) : 0;
+      const candidate = selectedOptions();
+      candidate[pos] = input.value;
+      const v = variants.find((x) => x.options.every((opt, i) => opt === candidate[i])) || variants.find((x) => x.options[pos] === input.value);
+      if (v && v.featured_media) preloadMedia(v.featured_media.id);
+    };
+    productForm.addEventListener('pointerover', warm, { passive: true });
+    productForm.addEventListener('touchstart', warm, { passive: true });
   }
 
   // Quantity steppers

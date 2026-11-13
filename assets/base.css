@@ -576,8 +576,10 @@ html.has-sticky-atc .toast { bottom: 88px; }
   .cart-upsell--page .mini-product > :last-child { grid-column: auto; }
 }
 @media (max-width: 640px) {
-  .product-form__row { flex-wrap: wrap; }
-  .product-form__row .btn { flex: 1 1 60%; }
+  .product-form__row { gap: 10px; }
+  .product-form__row .btn { flex: 1; min-width: 0; padding-left: 16px; padding-right: 16px; }
+  .qty__btn { width: 38px; }
+  .qty__input { width: 34px; }
   .breadcrumbs [aria-current] { max-width: 22ch; }
 }
 
