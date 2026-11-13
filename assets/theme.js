@@ -123,7 +123,7 @@
       return;
     }
     const pill = event.target.closest('.cart-pill');
-    if (pill && getDrawer() && T.cartType === 'drawer' && !event.metaKey && !event.ctrlKey) {
+    if (pill && getDrawer() && T.cartType === 'drawer' && !document.body.classList.contains('template-cart') && !event.metaKey && !event.ctrlKey) {
       event.preventDefault();
       openDrawer();
       return;
@@ -194,6 +194,10 @@
           .then((r) => r.json())
           .then((cart) => {
             setCartCount(cart.item_count);
+            if (document.body.classList.contains('template-cart')) {
+              window.location.reload();
+              return;
+            }
             if (useDrawer && data.sections) {
               renderDrawer(data.sections[DRAWER_SECTION]);
               openDrawer();

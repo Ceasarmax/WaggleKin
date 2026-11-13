@@ -76,9 +76,7 @@
 
     {% sections 'footer-group' %}
 
-    {%- if settings.cart_ajax and template.name != 'cart' -%}
-      {% section 'cart-drawer' %}
-    {%- endif -%}
+    {% section 'cart-drawer' %}
     <div class="toast" id="CartToast" role="status" aria-live="polite" hidden></div>
 
     {%- if template.name == 'index' -%}
