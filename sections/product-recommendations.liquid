@@ -35,7 +35,7 @@
     {%- endif -%}
   {%- elsif product != blank -%}
     {%- liquid
-      assign source = blank
+      assign source = nil
       for c in product.collections
         unless skip_handles contains c.handle
           if c.products_count > 1
@@ -44,7 +44,7 @@
           endif
         endunless
       endfor
-      if source == blank
+      if source == nil
         for c in product.collections
           unless c.handle == 'frontpage' or c.handle == 'all'
             if c.products_count > 1
@@ -58,11 +58,11 @@
     <div class="page-width">
       <div class="section__head">
         <h2 class="section__title">{{ section.settings.heading }}</h2>
-        {%- if source != blank -%}<a href="{{ source.url }}" class="link-arrow">{{ 'general.shop_all_named' | t: title: source.title }} &rarr;</a>{%- endif -%}
+        {%- if source -%}<a href="{{ source.url }}" class="link-arrow">{{ 'general.shop_all_named' | t: title: source.title }} &rarr;</a>{%- endif -%}
       </div>
       <div data-recommendations-body>
         <div class="product-grid">
-          {%- if source != blank -%}
+          {%- if source -%}
             {%- assign shown = 0 -%}
             {%- for rec in source.products -%}
               {%- if rec.id != product.id and rec.available -%}
@@ -83,7 +83,7 @@
   "name": "Product recommendations",
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
-    { "type": "range", "id": "limit", "label": "Products to show", "min": 4, "max": 8, "step": 4, "default": 4 }
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 2, "max": 8, "step": 1, "default": 4 }
   ],
   "presets": [{ "name": "Product recommendations" }]
 }
