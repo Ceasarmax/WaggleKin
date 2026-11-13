@@ -23,6 +23,7 @@
             <div class="drawer-item__info">
               <a href="{{ item.url }}" class="drawer-item__title">{{ item.product.title }}</a>
               {%- unless item.product.has_only_default_variant -%}<p class="drawer-item__variant">{{ item.variant.title }}</p>{%- endunless -%}
+              {% render 'delivery-badge', product: item.product %}
               {%- for discount in item.line_level_discount_allocations -%}
                 <p class="drawer-item__variant">{{ discount.discount_application.title }} (−{{ discount.amount | money }})</p>
               {%- endfor -%}
@@ -44,7 +45,7 @@
       </ul>
 
       {%- liquid
-        assign upsell_product = cart.items.last.product_id
+        assign upsell_product = cart.items.first.product_id
       -%}
       <div class="cart-upsell" data-cart-upsell data-product-id="{{ upsell_product }}" hidden></div>
 

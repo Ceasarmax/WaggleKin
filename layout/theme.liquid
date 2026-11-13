@@ -45,7 +45,8 @@
           cart: {{ routes.cart_url | json }},
           cartAdd: {{ routes.cart_add_url | json }},
           cartChange: {{ routes.cart_change_url | json }},
-          recommendations: {{ routes.product_recommendations_url | json }}
+          recommendations: {{ routes.product_recommendations_url | json }},
+          predictiveSearch: {{ routes.predictive_search_url | json }}
         },
         cartType: {% if settings.cart_ajax %}"drawer"{% else %}"page"{% endif %},
         strings: {

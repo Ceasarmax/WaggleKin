@@ -1,0 +1,23 @@
+{%- comment -%}
+  Outputs usable alt text for a media item. Supplier imports often set alt text to a 32-character
+  hash (e.g. "e20a3b9b65f1ee42560c7ed0d98a7c89"); in that case fall back to the product title
+  (plus an optional suffix such as the variant name).
+  Usage: {%- capture alt -%}{% render 'media-alt', media: media, product: product, suffix: '' %}{%- endcapture -%}
+{%- endcomment -%}
+{%- liquid
+  assign a = media.alt | strip
+  assign words = a | split: ' '
+  assign use_title = false
+  if a == blank
+    assign use_title = true
+  elsif words.size == 1 and a.size >= 24
+    assign use_title = true
+  endif
+  if use_title
+    assign a = product.title
+    if suffix != blank
+      assign a = a | append: ' – ' | append: suffix
+    endif
+  endif
+  echo a | strip_newlines
+-%}

@@ -1,0 +1,49 @@
+<section class="section section--tight contact-page">
+  <div class="page-width page-width--narrow">
+    <h1 class="section__title">{{ page.title }}</h1>
+    {%- if page.content != blank -%}<div class="rte contact-page__intro">{{ page.content }}</div>{%- endif -%}
+    {%- if section.settings.intro != blank -%}<p class="section__sub contact-page__intro">{{ section.settings.intro }}</p>{%- endif -%}
+
+    {%- form 'contact', class: 'contact-form', id: 'ContactForm' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="contact-form__success" role="status" tabindex="-1" autofocus>{{ 'contact.success' | t }}</p>
+      {%- elsif form.errors -%}
+        <div class="contact-form__error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+      <div class="contact-form__row">
+        <label class="contact-form__field">
+          <span>{{ 'contact.name' | t }}</span>
+          <input class="input" type="text" name="contact[name]" autocomplete="name" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}">
+        </label>
+        <label class="contact-form__field">
+          <span>{{ 'contact.email' | t }} <abbr title="{{ 'contact.required' | t }}">*</abbr></span>
+          <input class="input" type="email" name="contact[email]" autocomplete="email" required value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}">
+        </label>
+      </div>
+      <label class="contact-form__field">
+        <span>{{ 'contact.order' | t }}</span>
+        <input class="input" type="text" name="contact[order_number]" placeholder="#1001">
+      </label>
+      <fieldset class="contact-form__pets">
+        <legend>{{ 'contact.pets' | t }}</legend>
+        <label class="pill"><input type="checkbox" name="contact[pets_dog]" value="yes"><span>{{ 'contact.dog' | t }}</span></label>
+        <label class="pill"><input type="checkbox" name="contact[pets_cat]" value="yes"><span>{{ 'contact.cat' | t }}</span></label>
+      </fieldset>
+      <label class="contact-form__field">
+        <span>{{ 'contact.message' | t }} <abbr title="{{ 'contact.required' | t }}">*</abbr></span>
+        <textarea class="input" name="contact[body]" rows="6" required>{{ form.body }}</textarea>
+      </label>
+      <button type="submit" class="btn btn--orange btn--lg">{{ 'contact.send' | t }}</button>
+      <p class="contact-form__note">{{ 'contact.reply_time' | t }}</p>
+    {%- endform -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact form",
+  "settings": [
+    { "type": "text", "id": "intro", "label": "Intro text", "default": "Questions about an order, sizing or which product suits your pet? Send us a message." }
+  ]
+}
+{% endschema %}

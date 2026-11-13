@@ -12,6 +12,12 @@
   endfor
   assign shown = 0
   assign shown_ids = ''
+  assign cart_has_global = false
+  for item in cart.items
+    if item.product.tags contains 'ship:global'
+      assign cart_has_global = true
+    endif
+  endfor
 -%}
 <div data-upsell-body>
   <h3 class="cart-upsell__title">{{ 'cart.upsell_heading' | t }}</h3>
@@ -19,7 +25,13 @@
     {%- if recommendations.performed and recommendations.products_count > 0 -%}
       {%- for rec in recommendations.products -%}
         {%- assign key = ',' | append: rec.id | append: ',' -%}
-        {%- unless in_cart contains key or shown_ids contains key or rec.available == false -%}
+        {%- liquid
+          assign skip_rec = false
+          if cart_has_global == false and rec.tags contains 'ship:global'
+            assign skip_rec = true
+          endif
+        -%}
+        {%- unless in_cart contains key or shown_ids contains key or rec.available == false or skip_rec -%}
           <li>{% render 'mini-product', product: rec %}</li>
           {%- assign shown = shown | plus: 1 -%}
           {%- assign shown_ids = shown_ids | append: key -%}
@@ -30,7 +42,13 @@
     {%- if shown < 3 -%}
       {%- for rec in collections['pack-favourites'].products -%}
         {%- assign key = ',' | append: rec.id | append: ',' -%}
-        {%- unless in_cart contains key or shown_ids contains key or rec.available == false -%}
+        {%- liquid
+          assign skip_rec = false
+          if cart_has_global == false and rec.tags contains 'ship:global'
+            assign skip_rec = true
+          endif
+        -%}
+        {%- unless in_cart contains key or shown_ids contains key or rec.available == false or skip_rec -%}
           <li>{% render 'mini-product', product: rec %}</li>
           {%- assign shown = shown | plus: 1 -%}
           {%- assign shown_ids = shown_ids | append: key -%}

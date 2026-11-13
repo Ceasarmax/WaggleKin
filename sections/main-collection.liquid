@@ -1,31 +1,132 @@
 {%- paginate collection.products by section.settings.per_page -%}
-<section class="section collection-page">
+{%- liquid
+  assign current_sort = collection.sort_by | default: collection.default_sort_by
+  assign active_count = 0
+  for filter in collection.filters
+    assign active_count = active_count | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != blank or filter.max_value.value != blank
+        assign active_count = active_count | plus: 1
+      endif
+    endif
+  endfor
+-%}
+<section class="section section--tight collection-page">
   <div class="page-width">
-    <div class="section__head">
+    <nav class="breadcrumbs" aria-label="{{ 'general.breadcrumbs' | t }}">
+      <ol>
+        <li><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a></li>
+        <li aria-current="page">{{ collection.title }}</li>
+      </ol>
+    </nav>
+
+    <div class="section__head collection-page__head">
       <div>
         <h1 class="section__title">{{ collection.title }}</h1>
         {%- if collection.description != blank -%}<div class="section__sub rte">{{ collection.description }}</div>{%- endif -%}
       </div>
-      <form class="sort-form" data-sort-form>
-        <label for="SortBy" class="visually-hidden">{{ 'collections.sort_by' | t }}</label>
-        <select id="SortBy" name="sort_by" class="input input--select" onchange="this.form.submit()">
-          {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+    </div>
+
+    <div class="collection-toolbar">
+      {%- if collection.filters.size > 0 -%}
+        <details class="facets-toggle" data-facets{% if active_count > 0 %} open{% endif %}>
+          <summary class="btn btn--outline btn--sm">
+            {% render 'icon', name: 'grooming', icon_size: 16 %} {{ 'collections.filter' | t }}{% if active_count > 0 %} ({{ active_count }}){% endif %}
+          </summary>
+          <form class="facets" action="{{ collection.url }}" method="get" data-facets-form>
+            <input type="hidden" name="sort_by" value="{{ current_sort }}">
+            {%- for filter in collection.filters -%}
+              <fieldset class="facet">
+                <legend class="facet__label">{{ filter.label }}</legend>
+                {%- case filter.type -%}
+                  {%- when 'price_range' -%}
+                    <div class="facet__price">
+                      <label>
+                        <span class="visually-hidden">{{ 'collections.price_from' | t }}</span>
+                        <input class="input" type="number" inputmode="decimal" min="0" name="{{ filter.min_value.param_name }}"
+                          {%- if filter.min_value.value != blank %} value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"{% endif %}
+                          placeholder="{{ 'collections.price_from' | t }}">
+                      </label>
+                      <span aria-hidden="true">–</span>
+                      <label>
+                        <span class="visually-hidden">{{ 'collections.price_to' | t }}</span>
+                        <input class="input" type="number" inputmode="decimal" min="0" name="{{ filter.max_value.param_name }}"
+                          {%- if filter.max_value.value != blank %} value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"{% endif %}
+                          placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}">
+                      </label>
+                    </div>
+                  {%- else -%}
+                    <ul class="facet__list">
+                      {%- for value in filter.values -%}
+                        <li>
+                          <label class="facet__option{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
+                            <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %} data-facet-input>
+                            <span>{{ value.label }}</span>
+                            <span class="facet__count">({{ value.count }})</span>
+                          </label>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                {%- endcase -%}
+              </fieldset>
+            {%- endfor -%}
+            <div class="facets__actions">
+              <button type="submit" class="btn btn--navy btn--sm">{{ 'collections.apply' | t }}</button>
+              {%- if active_count > 0 -%}<a href="{{ collection.url }}?sort_by={{ current_sort }}" class="facets__clear">{{ 'collections.clear_all' | t }}</a>{%- endif -%}
+            </div>
+          </form>
+        </details>
+      {%- endif -%}
+
+      <p class="collection-toolbar__count">{{ 'collections.products_count' | t: count: collection.products_count }}</p>
+
+      <div class="sort-form">
+        <label for="SortBy" class="collection-toolbar__sort-label">{{ 'collections.sort_by' | t }}</label>
+        <select id="SortBy" name="sort_by" class="input input--select" data-sort-select>
           {%- for option in collection.sort_options -%}
             <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>{{ option.name }}</option>
           {%- endfor -%}
         </select>
-      </form>
+      </div>
     </div>
+
+    {%- if active_count > 0 -%}
+      <ul class="active-facets" aria-label="{{ 'collections.active_filters' | t }}">
+        {%- for filter in collection.filters -%}
+          {%- for value in filter.active_values -%}
+            <li><a href="{{ value.url_to_remove }}" class="active-facets__pill">{{ filter.label }}: {{ value.label }} <span aria-hidden="true">&times;</span><span class="visually-hidden">{{ 'collections.remove_filter' | t }}</span></a></li>
+          {%- endfor -%}
+          {%- if filter.type == 'price_range' -%}
+            {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
+              <li><a href="{{ filter.url_to_remove }}" class="active-facets__pill">{{ filter.label }}: {{ filter.min_value.value | default: 0 | money }}–{% if filter.max_value.value != blank %}{{ filter.max_value.value | money }}{% else %}{{ filter.range_max | money }}{% endif %} <span aria-hidden="true">&times;</span></a></li>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+        <li><a href="{{ collection.url }}?sort_by={{ current_sort }}" class="active-facets__clear">{{ 'collections.clear_all' | t }}</a></li>
+      </ul>
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == '@app' -%}<div class="collection-page__app">{% render block %}</div>{%- endif -%}
+    {%- endfor -%}
 
     {%- if collection.products.size > 0 -%}
       <div class="product-grid">
         {%- for product in collection.products -%}
-          {% render 'product-card', product: product %}
+          {%- liquid
+            assign eager = false
+            if forloop.index <= 4 and paginate.current_page == 1
+              assign eager = true
+            endif
+          -%}
+          {% render 'product-card', product: product, eager: eager %}
         {%- endfor -%}
       </div>
       {%- if paginate.pages > 1 -%}
-        <nav class="pagination" aria-label="Pagination">{{ paginate | default_pagination }}</nav>
+        <nav class="pagination" aria-label="{{ 'collections.pagination' | t }}">{{ paginate | default_pagination }}</nav>
       {%- endif -%}
+    {%- elsif active_count > 0 -%}
+      <p class="empty-state">{{ 'collections.no_matches' | t }} <a href="{{ collection.url }}?sort_by={{ current_sort }}">{{ 'collections.clear_all' | t }}</a></p>
     {%- else -%}
       <p class="empty-state">{{ 'collections.empty' | t }}</p>
     {%- endif -%}
@@ -38,6 +139,7 @@
   "name": "Collection",
   "settings": [
     { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 }
-  ]
+  ],
+  "blocks": [{ "type": "@app" }]
 }
 {% endschema %}

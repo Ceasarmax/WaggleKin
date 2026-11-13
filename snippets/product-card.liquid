@@ -1,6 +1,7 @@
 {%- comment -%}
   Product card used in grids. Usage: {% render 'product-card', product: product %}
   Badge: tag "badge:Bestseller" / "badge:New", or automatic "Save X%" when on sale.
+  Pass eager: true for the first row of a grid so the largest above-the-fold image isn't lazy-loaded.
 {%- endcomment -%}
 {%- liquid
   capture illo
@@ -26,13 +27,21 @@
     assign badge_style = 'teal'
   endif
 -%}
+{%- liquid
+  assign card_url = product.url | within: collection
+-%}
 <article class="product-card">
-  <a href="{{ product.url }}" class="product-card__media product-card__media--{{ illo_bg }}" tabindex="-1" aria-hidden="true">
+  <a href="{{ card_url }}" class="product-card__media product-card__media--{{ illo_bg }}{% if product.featured_media %} product-card__media--photo{% endif %}" tabindex="-1" aria-hidden="true">
     {%- if badge != '' -%}
       <span class="badge badge--{{ badge_style }}">{{ badge }}</span>
     {%- endif -%}
     {%- if product.featured_media -%}
-      {{ product.featured_media | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, 50vw', widths: '300, 450, 600', class: 'product-card__img', alt: product.featured_media.alt | default: product.title }}
+      {%- capture card_alt -%}{% render 'media-alt', media: product.featured_media, product: product %}{%- endcapture -%}
+      {%- if eager -%}
+        {{ product.featured_media | image_url: width: 600 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 990px) 25vw, 50vw', widths: '300, 450, 600', class: 'product-card__img', alt: card_alt }}
+      {%- else -%}
+        {{ product.featured_media | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, 50vw', widths: '300, 450, 600', class: 'product-card__img', alt: card_alt }}
+      {%- endif -%}
     {%- else -%}
       {% render 'illustration', name: illo_name %}
     {%- endif -%}
@@ -41,7 +50,7 @@
     {%- if product.type != blank -%}
       <p class="product-card__type">{{ product.type }}</p>
     {%- endif -%}
-    <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    <h3 class="product-card__title"><a href="{{ card_url }}">{{ product.title }}</a></h3>
     {% render 'delivery-badge', product: product %}
     <div class="product-card__footer">
       {% render 'price', product: product, show_from: true %}
@@ -53,7 +62,7 @@
           <button type="submit" class="btn btn--orange btn--sm">{{ 'products.add_to_cart' | t }}</button>
         {%- endform -%}
       {%- else -%}
-        <a href="{{ product.url }}" class="btn btn--outline btn--sm">{{ 'products.choose_options' | t }}</a>
+        <a href="{{ card_url }}" class="btn btn--outline btn--sm">{{ 'products.choose_options' | t }}</a>
       {%- endif -%}
     </div>
   </div>

@@ -20,6 +20,7 @@
               <div class="cart-item__info">
                 <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
                 {%- unless item.product.has_only_default_variant -%}<p class="cart-item__variant">{{ item.variant.title }}</p>{%- endunless -%}
+                {% render 'delivery-badge', product: item.product %}
                 {%- for discount in item.line_level_discount_allocations -%}
                   <p class="cart-item__discount">{{ discount.discount_application.title }} (−{{ discount.amount | money }})</p>
                 {%- endfor -%}
@@ -60,7 +61,10 @@
           {%- endif -%}
         </div>
       </form>
-      <div class="cart-upsell cart-upsell--page" data-cart-upsell data-product-id="{{ cart.items.last.product_id }}" hidden></div>
+      <div class="cart-upsell cart-upsell--page" data-cart-upsell data-product-id="{{ cart.items.first.product_id }}" hidden></div>
+      {%- for block in section.blocks -%}
+        {%- if block.type == '@app' -%}<div class="cart-page__app">{% render block %}</div>{%- endif -%}
+      {%- endfor -%}
     {%- else -%}
       <p class="empty-state">{{ 'cart.empty' | t }}</p>
       <a href="{{ routes.all_products_collection_url }}" class="btn btn--orange">{{ 'general.continue_shopping' | t }}</a>
@@ -69,5 +73,5 @@
 </section>
 
 {% schema %}
-{ "name": "Cart" }
+{ "name": "Cart", "blocks": [{ "type": "@app" }] }
 {% endschema %}

@@ -49,8 +49,8 @@
         "chip_eyebrow": "WaggleKin TV",
         "chip_title": "New episode every Friday",
         "chip_link": "shopify://pages/wagglekin-tv",
-        "badge_eyebrow": "Bundle & save",
-        "badge_title": "15% off 3+ items"
+        "badge_eyebrow": "Free US shipping",
+        "badge_title": "On orders over $49"
       }
     },
     "trust": {
@@ -62,7 +62,7 @@
             "icon": "truck",
             "color": "teal",
             "title": "Free shipping over [threshold]",
-            "text": "US · UK · CA · AU"
+            "text": "Fast delivery across the US"
           }
         },
         "t2": {
@@ -80,7 +80,7 @@
             "icon": "lock",
             "color": "teal",
             "title": "Secure checkout",
-            "text": "Shop Pay, PayPal, Apple Pay, cards"
+            "text": "Shop Pay, PayPal, Apple Pay, Klarna & cards"
           }
         },
         "t4": {
@@ -202,7 +202,7 @@
         "eyebrow": "WaggleKin TV",
         "heading": "The pack has a lot to say.",
         "text": "<p>Our talking-pet sitcom, with new episodes every week on YouTube, TikTok and Instagram. Spotted something in the show? Shop it below.</p>",
-        "episode_label": "Episode 1 · [Episode title]",
+        "episode_label": "Episode 1 · Coming soon",
         "products": [
           "calming-donut-bed",
           "interactive-feather-wand",
@@ -218,33 +218,33 @@
         "puppy": {
           "type": "bundle",
           "settings": {
-            "eyebrow": "5 items",
-            "title": "New Puppy Kit",
-            "text": "Bed, lick mat, chew toys, travel bottle and a deshedding brush.",
-            "link": "shopify://collections/dogs",
-            "cta": "From [PRICE]",
+            "eyebrow": "New puppy",
+            "title": "Puppy essentials",
+            "text": "Beds, chew toys, training and travel gear for the first weeks home.",
+            "link": "shopify://collections/puppy-kitten",
+            "cta": "Shop puppy picks",
             "color": "peach"
           }
         },
         "kitten": {
           "type": "bundle",
           "settings": {
-            "eyebrow": "5 items",
-            "title": "New Kitten Kit",
-            "text": "Water fountain, feather wand, scratcher, bed and a grooming brush.",
+            "eyebrow": "New kitten",
+            "title": "Kitten essentials",
+            "text": "Fountains, feather wands, scratchers and cosy beds for curious kittens.",
             "link": "shopify://collections/cats",
-            "cta": "From [PRICE]",
+            "cta": "Shop kitten picks",
             "color": "mint"
           }
         },
         "whole": {
           "type": "bundle",
           "settings": {
-            "eyebrow": "Build your own",
-            "title": "Whole Pack Bundle",
-            "text": "Pick any 3 or more items for your cats and dogs — 15% off automatically.",
-            "link": "/collections/all",
-            "cta": "Start building",
+            "eyebrow": "Mix & match",
+            "title": "Whole pack picks",
+            "text": "Beds, toys and feeding gear that work for cats and dogs under one roof.",
+            "link": "shopify://collections/pack-favourites",
+            "cta": "Shop pack favourites",
             "color": "yellow"
           }
         }
@@ -255,25 +255,25 @@
         "whole"
       ],
       "settings": {
-        "heading": "Bundle the pack, save 15%",
-        "subheading": "Starter kits for new arrivals and busy multi-pet homes."
+        "heading": "Kits for every stage",
+        "subheading": "Starter picks for new arrivals and busy multi-pet homes."
       }
     },
     "quiz": {
       "type": "cta-banner",
       "settings": {
         "heading": "Not sure what your pack needs?",
-        "text": "Tell us about your cats and dogs in 60 seconds and we’ll suggest the right picks.",
-        "button_label": "Take the pack quiz",
-        "button_link": "shopify://pages/pack-quiz",
+        "text": "Tell us about your cats and dogs and we’ll reply with the right picks.",
+        "button_label": "Ask the pack",
+        "button_link": "shopify://pages/contact",
         "color": "peach"
       }
     },
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "heading": "Join the pack — get 10% off",
-        "text": "New episodes, new arrivals and members-only deals. No spam, just good boys and girls.",
+        "heading": "Join the pack",
+        "text": "New arrivals, WaggleKin TV episodes and members-only deals. No spam, just good boys and girls.",
         "button_label": "Sign me up"
       }
     }

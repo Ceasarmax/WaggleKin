@@ -55,11 +55,12 @@
                     assign is_active = true
                   endif
                 -%}
-                <li class="product-gallery__slide product-card__media--{{ illo_parts[1] }}{% if is_active %} is-active{% endif %}" data-media-id="{{ media.id }}">
+                {%- capture media_alt -%}{% render 'media-alt', media: media, product: product %}{%- endcapture -%}
+                <li class="product-gallery__slide{% if is_active %} is-active{% endif %}" data-media-id="{{ media.id }}">
                   {%- if is_active -%}
-                    {{ media | image_url: width: 1400 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '500, 700, 1000, 1400', loading: 'eager', fetchpriority: 'high', alt: media.alt | default: product.title }}
+                    {{ media | image_url: width: 1400 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '500, 700, 1000, 1400', loading: 'eager', fetchpriority: 'high', alt: media_alt }}
                   {%- else -%}
-                    {{ media | image_url: width: 1400 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '500, 700, 1000, 1400', loading: 'lazy', alt: media.alt | default: product.title }}
+                    {{ media | image_url: width: 1400 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '500, 700, 1000, 1400', loading: 'lazy', alt: media_alt }}
                   {%- endif -%}
                 </li>
               {%- endif -%}
@@ -105,7 +106,7 @@
         {%- form 'product', product, class: 'product-form js-add-to-cart', data-product-form: '', id: 'ProductForm' -%}
           {%- unless product.has_only_default_variant -%}
             {%- for option in product.options_with_values -%}
-              <fieldset class="product-form__option" data-option-position="{{ forloop.index0 }}">
+              <fieldset class="product-form__option" data-option-position="{{ forloop.index0 }}"{% if option.values.size < 2 %} hidden{% endif %}>
                 <legend>{{ option.name }}: <span class="product-form__selected" data-selected-value>{{ option.selected_value }}</span></legend>
                 <div class="pill-group">
                   {%- for value in option.values -%}
@@ -133,6 +134,13 @@
           </div>
           {{ form | payment_button }}
         {%- endform -%}
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              <div class="product-info__app">{% render block %}</div>
+          {%- endcase -%}
+        {%- endfor -%}
 
         <div class="product-info__shipping">
           {%- if ship != '' -%}
@@ -237,10 +245,26 @@
       "url": {{ request.origin | append: v.url | json }},
       "price": {{ v.price | divided_by: 100.0 | json }},
       "priceCurrency": {{ cart.currency.iso_code | json }},
-      "availability": "http://schema.org/{% if v.available %}InStock{% else %}OutOfStock{% endif %}",
-      "itemCondition": "http://schema.org/NewCondition"
+      "availability": "https://schema.org/{% if v.available %}InStock{% else %}OutOfStock{% endif %}",
+      "itemCondition": "https://schema.org/NewCondition"
     }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": {{ 'general.home' | t | json }}, "item": {{ request.origin | append: routes.root_url | json }} },
+    {%- if breadcrumb_collection != blank -%}
+    { "@type": "ListItem", "position": 2, "name": {{ breadcrumb_collection.title | json }}, "item": {{ request.origin | append: breadcrumb_collection.url | json }} },
+    { "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
+    {%- else -%}
+    { "@type": "ListItem", "position": 2, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
+    {%- endif -%}
   ]
 }
 </script>
@@ -252,6 +276,7 @@
     { "type": "text", "id": "perk_1", "label": "Shipping line", "default": "Free US shipping on orders over [threshold]" },
     { "type": "text", "id": "perk_2", "label": "Perk 1", "default": "30-day happy-pet returns" },
     { "type": "text", "id": "perk_3", "label": "Perk 2", "default": "Secure checkout with Shop Pay, Apple Pay & cards" }
-  ]
+  ],
+  "blocks": [{ "type": "@app" }]
 }
 {% endschema %}

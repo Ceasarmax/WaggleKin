@@ -21,36 +21,18 @@
     </div>
 
     <div class="site-footer__bottom">
-      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ 'general.all_rights' | t }}</p>
       {%- if section.settings.show_payment_icons -%}
-        <ul class="payment-list" aria-label="Payment methods">
+        <ul class="payment-icons payment-icons--footer" aria-label="{{ 'general.payment_methods' | t }}">
           {%- for type in shop.enabled_payment_types -%}
-            {%- liquid
-              case type
-                when 'master'
-                  assign label = 'Mastercard'
-                when 'american_express'
-                  assign label = 'Amex'
-                when 'paypal'
-                  assign label = 'PayPal'
-                when 'apple_pay'
-                  assign label = 'Apple Pay'
-                when 'google_pay'
-                  assign label = 'Google Pay'
-                when 'shopify_pay'
-                  assign label = 'Shop Pay'
-                else
-                  assign label = type | replace: '_', ' ' | capitalize
-              endcase
-            -%}
-            <li class="payment-chip">{{ label }}</li>
+            <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
           {%- endfor -%}
         </ul>
       {%- endif -%}
       {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
         {% render 'country-selector', id: 'Footer', style: 'full' %}
       {%- else -%}
-        <p>Region: {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})</p>
+        <p>{{ 'general.region' | t }}: {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})</p>
       {%- endif -%}
     </div>
   </div>

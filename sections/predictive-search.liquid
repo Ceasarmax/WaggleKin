@@ -1,0 +1,49 @@
+{%- comment -%}
+  Search-as-you-type results, requested by theme.js from
+  /search/suggest?q=…&section_id=predictive-search&resources[type]=product,collection,query
+{%- endcomment -%}
+{%- if predictive_search.performed -%}
+  <div class="predictive" data-predictive-results>
+    {%- assign products = predictive_search.resources.products -%}
+    {%- assign collections = predictive_search.resources.collections -%}
+    {%- assign queries = predictive_search.resources.queries -%}
+    {%- if products.size > 0 or collections.size > 0 or queries.size > 0 -%}
+      {%- if queries.size > 0 or collections.size > 0 -%}
+        <ul class="predictive__chips" role="list">
+          {%- for q in queries limit: 3 -%}
+            <li><a href="{{ q.url }}" class="predictive__chip" data-predictive-item>{{ q.styled_text }}</a></li>
+          {%- endfor -%}
+          {%- for c in collections limit: 3 -%}
+            <li><a href="{{ c.url }}" class="predictive__chip predictive__chip--collection" data-predictive-item>{{ c.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if products.size > 0 -%}
+        <ul class="predictive__products" role="list">
+          {%- for p in products limit: 6 -%}
+            <li>
+              <a href="{{ p.url }}" class="predictive__product" data-predictive-item>
+                <span class="predictive__media">
+                  {%- if p.featured_media -%}{{ p.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}
+                </span>
+                <span class="predictive__info">
+                  <span class="predictive__title">{{ p.title }}</span>
+                  <span class="predictive__price">
+                    {%- if p.price_varies -%}{%- assign min_price = p.price_min | money -%}{{ 'products.from_price' | t: price: min_price }}{%- else -%}{{ p.price | money }}{%- endif -%}
+                  </span>
+                </span>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <a href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&type=product" class="predictive__all" data-predictive-item>{{ 'search.view_all' | t: terms: predictive_search.terms }} &rarr;</a>
+    {%- else -%}
+      <p class="predictive__empty">{{ 'search.no_results' | t: terms: predictive_search.terms }}</p>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{ "name": "Predictive search" }
+{% endschema %}

@@ -51,7 +51,7 @@
       {%- if section.settings.show_country_selector -%}
         <div class="site-header__country">{% render 'country-selector', id: 'Header', style: 'compact' %}</div>
       {%- endif -%}
-      <a href="{{ routes.search_url }}" class="icon-btn" data-search-toggle>
+      <a href="{{ routes.search_url }}" class="icon-btn" data-search-toggle aria-controls="SearchDrawer" aria-expanded="false">
         <span class="visually-hidden">{{ 'general.search' | t }}</span>
         {% render 'icon', name: 'search' %}
       </a>
@@ -69,13 +69,14 @@
     </div>
   </div>
 
-  <div class="search-drawer" data-search-drawer hidden>
-    <form action="{{ routes.search_url }}" method="get" role="search" class="page-width search-drawer__form">
+  <div class="search-drawer" id="SearchDrawer" data-search-drawer hidden>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="page-width search-drawer__form" data-predictive-form>
       <input type="hidden" name="type" value="product">
       <label for="HeaderSearch" class="visually-hidden">{{ 'general.search' | t }}</label>
-      <input id="HeaderSearch" class="input" type="search" name="q" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off">
+      <input id="HeaderSearch" class="input" type="search" name="q" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off" aria-controls="PredictiveResults" aria-autocomplete="list" data-predictive-input>
       <button type="submit" class="btn btn--navy">{{ 'general.search' | t }}</button>
     </form>
+    <div class="page-width"><div id="PredictiveResults" class="predictive-wrap" data-predictive-target aria-live="polite"></div></div>
   </div>
 </header>
 

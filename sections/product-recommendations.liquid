@@ -9,7 +9,7 @@
   assign limit = section.settings.limit
   assign skip_handles = 'frontpage,all,fast-us-shipping,value-picks,new-arrivals,pack-favourites,holiday-shop,gifts,bundles,dogs,cats' | split: ','
 -%}
-<section class="section product-recommendations" data-recommendations data-section-id="{{ section.id }}" data-url="{{ routes.product_recommendations_url }}" data-product-id="{{ product.id }}" data-limit="{{ limit }}">
+<section class="section product-recommendations" data-recommendations data-section-id="{{ section.id }}" data-url="{{ routes.product_recommendations_url }}" data-product-id="{{ product.id }}" data-limit="{{ limit }}" data-ship="{% if product.tags contains 'ship:us' %}us{% elsif product.tags contains 'ship:global' %}global{% endif %}">
   {%- if recommendations.performed -%}
     {%- if recommendations.intent == 'complementary' -%}
       <div data-recommendations-complementary>
@@ -65,7 +65,13 @@
           {%- if source -%}
             {%- assign shown = 0 -%}
             {%- for rec in source.products -%}
-              {%- if rec.id != product.id and rec.available -%}
+              {%- liquid
+                assign skip_rec = false
+                if product.tags contains 'ship:us' and rec.tags contains 'ship:global'
+                  assign skip_rec = true
+                endif
+              -%}
+              {%- if rec.id != product.id and rec.available and skip_rec == false -%}
                 {% render 'product-card', product: rec %}
                 {%- assign shown = shown | plus: 1 -%}
                 {%- if shown >= limit -%}{%- break -%}{%- endif -%}

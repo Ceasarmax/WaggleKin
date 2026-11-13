@@ -3,7 +3,7 @@
   'use strict';
 
   const T = window.theme || {};
-  const routes = Object.assign({ root: '/', cart: '/cart', cartAdd: '/cart/add', cartChange: '/cart/change', recommendations: '/recommendations/products' }, T.routes || {});
+  const routes = Object.assign({ root: '/', cart: '/cart', cartAdd: '/cart/add', cartChange: '/cart/change', recommendations: '/recommendations/products', predictiveSearch: '/search/suggest' }, T.routes || {});
   const strings = Object.assign({ addToCart: 'Add to cart', soldOut: 'Sold out', unavailable: 'Unavailable', added: 'Added to cart', viewCart: 'View cart', cartError: 'Something went wrong. Please try again.', savePercent: 'Save [percent]%' }, T.strings || {});
 
   function escapeHtml(value) {
@@ -36,8 +36,15 @@
     dd.addEventListener('toggle', () => {
       if (dd.open) dropdowns.forEach((other) => { if (other !== dd) other.open = false; });
     });
-    dd.parentElement.addEventListener('mouseenter', () => { if (desktop.matches) dd.open = true; });
-    dd.parentElement.addEventListener('mouseleave', () => { if (desktop.matches) dd.open = false; });
+    dd.parentElement.addEventListener('mouseenter', () => { if (desktop.matches) { dd.open = true; dd.dataset.hoverOpened = '1'; } });
+    dd.parentElement.addEventListener('mouseleave', () => { if (desktop.matches) { dd.open = false; delete dd.dataset.hoverOpened; } });
+    const summary = dd.querySelector('summary');
+    if (summary) {
+      summary.addEventListener('click', (event) => {
+        // hover already opened it: a click shouldn't snap it shut
+        if (desktop.matches && dd.open && dd.dataset.hoverOpened) { event.preventDefault(); delete dd.dataset.hoverOpened; }
+      });
+    }
   });
   document.addEventListener('click', (event) => {
     dropdowns.forEach((dd) => { if (dd.open && !dd.contains(event.target)) dd.open = false; });
@@ -49,12 +56,72 @@
       if (!drawer) return;
       event.preventDefault();
       drawer.hidden = !drawer.hidden;
+      link.setAttribute('aria-expanded', String(!drawer.hidden));
       if (!drawer.hidden) drawer.querySelector('input[type="search"]').focus();
+    });
+  });
+
+  // Search as you type (Shopify Predictive Search API, rendered by sections/predictive-search.liquid)
+  document.querySelectorAll('[data-predictive-form]').forEach((form) => {
+    const input = form.querySelector('[data-predictive-input]');
+    const target = form.parentElement.querySelector('[data-predictive-target]');
+    if (!input || !target || !routes.predictiveSearch) return;
+    let timer;
+    let controller;
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      const q = input.value.trim();
+      if (q.length < 2) { target.innerHTML = ''; return; }
+      timer = setTimeout(() => {
+        if (controller) controller.abort();
+        controller = window.AbortController ? new AbortController() : null;
+        const url = `${routes.predictiveSearch}?q=${encodeURIComponent(q)}&section_id=predictive-search&resources[type]=product,collection,query&resources[limit]=6&resources[options][unavailable_products]=last`;
+        fetch(url, controller ? { signal: controller.signal } : {})
+          .then((r) => r.text())
+          .then((html) => {
+            const results = parseHTML(html).querySelector('[data-predictive-results]');
+            target.innerHTML = results ? results.outerHTML : '';
+          })
+          .catch(() => {});
+      }, 250);
+    });
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown') {
+        const first = target.querySelector('[data-predictive-item]');
+        if (first) { event.preventDefault(); first.focus(); }
+      }
+    });
+    target.addEventListener('keydown', (event) => {
+      const items = Array.from(target.querySelectorAll('[data-predictive-item]'));
+      const i = items.indexOf(document.activeElement);
+      if (i === -1) return;
+      if (event.key === 'ArrowDown' && items[i + 1]) { event.preventDefault(); items[i + 1].focus(); }
+      if (event.key === 'ArrowUp') { event.preventDefault(); (items[i - 1] || input).focus(); }
     });
   });
 
   document.querySelectorAll('[data-country-select]').forEach((select) => {
     select.addEventListener('change', () => select.form.submit());
+  });
+
+  /* ---------------------------------------------------------------- Collection filters & sort */
+  document.querySelectorAll('[data-sort-select]').forEach((select) => {
+    select.addEventListener('change', () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('sort_by', select.value);
+      url.searchParams.delete('page');
+      window.location.href = url.toString();
+    });
+  });
+  document.querySelectorAll('[data-facets-form]').forEach((form) => {
+    // checkboxes apply instantly; the price fields use the Apply button
+    form.addEventListener('change', (event) => {
+      if (event.target.matches('[data-facet-input]')) form.requestSubmit ? form.requestSubmit() : form.submit();
+    });
+    form.addEventListener('submit', () => {
+      // drop empty price inputs so the URL stays clean
+      form.querySelectorAll('input[type="number"]').forEach((input) => { if (input.value === '') input.disabled = true; });
+    });
   });
 
   /* ---------------------------------------------------------------- Toast */
@@ -93,8 +160,10 @@
     if (!fresh) return;
     const wasOpen = drawer.classList.contains('is-open');
     drawer.innerHTML = fresh.innerHTML;
-    if (wasOpen) drawer.classList.add('is-open');
-    loadUpsells(drawer);
+    if (wasOpen) {
+      drawer.classList.add('is-open');
+      loadUpsells(drawer);
+    }
   }
 
   function openDrawer() {
@@ -105,6 +174,7 @@
     document.documentElement.classList.add('has-drawer');
     const panel = drawer.querySelector('[data-cart-panel]');
     if (panel) setTimeout(() => panel.focus(), 50);
+    loadUpsells(drawer);
     return true;
   }
 
@@ -139,6 +209,13 @@
     if (event.key === 'Escape') {
       dropdowns.forEach((dd) => { dd.open = false; });
       closeDrawer();
+      document.querySelectorAll('[data-search-drawer]').forEach((d) => {
+        if (!d.hidden) {
+          d.hidden = true;
+          const toggle = document.querySelector('[data-search-toggle]');
+          if (toggle) { toggle.setAttribute('aria-expanded', 'false'); toggle.focus(); }
+        }
+      });
     }
     // keep keyboard focus inside the open drawer
     if (event.key === 'Tab') {
@@ -227,6 +304,10 @@
       .then((r) => r.text())
       .then((html) => {
         const related = parseHTML(html).querySelector('[data-recommendations-related]');
+        // Keep China-shipped "Value Picks" out of recommendations for US-shipped products
+        if (related && recSection.dataset.ship === 'us') {
+          related.querySelectorAll('.product-card').forEach((card) => { if (card.querySelector('.delivery-badge--global')) card.remove(); });
+        }
         if (related && body && related.querySelectorAll('.product-card').length >= 2) {
           body.innerHTML = related.innerHTML;
         }
@@ -254,7 +335,8 @@
   function loadUpsells(scope) {
     (scope || document).querySelectorAll('[data-cart-upsell]').forEach((box) => {
       const productId = box.dataset.productId;
-      if (!productId) return;
+      if (!productId || box.dataset.loadedFor === productId) return;
+      box.dataset.loadedFor = productId;
       fetch(recUrl(productId, 'related', 8, 'cart-upsell'))
         .then((r) => r.text())
         .then((html) => {
@@ -267,7 +349,8 @@
         .catch(() => {});
     });
   }
-  loadUpsells(document);
+  // Cart page: load "Complete your order" straight away (the drawer loads its own when opened)
+  document.querySelectorAll('.cart-upsell--page').forEach((box) => loadUpsells(box.parentElement));
 
   /* ---------------------------------------------------------------- Product page */
   const productForm = document.querySelector('[data-product-form]');
@@ -387,12 +470,39 @@
       if (stickyVariant) stickyVariant.textContent = variant.title;
     }
 
+    // When the exact combination doesn't exist (or is sold out), jump to the closest real variant
+    // that keeps the value the shopper just picked, preferring in-stock ones.
+    function closestVariant(position, value, selected) {
+      const candidates = variants.filter((v) => v.options[position] === value);
+      if (!candidates.length) return null;
+      const score = (v) => {
+        let s = v.available ? 1000 : 0;
+        v.options.forEach((opt, i) => { if (i !== position && opt === selected[i]) s += 10 * (v.options.length - i); });
+        return s;
+      };
+      return candidates.sort((a, b) => score(b) - score(a))[0];
+    }
+
     productForm.addEventListener('change', (event) => {
       if (!event.target.matches('[data-option-input]')) return;
-      const selected = selectedOptions();
-      const variant = variants.find((v) => v.options.every((opt, i) => opt === selected[i]));
+      const fieldset = event.target.closest('[data-option-position]');
+      const position = fieldset ? parseInt(fieldset.dataset.optionPosition, 10) : 0;
+      let selected = selectedOptions();
+      let variant = variants.find((v) => v.options.every((opt, i) => opt === selected[i]));
+      if (!variant || !variant.available) {
+        const better = closestVariant(position, event.target.value, selected);
+        if (better && (!variant || better.available)) {
+          variant = better;
+          fieldsets.forEach((fs, i) => {
+            const input = Array.from(fs.querySelectorAll('[data-option-input]')).find((x) => x.value === variant.options[i]);
+            if (input) input.checked = true;
+          });
+          selected = variant.options.slice();
+        }
+      }
       markAvailability();
       setButtons(variant);
+      productForm.classList.toggle('product-form--unavailable', !variant || !variant.available);
       if (!variant) return;
       idInput.value = variant.id;
       updatePrice(variant);
