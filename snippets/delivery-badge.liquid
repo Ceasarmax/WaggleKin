@@ -18,11 +18,11 @@
     {% render 'icon', name: 'truck', icon_size: 16 %}
     <span><strong>{{ 'products.ship_us' | t }}</strong> · {{ settings.delivery_days_us }} {{ 'products.business_days' | t }}</span>
   </p>
-  {%- if full -%}<p class="delivery-badge__note">{{ 'products.ship_us_note' | t }}</p>{%- endif -%}
+  {%- if full -%}<p class="delivery-badge__note" data-ship-note data-note-in="{{ 'products.ship_us_note' | t | escape }}" data-note-out="{{ 'products.sold_out_note' | t | escape }}">{% if sold_out %}{{ 'products.sold_out_note' | t }}{% else %}{{ 'products.ship_us_note' | t }}{% endif %}</p>{%- endif -%}
 {%- elsif ship == 'global' -%}
   <p class="delivery-badge delivery-badge--global">
     {% render 'icon', name: 'paw', icon_size: 16 %}
     <span><strong>{{ 'products.ship_global' | t }}</strong> · {{ settings.delivery_days_global }} {{ 'products.business_days' | t }}</span>
   </p>
-  {%- if full -%}<p class="delivery-badge__note">{{ 'products.ship_global_note' | t }}</p>{%- endif -%}
+  {%- if full -%}<p class="delivery-badge__note" data-ship-note data-note-in="{{ 'products.ship_global_note' | t | escape }}" data-note-out="{{ 'products.sold_out_note' | t | escape }}">{% if sold_out %}{{ 'products.sold_out_note' | t }}{% else %}{{ 'products.ship_global_note' | t }}{% endif %}</p>{%- endif -%}
 {%- endif -%}

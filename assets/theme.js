@@ -20,15 +20,27 @@
   function parseHTML(html) {
     return new DOMParser().parseFromString(html, 'text/html');
   }
+  // Parse a fetch response as JSON without surfacing raw parser errors (e.g. HTML error pages)
+  function readJSON(r) {
+    return r.text().then((text) => {
+      let data = {};
+      try { data = JSON.parse(text); } catch (e) { data = {}; }
+      return { ok: r.ok, data };
+    });
+  }
 
   /* ---------------------------------------------------------------- Navigation */
-  document.querySelectorAll('[data-nav-toggle]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const nav = btn.closest('.site-header').querySelector('.site-nav');
-      const open = nav.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', String(open));
-    });
-  });
+  const navToggle = document.querySelector('[data-nav-toggle]');
+  const siteNav = navToggle && navToggle.closest('.site-header').querySelector('.site-nav');
+  function setNav(open) {
+    if (!siteNav) return;
+    siteNav.classList.toggle('is-open', open);
+    navToggle.setAttribute('aria-expanded', String(open));
+    document.documentElement.classList.toggle('has-nav-open', open);
+    // size the menu from where it actually starts (below announcement bar + header) so the last link is reachable
+    siteNav.style.maxHeight = open ? Math.max(240, window.innerHeight - siteNav.getBoundingClientRect().top) + 'px' : '';
+  }
+  if (navToggle && siteNav) navToggle.addEventListener('click', () => setNav(!siteNav.classList.contains('is-open')));
 
   const dropdowns = Array.from(document.querySelectorAll('[data-nav-dropdown]'));
   const desktop = window.matchMedia('(min-width: 990px)');
@@ -48,6 +60,7 @@
   });
   document.addEventListener('click', (event) => {
     dropdowns.forEach((dd) => { if (dd.open && !dd.contains(event.target)) dd.open = false; });
+    if (siteNav && siteNav.classList.contains('is-open') && !siteNav.contains(event.target) && !navToggle.contains(event.target)) setNav(false);
   });
 
   document.querySelectorAll('[data-search-toggle]').forEach((link) => {
@@ -71,7 +84,7 @@
     input.addEventListener('input', () => {
       clearTimeout(timer);
       const q = input.value.trim();
-      if (q.length < 2) { target.innerHTML = ''; return; }
+      if (q.length < 2) { if (controller) controller.abort(); target.innerHTML = ''; return; }
       timer = setTimeout(() => {
         if (controller) controller.abort();
         controller = window.AbortController ? new AbortController() : null;
@@ -79,6 +92,7 @@
         fetch(url, controller ? { signal: controller.signal } : {})
           .then((r) => r.text())
           .then((html) => {
+            if (input.value.trim() !== q) return; // the shopper has typed something else since
             const results = parseHTML(html).querySelector('[data-predictive-results]');
             target.innerHTML = results ? results.outerHTML : '';
           })
@@ -159,17 +173,33 @@
     const fresh = parseHTML(html).querySelector('[data-cart-drawer]');
     if (!fresh) return;
     const wasOpen = drawer.classList.contains('is-open');
+    const oldPanel = drawer.querySelector('[data-cart-panel]');
+    const scrollTop = oldPanel ? oldPanel.scrollTop : 0;
+    const active = document.activeElement;
+    const focusKey = active && drawer.contains(active) && active.closest('.drawer-item') ? active.closest('.drawer-item').dataset.key : null;
+    const focusLabel = active && drawer.contains(active) ? active.getAttribute('aria-label') || active.textContent.trim() : null;
+    const focusWasInside = active && drawer.contains(active);
     drawer.innerHTML = fresh.innerHTML;
+    const panel = drawer.querySelector('[data-cart-panel]');
+    if (panel) panel.scrollTop = scrollTop;
     if (wasOpen) {
       drawer.classList.add('is-open');
       loadUpsells(drawer);
+      if (focusWasInside) {
+        let target = null;
+        if (focusKey) {
+          const row = drawer.querySelector(`.drawer-item[data-key="${CSS.escape(focusKey)}"]`);
+          if (row) target = Array.from(row.querySelectorAll('button')).find((b) => (b.getAttribute('aria-label') || b.textContent.trim()) === focusLabel) || row.querySelector('button');
+        }
+        (target || panel || drawer).focus();
+      }
     }
   }
 
   function openDrawer() {
     const drawer = getDrawer();
     if (!drawer) return false;
-    lastFocus = document.activeElement;
+    if (!drawer.classList.contains('is-open')) lastFocus = document.activeElement;
     drawer.classList.add('is-open');
     document.documentElement.classList.add('has-drawer');
     const panel = drawer.querySelector('[data-cart-panel]');
@@ -209,6 +239,7 @@
     if (event.key === 'Escape') {
       dropdowns.forEach((dd) => { dd.open = false; });
       closeDrawer();
+      if (siteNav && siteNav.classList.contains('is-open')) { setNav(false); navToggle.focus(); }
       document.querySelectorAll('[data-search-drawer]').forEach((d) => {
         if (!d.hidden) {
           d.hidden = true;
@@ -225,29 +256,52 @@
       if (!focusable.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      if (focusable.indexOf(document.activeElement) === -1) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+      else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     }
   });
 
-  function changeLine(line, quantity, trigger) {
+  // Quantity changes are sent by line key (stable) and one at a time, so fast taps can't hit the wrong item
+  let cartBusy = false;
+  function changeLine(key, quantity, trigger) {
+    if (cartBusy) return;
+    const drawer = getDrawer();
     const item = trigger && trigger.closest('.drawer-item');
+    cartBusy = true;
+    if (drawer) drawer.classList.add('is-busy');
     if (item) item.classList.add('is-updating');
     fetch(routes.cartChange + '.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ line: parseInt(line, 10), quantity: Math.max(0, quantity), sections: [DRAWER_SECTION] }),
+      body: JSON.stringify({ id: key, quantity: Math.max(0, quantity), sections: [DRAWER_SECTION] }),
     })
-      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+      .then(readJSON)
       .then(({ ok, data }) => {
         if (!ok) throw new Error(data.description || data.message || strings.cartError);
         setCartCount(data.item_count);
+        refreshFreeShipLine(data.total_price);
         if (data.sections) renderDrawer(data.sections[DRAWER_SECTION]);
       })
       .catch((error) => {
         if (item) item.classList.remove('is-updating');
-        showToast(escapeHtml(error.message));
+        showToast(escapeHtml(error.message || strings.cartError));
+      })
+      .finally(() => {
+        cartBusy = false;
+        const d = getDrawer();
+        if (d) d.classList.remove('is-busy');
       });
+  }
+
+  // Product page "Add $X more for free shipping" line follows the cart
+  function refreshFreeShipLine(totalCents) {
+    const line = document.querySelector('[data-free-ship-line]');
+    const threshold = T.freeShippingThreshold || 0;
+    if (!line || !threshold || typeof totalCents !== 'number') return;
+    const remaining = threshold - totalCents;
+    if (remaining > 0) line.innerHTML = (strings.freeShipRemaining || '').replace('[amount]', escapeHtml(money(remaining)));
+    else line.textContent = strings.freeShipUnlocked || '';
   }
 
   // AJAX add to cart → open the drawer (falls back to the toast, then to a normal form post)
@@ -255,36 +309,56 @@
     const form = event.target.closest('.js-add-to-cart');
     if (!form || !window.fetch || !window.FormData) return;
     event.preventDefault();
+    if (form.dataset.busy) return;
+    form.dataset.busy = '1';
     const submitter = event.submitter || form.querySelector('[type="submit"]');
     const buttons = [submitter].concat(Array.from(document.querySelectorAll('[data-sticky-button]'))).filter(Boolean);
     buttons.forEach((b) => b.classList.add('is-loading'));
 
-    const body = new FormData(form);
+    // Send items[] as JSON: unlike a bare "id" field, Shopify checks stock for items[] and refuses sold-out variants
+    const fd = new FormData(form);
+    const line = { id: parseInt(fd.get('id'), 10), quantity: Math.max(1, parseInt(fd.get('quantity') || '1', 10) || 1) };
+    const properties = {};
+    fd.forEach((value, name) => {
+      const m = name.match(/^properties\[(.+)\]$/);
+      if (m && value !== '') properties[m[1]] = value;
+    });
+    if (Object.keys(properties).length) line.properties = properties;
+    if (fd.get('selling_plan')) line.selling_plan = fd.get('selling_plan');
     const useDrawer = T.cartType === 'drawer' && !!getDrawer();
-    if (useDrawer) body.append('sections', DRAWER_SECTION);
+    const payload = { items: [line] };
+    if (useDrawer) payload.sections = DRAWER_SECTION;
 
-    fetch(routes.cartAdd + '.js', { method: 'POST', headers: { Accept: 'application/json' }, body })
-      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+    fetch(routes.cartAdd + '.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) })
+      .then(readJSON)
       .then(({ ok, data }) => {
         if (!ok) throw new Error(data.description || data.message || strings.cartError);
+        if (document.body.classList.contains('template-cart')) {
+          window.location.reload();
+          return null;
+        }
+        const added = (data.items && data.items[0]) || {};
+        if (useDrawer && data.sections) {
+          renderDrawer(data.sections[DRAWER_SECTION]);
+          openDrawer();
+        } else {
+          showToast(`${escapeHtml(added.product_title || strings.added)} &middot; <a href="${routes.cart}">${escapeHtml(strings.viewCart)}</a>`);
+        }
+        // refresh the header count + product-page shipping line (a failure here doesn't undo the add)
         return fetch(routes.cart + '.js', { headers: { Accept: 'application/json' } })
-          .then((r) => r.json())
-          .then((cart) => {
+          .then(readJSON)
+          .then(({ ok: cartOk, data: cart }) => {
+            if (!cartOk) return;
             setCartCount(cart.item_count);
-            if (document.body.classList.contains('template-cart')) {
-              window.location.reload();
-              return;
-            }
-            if (useDrawer && data.sections) {
-              renderDrawer(data.sections[DRAWER_SECTION]);
-              openDrawer();
-            } else {
-              showToast(`${escapeHtml(data.product_title || strings.added)} &middot; <a href="${routes.cart}">${escapeHtml(strings.viewCart)}</a>`);
-            }
-          });
+            refreshFreeShipLine(cart.total_price);
+          })
+          .catch(() => {});
       })
-      .catch((error) => showToast(escapeHtml(error.message)))
-      .finally(() => buttons.forEach((b) => b.classList.remove('is-loading')));
+      .catch((error) => showToast(escapeHtml(error.message || strings.cartError)))
+      .finally(() => {
+        delete form.dataset.busy;
+        buttons.forEach((b) => b.classList.remove('is-loading'));
+      });
   });
 
   /* ---------------------------------------------------------------- Recommendations */
@@ -370,8 +444,11 @@
     return img;
   }
 
+  let mediaToken = 0;
   function showMedia(mediaId, opts) {
     if (!slidesWrap || !mediaId) return;
+    const token = (opts && opts.token) || ++mediaToken;
+    if (token !== mediaToken) return; // a newer choice has been made since
     const slides = Array.from(slidesWrap.children);
     const target = slides.find((s) => s.dataset.mediaId === String(mediaId));
     if (!target) return;
@@ -379,7 +456,7 @@
     const img = preloadMedia(mediaId);
     if (img && !img.complete && !mobile.matches && !(opts && opts.loaded)) {
       let done = false;
-      const finish = () => { if (!done) { done = true; showMedia(mediaId, Object.assign({}, opts, { loaded: true })); } };
+      const finish = () => { if (!done) { done = true; showMedia(mediaId, Object.assign({}, opts, { loaded: true, token })); } };
       img.addEventListener('load', finish, { once: true });
       img.addEventListener('error', finish, { once: true });
       setTimeout(finish, 1500);
@@ -405,6 +482,7 @@
       if (!mobile.matches) return;
       clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {
+        mediaToken += 1; // a swipe cancels any pending variant photo swap
         const slides = Array.from(slidesWrap.children);
         const index = Math.round(slidesWrap.scrollLeft / slidesWrap.clientWidth);
         const slide = slides[Math.max(0, Math.min(index, slides.length - 1))];
@@ -450,11 +528,20 @@
     }
 
     function setButtons(variant) {
-      const label = !variant ? strings.unavailable : (variant.available ? strings.addToCart : strings.soldOut);
+      const available = !!(variant && variant.available);
+      const label = !variant ? strings.unavailable : (available ? strings.addToCart : strings.soldOut);
       [addButton, stickyButton].forEach((b) => {
         if (!b) return;
-        b.disabled = !variant || !variant.available;
+        b.disabled = !available;
         b.textContent = label;
+      });
+      // no delivery promise for something that can't be bought
+      document.querySelectorAll('[data-delivery-estimate]').forEach((el) => {
+        el.dataset.soldOut = String(!available);
+        el.hidden = !available || !el.querySelector('[data-delivery-range]').textContent;
+      });
+      document.querySelectorAll('[data-ship-note]').forEach((el) => {
+        el.textContent = available ? el.dataset.noteIn : el.dataset.noteOut;
       });
     }
 
@@ -505,9 +592,9 @@
       const position = fieldset ? parseInt(fieldset.dataset.optionPosition, 10) : 0;
       let selected = selectedOptions();
       let variant = variants.find((v) => v.options.every((opt, i) => opt === selected[i]));
-      if (!variant || !variant.available) {
+      if (!variant) {
         const better = closestVariant(position, event.target.value, selected);
-        if (better && (!variant || better.available)) {
+        if (better) {
           variant = better;
           fieldsets.forEach((fs, i) => {
             const input = Array.from(fs.querySelectorAll('[data-option-input]')).find((x) => x.value === variant.options[i]);
@@ -601,10 +688,10 @@
       sticky.setAttribute('aria-hidden', String(!show));
       const btn = sticky.querySelector('[data-sticky-button]');
       if (btn) btn.tabIndex = show ? 0 : -1;
-      document.documentElement.classList.toggle('has-sticky-atc', show);
+      document.documentElement.classList.toggle('has-sticky-atc', show && !desktop.matches);
     };
-    new IntersectionObserver((entries) => { mainVisible = entries[0].isIntersecting || entries[0].boundingClientRect.top > 0; sync(); }).observe(mainAdd);
-    if (footer) new IntersectionObserver((entries) => { footerVisible = entries[0].isIntersecting; sync(); }).observe(footer);
+    new IntersectionObserver((entries) => { const e = entries[entries.length - 1]; mainVisible = e.isIntersecting || e.boundingClientRect.top > 0; sync(); }).observe(mainAdd);
+    if (footer) new IntersectionObserver((entries) => { footerVisible = entries[entries.length - 1].isIntersecting; sync(); }).observe(footer);
   }
 
   // Delivery estimate: "Order today, estimated delivery Tue, Nov 18 – Fri, Nov 21" (business days, skips weekends)
@@ -613,13 +700,21 @@
     const max = parseInt(el.dataset.maxDays, 10);
     if (!min || !max) return;
     const handling = 2; // warehouse processing time (padded so the estimate has a reasonable basis)
+    // US carrier holidays (no deliveries): New Year, Memorial Day, July 4, Labor Day, Thanksgiving, Christmas
+    const nthWeekday = (y, m, weekday, n) => { const d = new Date(y, m, 1); const offset = (weekday - d.getDay() + 7) % 7; return new Date(y, m, 1 + offset + (n - 1) * 7); };
+    const lastWeekday = (y, m, weekday) => { const d = new Date(y, m + 1, 0); return new Date(y, m, d.getDate() - ((d.getDay() - weekday + 7) % 7)); };
+    const isHoliday = (d) => {
+      const y = d.getFullYear();
+      const same = (x) => x.getMonth() === d.getMonth() && x.getDate() === d.getDate();
+      return [new Date(y, 0, 1), lastWeekday(y, 4, 1), new Date(y, 6, 4), nthWeekday(y, 8, 1, 1), nthWeekday(y, 10, 4, 4), new Date(y, 11, 25)].some(same);
+    };
     const addBusinessDays = (date, days) => {
       const d = new Date(date);
       let added = 0;
       while (added < days) {
         d.setDate(d.getDate() + 1);
         const day = d.getDay();
-        if (day !== 0 && day !== 6) added += 1;
+        if (day !== 0 && day !== 6 && !isHoliday(d)) added += 1;
       }
       return d;
     };
@@ -629,7 +724,7 @@
     const to = addBusinessDays(now, max + handling);
     const range = el.querySelector('[data-delivery-range]');
     if (range) range.textContent = `${fmt.format(from)} – ${fmt.format(to)}`;
-    el.hidden = false;
+    el.hidden = el.dataset.soldOut === 'true';
   });
 
   /* ---------------------------------------------------------------- WaggleKin TV */

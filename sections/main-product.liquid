@@ -1,7 +1,18 @@
 {%- capture threshold -%}{% render 'shipping-threshold' %}{%- endcapture -%}
 {%- liquid
   assign variant = product.selected_or_first_available_variant
-  assign active_media = variant.featured_media | default: product.featured_media
+  assign active_media = variant.featured_media
+  if active_media == blank or active_media.media_type != 'image'
+    assign active_media = product.media | where: 'media_type', 'image' | first
+  endif
+  assign sold_out_now = false
+  unless variant.available
+    assign sold_out_now = true
+  endunless
+  assign form_class = 'product-form js-add-to-cart'
+  unless variant.available
+    assign form_class = form_class | append: ' product-form--unavailable'
+  endunless
   capture illo
     render 'product-illustration-key', product: product
   endcapture
@@ -70,10 +81,12 @@
           {%- if image_count > 1 -%}
             <p class="product-gallery__counter" aria-hidden="true"><span data-gallery-index>1</span> / {{ image_count }}</p>
             <ul class="product-gallery__thumbs" aria-label="{{ 'products.thumbnails' | t }}">
+              {%- assign thumb_number = 0 -%}
               {%- for media in product.media -%}
                 {%- if media.media_type == 'image' -%}
+                  {%- assign thumb_number = thumb_number | plus: 1 -%}
                   <li>
-                    <button type="button" class="{% if media.id == active_media.id %}is-active{% endif %}" data-thumb data-media-id="{{ media.id }}" aria-label="{{ 'products.show_image' | t: number: forloop.index }}"{% if media.id == active_media.id %} aria-current="true"{% endif %}>
+                    <button type="button" class="{% if media.id == active_media.id %}is-active{% endif %}" data-thumb data-media-id="{{ media.id }}" aria-label="{{ 'products.show_image' | t: number: thumb_number }}"{% if media.id == active_media.id %} aria-current="true"{% endif %}>
                       {{ media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
                     </button>
                   </li>
@@ -102,9 +115,9 @@
           </span>
         </div>
 
-        {% render 'delivery-badge', product: product, full: true %}
+        {% render 'delivery-badge', product: product, full: true, sold_out: sold_out_now %}
 
-        {%- form 'product', product, class: 'product-form js-add-to-cart', data-product-form: '', id: 'ProductForm' -%}
+        {%- form 'product', product, class: form_class, data-product-form: '', id: 'ProductForm' -%}
           {%- unless product.has_only_default_variant -%}
             {%- for option in product.options_with_values -%}
               <fieldset class="product-form__option" data-option-position="{{ forloop.index0 }}"{% if option.values.size < 2 %} hidden{% endif %}>
@@ -154,7 +167,7 @@
               assign min_days = day_range | split: '–' | first | split: '-' | first | strip
               assign max_days = day_range | split: '–' | last | split: '-' | last | strip
             -%}
-            <p class="delivery-estimate" data-delivery-estimate data-min-days="{{ min_days }}" data-max-days="{{ max_days }}" hidden>
+            <p class="delivery-estimate" data-delivery-estimate data-min-days="{{ min_days }}" data-max-days="{{ max_days }}" data-sold-out="{% if variant.available %}false{% else %}true{% endif %}" hidden>
               {% render 'icon', name: 'truck', icon_size: 18 %}
               <span>{{ 'products.arrives' | t }} <strong data-delivery-range></strong></span>
             </p>
@@ -163,7 +176,7 @@
             assign fs_threshold = settings.free_shipping_amount | times: 100
             assign fs_remaining = fs_threshold | minus: cart.total_price
           -%}
-          <p class="product-info__free-ship">
+          <p class="product-info__free-ship" data-free-ship-line>
             {%- if cart.item_count > 0 and fs_threshold > 0 and fs_remaining > 0 -%}
               {%- assign fs_money = fs_remaining | money -%}
               {{ 'products.free_ship_remaining_html' | t: amount: fs_money }}
@@ -182,7 +195,7 @@
         {%- if shop.enabled_payment_types.size > 0 -%}
           <ul class="payment-icons" aria-label="{{ 'general.payment_methods' | t }}">
             {%- for type in shop.enabled_payment_types -%}
-              <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+              <li>{{ type | payment_type_svg_tag: class: 'payment-icon' | replace: ' id="pi-', ' data-pi="' | replace: 'aria-labelledby="pi-', 'data-pi-label="' }}</li>
             {%- endfor -%}
           </ul>
         {%- endif -%}
@@ -230,7 +243,7 @@
     <div class="sticky-atc__inner">
       <div class="sticky-atc__info">
         <p class="sticky-atc__title">{{ product.title }}</p>
-        <p class="sticky-atc__meta"><span data-sticky-price>{{ variant.price | money }}</span>{% unless product.has_only_default_variant %} · <span data-sticky-variant>{{ variant.title }}</span>{% endunless %}</p>
+        <p class="sticky-atc__meta"><span data-sticky-price>{{ variant.price | money }}</span>{% if product.variants.size > 1 %} · <span data-sticky-variant>{{ variant.title }}</span>{% endif %}</p>
       </div>
       <button type="submit" form="ProductForm" class="btn btn--orange" data-sticky-button tabindex="-1" {% unless variant.available %}disabled{% endunless %}>
         {%- if variant.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}

@@ -69,7 +69,8 @@
     "free_ship_unlocked": "Your cart qualifies for free US shipping",
     "zoom": "Zoom image",
     "previous_image": "Previous image",
-    "next_image": "Next image"
+    "next_image": "Next image",
+    "sold_out_note": "This option is sold out right now. Try another option, or check back soon."
   },
   "collections": {
     "empty": "No products here yet — check back soon.",
@@ -107,7 +108,8 @@
     "secure_checkout": "Secure checkout",
     "returns_short": "30-day returns",
     "error": "Something went wrong. Please try again.",
-    "two_warehouses_html": "Your items ship from 2 warehouses, so shipping is charged per warehouse on orders under the free-shipping threshold. Add <strong>{{ amount }}</strong> to ship everything free."
+    "two_warehouses_html": "Your items ship from 2 warehouses, so shipping is charged per warehouse on orders under the free-shipping threshold. Add <strong>{{ amount }}</strong> to ship everything free.",
+    "item_sold_out": "Sold out. Please remove this item to check out."
   },
   "search": {
     "placeholder": "Search for beds, toys, fountains…",

@@ -75,13 +75,7 @@
         assign max_price = 6000
       endif
     -%}
-    <div class="page-width">
-      <div class="section__head">
-        <h2 class="section__title">{{ section.settings.heading }}</h2>
-        {%- if source -%}<a href="{{ source.url }}" class="link-arrow">{{ 'general.shop_all_named' | t: title: source.title }} &rarr;</a>{%- endif -%}
-      </div>
-      <div data-recommendations-body>
-        <div class="product-grid">
+    {%- capture rec_cards -%}
           {%- for pass in (1..2) -%}
             {%- if pass == 1 -%}
               {%- assign pool = source.products -%}
@@ -129,9 +123,20 @@
               {%- endunless -%}
             {%- endfor -%}
           {%- endfor -%}
+    {%- endcapture -%}
+    {%- if shown > 0 -%}
+    <div class="page-width">
+      <div class="section__head">
+        <h2 class="section__title">{{ section.settings.heading }}</h2>
+        {%- if source -%}<a href="{{ source.url }}" class="link-arrow">{{ 'general.shop_all_named' | t: title: source.title }} &rarr;</a>{%- endif -%}
+      </div>
+      <div data-recommendations-body>
+        <div class="product-grid">
+          {{ rec_cards }}
         </div>
       </div>
     </div>
+    {%- endif -%}
   {%- endif -%}
 </section>
 

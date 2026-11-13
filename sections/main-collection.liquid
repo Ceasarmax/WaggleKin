@@ -43,14 +43,14 @@
                     <div class="facet__price">
                       <label>
                         <span class="visually-hidden">{{ 'collections.price_from' | t }}</span>
-                        <input class="input" type="number" inputmode="decimal" min="0" name="{{ filter.min_value.param_name }}"
+                        <input class="input" type="number" inputmode="decimal" min="0" step="0.01" name="{{ filter.min_value.param_name }}"
                           {%- if filter.min_value.value != blank %} value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"{% endif %}
                           placeholder="{{ 'collections.price_from' | t }}">
                       </label>
                       <span aria-hidden="true">–</span>
                       <label>
                         <span class="visually-hidden">{{ 'collections.price_to' | t }}</span>
-                        <input class="input" type="number" inputmode="decimal" min="0" name="{{ filter.max_value.param_name }}"
+                        <input class="input" type="number" inputmode="decimal" min="0" step="0.01" name="{{ filter.max_value.param_name }}"
                           {%- if filter.max_value.value != blank %} value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"{% endif %}
                           placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}">
                       </label>
@@ -60,7 +60,7 @@
                       {%- for value in filter.values -%}
                         <li>
                           <label class="facet__option{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
-                            <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %} data-facet-input>
+                            <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %} data-facet-input>
                             <span>{{ value.label }}</span>
                             <span class="facet__count">({{ value.count }})</span>
                           </label>

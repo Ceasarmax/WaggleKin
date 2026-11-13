@@ -684,3 +684,10 @@ html.has-sticky-atc .toast { bottom: 88px; }
   .product-gallery__thumbs { display: none; }
   .product-page .breadcrumbs { margin-bottom: 10px; }
 }
+
+/* Review fixes */
+.toast { z-index: 70; }
+.cart-drawer.is-busy [data-line-change] { pointer-events: none; opacity: .6; }
+.drawer-item__soldout { font-size: 12.5px; font-weight: 600; color: #B42318; }
+@media (max-width: 989px) { html.has-nav-open { overflow: hidden; } }
+.product-recommendations:not(:has(.product-card)) { display: none; }

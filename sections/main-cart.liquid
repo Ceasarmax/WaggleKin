@@ -19,7 +19,8 @@
               </a>
               <div class="cart-item__info">
                 <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
-                {%- unless item.product.has_only_default_variant -%}<p class="cart-item__variant">{{ item.variant.title }}</p>{%- endunless -%}
+                {%- if item.product.variants.size > 1 -%}<p class="cart-item__variant">{{ item.variant.title }}</p>{%- endif -%}
+                {%- unless item.variant.available -%}<p class="drawer-item__soldout">{{ 'cart.item_sold_out' | t }}</p>{%- endunless -%}
                 {% render 'delivery-badge', product: item.product %}
                 {%- for discount in item.line_level_discount_allocations -%}
                   <p class="cart-item__discount">{{ discount.discount_application.title }} (−{{ discount.amount | money }})</p>
@@ -56,7 +57,7 @@
           <p class="cart-summary__trust">{% render 'icon', name: 'lock', icon_size: 14 %} {{ 'cart.secure_checkout' | t }} · {{ 'cart.returns_short' | t }}</p>
           {%- if shop.enabled_payment_types.size > 0 -%}
             <ul class="payment-icons payment-icons--cart" aria-label="{{ 'general.payment_methods' | t }}">
-              {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>{%- endfor -%}
+              {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag: class: 'payment-icon' | replace: ' id="pi-', ' data-pi="' | replace: 'aria-labelledby="pi-', 'data-pi-label="' }}</li>{%- endfor -%}
             </ul>
           {%- endif -%}
         </div>

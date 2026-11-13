@@ -45,7 +45,7 @@
     endif
   endif
 
-  assign skip_handles = 'frontpage,all,fast-us-shipping,value-picks,new-arrivals,pack-favourites,holiday-shop,gifts,bundles,dogs,cats'
+  assign skip_handles = 'frontpage,all,fast-us-shipping,value-picks,new-arrivals,pack-favourites,holiday-shop,gifts,bundles,dogs,cats' | split: ','
   assign category = nil
   assign first_item = cart.items.first
   for c in first_item.product.collections

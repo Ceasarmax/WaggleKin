@@ -49,6 +49,7 @@
           predictiveSearch: {{ routes.predictive_search_url | json }}
         },
         cartType: {% if settings.cart_ajax %}"drawer"{% else %}"page"{% endif %},
+        freeShippingThreshold: {{ settings.free_shipping_amount | times: 100 | json }},
         strings: {
           addToCart: {{ 'products.add_to_cart' | t | json }},
           soldOut: {{ 'products.sold_out' | t | json }},
@@ -56,7 +57,9 @@
           added: {{ 'products.added' | t | json }},
           viewCart: {{ 'products.view_cart' | t | json }},
           cartError: {{ 'cart.error' | t | json }},
-          savePercent: {{ 'products.save_percent' | t: percent: '[percent]' | json }}
+          savePercent: {{ 'products.save_percent' | t: percent: '[percent]' | json }},
+          freeShipRemaining: {{ 'products.free_ship_remaining_html' | t: amount: '[amount]' | json }},
+          freeShipUnlocked: {{ 'products.free_ship_unlocked' | t | json }}
         }
       };
     </script>

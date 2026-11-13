@@ -22,18 +22,19 @@
             </a>
             <div class="drawer-item__info">
               <a href="{{ item.url }}" class="drawer-item__title">{{ item.product.title }}</a>
-              {%- unless item.product.has_only_default_variant -%}<p class="drawer-item__variant">{{ item.variant.title }}</p>{%- endunless -%}
+              {%- if item.product.variants.size > 1 -%}<p class="drawer-item__variant">{{ item.variant.title }}</p>{%- endif -%}
+              {%- unless item.variant.available -%}<p class="drawer-item__soldout">{{ 'cart.item_sold_out' | t }}</p>{%- endunless -%}
               {% render 'delivery-badge', product: item.product %}
               {%- for discount in item.line_level_discount_allocations -%}
                 <p class="drawer-item__variant">{{ discount.discount_application.title }} (−{{ discount.amount | money }})</p>
               {%- endfor -%}
               <div class="drawer-item__controls">
                 <div class="qty qty--sm">
-                  <button type="button" class="qty__btn" data-line-change="{{ forloop.index }}" data-quantity="{{ item.quantity | minus: 1 }}" aria-label="{{ 'products.decrease_quantity' | t }}">&minus;</button>
+                  <button type="button" class="qty__btn" data-line-change="{{ item.key }}" data-quantity="{{ item.quantity | minus: 1 }}" aria-label="{{ 'products.decrease_quantity' | t }}">&minus;</button>
                   <span class="qty__value" aria-live="polite">{{ item.quantity }}</span>
-                  <button type="button" class="qty__btn" data-line-change="{{ forloop.index }}" data-quantity="{{ item.quantity | plus: 1 }}" aria-label="{{ 'products.increase_quantity' | t }}">+</button>
+                  <button type="button" class="qty__btn" data-line-change="{{ item.key }}" data-quantity="{{ item.quantity | plus: 1 }}" aria-label="{{ 'products.increase_quantity' | t }}">+</button>
                 </div>
-                <button type="button" class="drawer-item__remove" data-line-change="{{ forloop.index }}" data-quantity="0">{{ 'cart.remove' | t }}</button>
+                <button type="button" class="drawer-item__remove" data-line-change="{{ item.key }}" data-quantity="0">{{ 'cart.remove' | t }}</button>
               </div>
             </div>
             <div class="drawer-item__price">
