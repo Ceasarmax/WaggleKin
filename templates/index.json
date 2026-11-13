@@ -47,7 +47,7 @@
         "heading": "Everything your cats & dogs need. Plus a show they’d star in.",
         "text": "<p>Comfy beds, clever feeders, toys and grooming gear — picked for multi-pet homes and shipped to your door.</p>",
         "chip_eyebrow": "WaggleKin TV",
-        "chip_title": "New episode every Friday",
+        "chip_title": "Episode 1 coming soon",
         "chip_link": "shopify://pages/wagglekin-tv",
         "badge_eyebrow": "Free US shipping",
         "badge_title": "On orders over $49"
@@ -80,7 +80,7 @@
             "icon": "lock",
             "color": "teal",
             "title": "Secure checkout",
-            "text": "Shop Pay, PayPal, Apple Pay, Klarna & cards"
+            "text": "Shop Pay, PayPal, Apple Pay & cards"
           }
         },
         "t4": {
@@ -89,7 +89,7 @@
             "icon": "heart",
             "color": "teal",
             "title": "Made for multi-pet homes",
-            "text": "Cat- and dog-tested picks"
+            "text": "Picked for cats and dogs under one roof"
           }
         }
       },
@@ -201,7 +201,7 @@
       "settings": {
         "eyebrow": "WaggleKin TV",
         "heading": "The pack has a lot to say.",
-        "text": "<p>Our talking-pet sitcom, with new episodes every week on YouTube, TikTok and Instagram. Spotted something in the show? Shop it below.</p>",
+        "text": "<p>Our talking-pet sitcom starring a very opinionated cat and a very enthusiastic dog. Episode 1 is coming soon to YouTube, TikTok and Instagram. Meanwhile, shop the cast's favourite gear below.</p>",
         "episode_label": "Episode 1 · Coming soon",
         "products": [
           "calming-donut-bed",

@@ -612,7 +612,7 @@
     const min = parseInt(el.dataset.minDays, 10);
     const max = parseInt(el.dataset.maxDays, 10);
     if (!min || !max) return;
-    const handling = 1; // orders are processed by the warehouse the next business day
+    const handling = 2; // warehouse processing time (padded so the estimate has a reasonable basis)
     const addBusinessDays = (date, days) => {
       const d = new Date(date);
       let added = 0;
