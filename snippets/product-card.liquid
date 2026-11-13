@@ -44,14 +44,16 @@
     <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     {% render 'delivery-badge', product: product %}
     <div class="product-card__footer">
-      {% render 'price', product: product %}
-      {%- if variant.available -%}
+      {% render 'price', product: product, show_from: true %}
+      {%- if product.available == false -%}
+        <span class="btn btn--sm btn--disabled">{{ 'products.sold_out' | t }}</span>
+      {%- elsif product.has_only_default_variant or product.variants.size == 1 -%}
         {%- form 'product', product, class: 'js-add-to-cart' -%}
           <input type="hidden" name="id" value="{{ variant.id }}">
           <button type="submit" class="btn btn--orange btn--sm">{{ 'products.add_to_cart' | t }}</button>
         {%- endform -%}
       {%- else -%}
-        <span class="btn btn--sm btn--disabled">{{ 'products.sold_out' | t }}</span>
+        <a href="{{ product.url }}" class="btn btn--outline btn--sm">{{ 'products.choose_options' | t }}</a>
       {%- endif -%}
     </div>
   </div>

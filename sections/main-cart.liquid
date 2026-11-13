@@ -3,6 +3,7 @@
     <h1 class="section__title">{{ 'cart.title' | t }}</h1>
 
     {%- if cart.item_count > 0 -%}
+      {% render 'free-shipping-bar' %}
       <form action="{{ routes.cart_url }}" method="post" class="cart-form" novalidate>
         <ul class="cart-items">
           {%- for item in cart.items -%}
@@ -51,8 +52,15 @@
           {%- if additional_checkout_buttons -%}
             <div class="cart-summary__dynamic">{{ content_for_additional_checkout_buttons }}</div>
           {%- endif -%}
+          <p class="cart-summary__trust">{% render 'icon', name: 'lock', icon_size: 14 %} {{ 'cart.secure_checkout' | t }} · {{ 'cart.returns_short' | t }}</p>
+          {%- if shop.enabled_payment_types.size > 0 -%}
+            <ul class="payment-icons payment-icons--cart" aria-label="{{ 'general.payment_methods' | t }}">
+              {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>{%- endfor -%}
+            </ul>
+          {%- endif -%}
         </div>
       </form>
+      <div class="cart-upsell cart-upsell--page" data-cart-upsell data-product-id="{{ cart.items.last.product_id }}" hidden></div>
     {%- else -%}
       <p class="empty-state">{{ 'cart.empty' | t }}</p>
       <a href="{{ routes.all_products_collection_url }}" class="btn btn--orange">{{ 'general.continue_shopping' | t }}</a>

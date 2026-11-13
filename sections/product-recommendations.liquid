@@ -1,0 +1,90 @@
+{%- comment -%}
+  "You may also like" on product pages.
+  - First paint: products from the same category collection (works for a brand-new store with no sales data).
+  - theme.js then asks Shopify's Product Recommendations API (intent=related) for this section and swaps in
+    Shopify's picks when it returns any. The same section also renders the "Pairs well with" list
+    (intent=complementary, set up in the free Shopify Search & Discovery app) for the product page.
+{%- endcomment -%}
+{%- liquid
+  assign limit = section.settings.limit
+  assign skip_handles = 'frontpage,all,fast-us-shipping,value-picks,new-arrivals,pack-favourites,holiday-shop,gifts,bundles,dogs,cats' | split: ','
+-%}
+<section class="section product-recommendations" data-recommendations data-section-id="{{ section.id }}" data-url="{{ routes.product_recommendations_url }}" data-product-id="{{ product.id }}" data-limit="{{ limit }}">
+  {%- if recommendations.performed -%}
+    {%- if recommendations.intent == 'complementary' -%}
+      <div data-recommendations-complementary>
+        {%- if recommendations.products_count > 0 -%}
+          <h2 class="product-complementary__title">{{ 'products.pairs_well_with' | t }}</h2>
+          <ul class="mini-list">
+            {%- for rec in recommendations.products -%}
+              <li>{% render 'mini-product', product: rec %}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+    {%- else -%}
+      <div data-recommendations-related>
+        {%- if recommendations.products_count > 0 -%}
+          <div class="product-grid">
+            {%- for rec in recommendations.products -%}
+              {% render 'product-card', product: rec %}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- elsif product != blank -%}
+    {%- liquid
+      assign source = blank
+      for c in product.collections
+        unless skip_handles contains c.handle
+          if c.products_count > 1
+            assign source = c
+            break
+          endif
+        endunless
+      endfor
+      if source == blank
+        for c in product.collections
+          unless c.handle == 'frontpage' or c.handle == 'all'
+            if c.products_count > 1
+              assign source = c
+              break
+            endif
+          endunless
+        endfor
+      endif
+    -%}
+    <div class="page-width">
+      <div class="section__head">
+        <h2 class="section__title">{{ section.settings.heading }}</h2>
+        {%- if source != blank -%}<a href="{{ source.url }}" class="link-arrow">{{ 'general.shop_all_named' | t: title: source.title }} &rarr;</a>{%- endif -%}
+      </div>
+      <div data-recommendations-body>
+        <div class="product-grid">
+          {%- if source != blank -%}
+            {%- assign shown = 0 -%}
+            {%- for rec in source.products -%}
+              {%- if rec.id != product.id and rec.available -%}
+                {% render 'product-card', product: rec %}
+                {%- assign shown = shown | plus: 1 -%}
+                {%- if shown >= limit -%}{%- break -%}{%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 4, "max": 8, "step": 4, "default": 4 }
+  ],
+  "presets": [{ "name": "Product recommendations" }]
+}
+{% endschema %}

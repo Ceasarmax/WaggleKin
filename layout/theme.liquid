@@ -38,6 +38,27 @@
       }
     </style>
     {{ 'base.css' | asset_url | stylesheet_tag }}
+    <script>
+      window.theme = {
+        routes: {
+          root: {{ routes.root_url | json }},
+          cart: {{ routes.cart_url | json }},
+          cartAdd: {{ routes.cart_add_url | json }},
+          cartChange: {{ routes.cart_change_url | json }},
+          recommendations: {{ routes.product_recommendations_url | json }}
+        },
+        cartType: {% if settings.cart_ajax %}"drawer"{% else %}"page"{% endif %},
+        strings: {
+          addToCart: {{ 'products.add_to_cart' | t | json }},
+          soldOut: {{ 'products.sold_out' | t | json }},
+          unavailable: {{ 'products.unavailable' | t | json }},
+          added: {{ 'products.added' | t | json }},
+          viewCart: {{ 'products.view_cart' | t | json }},
+          cartError: {{ 'cart.error' | t | json }},
+          savePercent: {{ 'products.save_percent' | t: percent: '[percent]' | json }}
+        }
+      };
+    </script>
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
 
     {{ content_for_header }}
@@ -55,6 +76,36 @@
 
     {% sections 'footer-group' %}
 
+    {%- if settings.cart_ajax and template.name != 'cart' -%}
+      {% section 'cart-drawer' %}
+    {%- endif -%}
     <div class="toast" id="CartToast" role="status" aria-live="polite" hidden></div>
+
+    {%- if template.name == 'index' -%}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": {{ shop.name | json }},
+          "url": {{ request.origin | append: routes.root_url | json }}
+          {%- if settings.logo != blank -%},
+          "logo": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }}
+          {%- endif %}
+        }
+      </script>
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": {{ shop.name | json }},
+          "url": {{ request.origin | append: routes.root_url | json }},
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {{ request.origin | append: routes.search_url | append: '?q={search_term_string}&type=product' | json }},
+            "query-input": "required name=search_term_string"
+          }
+        }
+      </script>
+    {%- endif -%}
   </body>
 </html>

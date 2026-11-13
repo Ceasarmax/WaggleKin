@@ -1,6 +1,7 @@
 {
   "sections": {
-    "main": { "type": "main-product", "settings": {} }
+    "main": { "type": "main-product", "settings": {} },
+    "recommendations": { "type": "product-recommendations", "settings": { "heading": "You may also like", "limit": 4 } }
   },
-  "order": ["main"]
+  "order": ["main", "recommendations"]
 }

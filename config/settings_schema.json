@@ -101,6 +101,13 @@
         "default": "$49"
       },
       {
+        "type": "number",
+        "id": "free_shipping_amount",
+        "label": "Free shipping threshold (number, for the cart progress bar)",
+        "info": "Must match the free-shipping rate in Settings → Shipping and delivery (US: 49).",
+        "default": 49
+      },
+      {
         "type": "header",
         "content": "Delivery times"
       },
@@ -128,7 +135,7 @@
       {
         "type": "checkbox",
         "id": "cart_ajax",
-        "label": "Add to cart without leaving the page",
+        "label": "Open a slide-out cart when items are added",
         "default": true
       }
     ]

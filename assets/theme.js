@@ -1,10 +1,27 @@
-/* WaggleKin theme — small progressive enhancements */
+/* WaggleKin theme — progressive enhancements (no dependencies) */
 (function () {
   'use strict';
 
-  const root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+  const T = window.theme || {};
+  const routes = Object.assign({ root: '/', cart: '/cart', cartAdd: '/cart/add', cartChange: '/cart/change', recommendations: '/recommendations/products' }, T.routes || {});
+  const strings = Object.assign({ addToCart: 'Add to cart', soldOut: 'Sold out', unavailable: 'Unavailable', added: 'Added to cart', viewCart: 'View cart', cartError: 'Something went wrong. Please try again.', savePercent: 'Save [percent]%' }, T.strings || {});
 
-  // Mobile navigation
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function money(cents) {
+    const currency = (window.Shopify && window.Shopify.currency && window.Shopify.currency.active) || 'USD';
+    try {
+      return new Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency }).format(cents / 100);
+    } catch (e) {
+      return '$' + (cents / 100).toFixed(2);
+    }
+  }
+  function parseHTML(html) {
+    return new DOMParser().parseFromString(html, 'text/html');
+  }
+
+  /* ---------------------------------------------------------------- Navigation */
   document.querySelectorAll('[data-nav-toggle]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const nav = btn.closest('.site-header').querySelector('.site-nav');
@@ -13,7 +30,6 @@
     });
   });
 
-  // Dropdown menus: hover to open on desktop, only one open at a time, close on outside click / Escape
   const dropdowns = Array.from(document.querySelectorAll('[data-nav-dropdown]'));
   const desktop = window.matchMedia('(min-width: 990px)');
   dropdowns.forEach((dd) => {
@@ -26,11 +42,7 @@
   document.addEventListener('click', (event) => {
     dropdowns.forEach((dd) => { if (dd.open && !dd.contains(event.target)) dd.open = false; });
   });
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') dropdowns.forEach((dd) => { dd.open = false; });
-  });
 
-  // Search drawer
   document.querySelectorAll('[data-search-toggle]').forEach((link) => {
     link.addEventListener('click', (event) => {
       const drawer = link.closest('.site-header').querySelector('[data-search-drawer]');
@@ -41,12 +53,11 @@
     });
   });
 
-  // Country selector: switch market as soon as a country is picked
   document.querySelectorAll('[data-country-select]').forEach((select) => {
     select.addEventListener('change', () => select.form.submit());
   });
 
-  // Toast
+  /* ---------------------------------------------------------------- Toast */
   const toast = document.getElementById('CartToast');
   let toastTimer;
   function showToast(html) {
@@ -54,101 +65,399 @@
     toast.innerHTML = html;
     toast.hidden = false;
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { toast.hidden = true; }, 3500);
+    toastTimer = setTimeout(() => { toast.hidden = true; }, 4000);
   }
 
-  function updateCartCount() {
-    return fetch(root + 'cart.js', { headers: { Accept: 'application/json' } })
-      .then((r) => r.json())
-      .then((cart) => {
-        document.querySelectorAll('[data-cart-count]').forEach((el) => {
-          el.textContent = cart.item_count;
-          const pill = el.closest('.cart-pill');
-          if (pill) {
-            pill.classList.remove('is-bumped');
-            void pill.offsetWidth;
-            pill.classList.add('is-bumped');
-          }
-        });
-      });
+  /* ---------------------------------------------------------------- Cart drawer */
+  const DRAWER_SECTION = 'cart-drawer';
+  let lastFocus = null;
+
+  function getDrawer() { return document.querySelector('[data-cart-drawer]'); }
+
+  function setCartCount(count) {
+    document.querySelectorAll('[data-cart-count]').forEach((el) => {
+      el.textContent = count;
+      const pill = el.closest('.cart-pill');
+      if (pill) {
+        pill.classList.remove('is-bumped');
+        void pill.offsetWidth;
+        pill.classList.add('is-bumped');
+      }
+    });
   }
 
-  // AJAX add to cart (falls back to a normal form post on error)
-  document.addEventListener('submit', (event) => {
-    const form = event.target.closest('.js-add-to-cart');
-    if (!form || !window.fetch) return;
-    event.preventDefault();
-    const button = form.querySelector('[type="submit"]');
-    if (button) button.classList.add('is-loading');
+  function renderDrawer(html) {
+    const drawer = getDrawer();
+    if (!drawer || !html) return;
+    const fresh = parseHTML(html).querySelector('[data-cart-drawer]');
+    if (!fresh) return;
+    const wasOpen = drawer.classList.contains('is-open');
+    drawer.innerHTML = fresh.innerHTML;
+    if (wasOpen) drawer.classList.add('is-open');
+    loadUpsells(drawer);
+  }
 
-    fetch(root + 'cart/add.js', {
+  function openDrawer() {
+    const drawer = getDrawer();
+    if (!drawer) return false;
+    lastFocus = document.activeElement;
+    drawer.classList.add('is-open');
+    document.documentElement.classList.add('has-drawer');
+    const panel = drawer.querySelector('[data-cart-panel]');
+    if (panel) setTimeout(() => panel.focus(), 50);
+    return true;
+  }
+
+  function closeDrawer() {
+    const drawer = getDrawer();
+    if (!drawer || !drawer.classList.contains('is-open')) return;
+    drawer.classList.remove('is-open');
+    document.documentElement.classList.remove('has-drawer');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-cart-close]')) {
+      event.preventDefault();
+      closeDrawer();
+      return;
+    }
+    const pill = event.target.closest('.cart-pill');
+    if (pill && getDrawer() && T.cartType === 'drawer' && !event.metaKey && !event.ctrlKey) {
+      event.preventDefault();
+      openDrawer();
+      return;
+    }
+    const change = event.target.closest('[data-line-change]');
+    if (change) {
+      event.preventDefault();
+      changeLine(change.dataset.lineChange, parseInt(change.dataset.quantity, 10), change);
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      dropdowns.forEach((dd) => { dd.open = false; });
+      closeDrawer();
+    }
+    // keep keyboard focus inside the open drawer
+    if (event.key === 'Tab') {
+      const drawer = getDrawer();
+      if (!drawer || !drawer.classList.contains('is-open')) return;
+      const focusable = Array.from(drawer.querySelectorAll('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])')).filter((el) => el.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  });
+
+  function changeLine(line, quantity, trigger) {
+    const item = trigger && trigger.closest('.drawer-item');
+    if (item) item.classList.add('is-updating');
+    fetch(routes.cartChange + '.js', {
       method: 'POST',
-      headers: { Accept: 'application/json' },
-      body: new FormData(form),
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ line: parseInt(line, 10), quantity: Math.max(0, quantity), sections: [DRAWER_SECTION] }),
     })
       .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
       .then(({ ok, data }) => {
-        if (!ok) throw new Error(data.description || data.message || 'Could not add to cart');
-        return updateCartCount().then(() => {
-          showToast(`${escapeHtml(data.product_title || 'Item')} added &middot; <a href="${root}cart">View cart</a>`);
-        });
+        if (!ok) throw new Error(data.description || data.message || strings.cartError);
+        setCartCount(data.item_count);
+        if (data.sections) renderDrawer(data.sections[DRAWER_SECTION]);
       })
-      .catch((error) => showToast(escapeHtml(error.message)))
-      .finally(() => { if (button) button.classList.remove('is-loading'); });
-  });
-
-  function escapeHtml(value) {
-    return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      .catch((error) => {
+        if (item) item.classList.remove('is-updating');
+        showToast(escapeHtml(error.message));
+      });
   }
 
-  // Product page: variant selection
+  // AJAX add to cart → open the drawer (falls back to the toast, then to a normal form post)
+  document.addEventListener('submit', (event) => {
+    const form = event.target.closest('.js-add-to-cart');
+    if (!form || !window.fetch || !window.FormData) return;
+    event.preventDefault();
+    const submitter = event.submitter || form.querySelector('[type="submit"]');
+    const buttons = [submitter].concat(Array.from(document.querySelectorAll('[data-sticky-button]'))).filter(Boolean);
+    buttons.forEach((b) => b.classList.add('is-loading'));
+
+    const body = new FormData(form);
+    const useDrawer = T.cartType === 'drawer' && !!getDrawer();
+    if (useDrawer) body.append('sections', DRAWER_SECTION);
+
+    fetch(routes.cartAdd + '.js', { method: 'POST', headers: { Accept: 'application/json' }, body })
+      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.description || data.message || strings.cartError);
+        return fetch(routes.cart + '.js', { headers: { Accept: 'application/json' } })
+          .then((r) => r.json())
+          .then((cart) => {
+            setCartCount(cart.item_count);
+            if (useDrawer && data.sections) {
+              renderDrawer(data.sections[DRAWER_SECTION]);
+              openDrawer();
+            } else {
+              showToast(`${escapeHtml(data.product_title || strings.added)} &middot; <a href="${routes.cart}">${escapeHtml(strings.viewCart)}</a>`);
+            }
+          });
+      })
+      .catch((error) => showToast(escapeHtml(error.message)))
+      .finally(() => buttons.forEach((b) => b.classList.remove('is-loading')));
+  });
+
+  /* ---------------------------------------------------------------- Recommendations */
+  const recSection = document.querySelector('[data-recommendations]');
+  function recUrl(productId, intent, limit, sectionId) {
+    return `${routes.recommendations}?section_id=${encodeURIComponent(sectionId)}&product_id=${encodeURIComponent(productId)}&limit=${limit}&intent=${intent}`;
+  }
+
+  if (recSection && recSection.dataset.productId) {
+    const sectionId = recSection.dataset.sectionId;
+    const productId = recSection.dataset.productId;
+    const limit = recSection.dataset.limit || 4;
+    const body = recSection.querySelector('[data-recommendations-body]');
+
+    // "You may also like": swap the same-category fallback for Shopify's related picks when available
+    fetch(recUrl(productId, 'related', limit, sectionId))
+      .then((r) => r.text())
+      .then((html) => {
+        const related = parseHTML(html).querySelector('[data-recommendations-related]');
+        if (related && body && related.querySelectorAll('.product-card').length >= 2) {
+          body.innerHTML = related.innerHTML;
+        }
+        if (body && !body.querySelector('.product-card')) recSection.hidden = true;
+      })
+      .catch(() => { if (body && !body.querySelector('.product-card')) recSection.hidden = true; });
+
+    // "Pairs well with" on the product page (complementary products from Search & Discovery)
+    const complementary = document.querySelector('[data-complementary]');
+    if (complementary) {
+      fetch(recUrl(productId, 'complementary', 3, sectionId))
+        .then((r) => r.text())
+        .then((html) => {
+          const block = parseHTML(html).querySelector('[data-recommendations-complementary]');
+          if (block && block.querySelector('.mini-product')) {
+            complementary.innerHTML = block.innerHTML;
+            complementary.hidden = false;
+          }
+        })
+        .catch(() => {});
+    }
+  }
+
+  // "Complete your order" in the cart drawer / cart page
+  function loadUpsells(scope) {
+    (scope || document).querySelectorAll('[data-cart-upsell]').forEach((box) => {
+      const productId = box.dataset.productId;
+      if (!productId) return;
+      fetch(recUrl(productId, 'related', 8, 'cart-upsell'))
+        .then((r) => r.text())
+        .then((html) => {
+          const upsell = parseHTML(html).querySelector('[data-upsell-body]');
+          if (upsell && upsell.querySelector('.mini-product')) {
+            box.innerHTML = upsell.innerHTML;
+            box.hidden = false;
+          }
+        })
+        .catch(() => {});
+    });
+  }
+  loadUpsells(document);
+
+  /* ---------------------------------------------------------------- Product page */
   const productForm = document.querySelector('[data-product-form]');
   const variantsJson = document.querySelector('[data-product-json]');
+
+  // Gallery: show one image at a time on desktop, swipe on mobile; thumbnails + variant images
+  const slidesWrap = document.querySelector('[data-gallery-slides]');
+  const thumbs = Array.from(document.querySelectorAll('[data-thumb]'));
+  const counter = document.querySelector('[data-gallery-index]');
+  const mobile = window.matchMedia('(max-width: 989px)');
+
+  function showMedia(mediaId, opts) {
+    if (!slidesWrap || !mediaId) return;
+    const slides = Array.from(slidesWrap.children);
+    const target = slides.find((s) => s.dataset.mediaId === String(mediaId));
+    if (!target) return;
+    slides.forEach((s) => s.classList.toggle('is-active', s === target));
+    thumbs.forEach((t) => {
+      const on = t.dataset.mediaId === String(mediaId);
+      t.classList.toggle('is-active', on);
+      if (on) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current');
+    });
+    const img = target.querySelector('img');
+    if (img && img.loading === 'lazy') img.loading = 'eager';
+    if (counter) counter.textContent = String(slides.indexOf(target) + 1);
+    if (mobile.matches) {
+      slidesWrap.scrollTo({ left: target.offsetLeft - slidesWrap.offsetLeft, behavior: opts && opts.instant ? 'auto' : 'smooth' });
+    }
+  }
+
+  thumbs.forEach((thumb) => thumb.addEventListener('click', () => showMedia(thumb.dataset.mediaId)));
+
+  if (slidesWrap) {
+    let scrollTimer;
+    slidesWrap.addEventListener('scroll', () => {
+      if (!mobile.matches) return;
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        const slides = Array.from(slidesWrap.children);
+        const index = Math.round(slidesWrap.scrollLeft / slidesWrap.clientWidth);
+        const slide = slides[Math.max(0, Math.min(index, slides.length - 1))];
+        if (!slide) return;
+        slides.forEach((s) => s.classList.toggle('is-active', s === slide));
+        thumbs.forEach((t) => t.classList.toggle('is-active', t.dataset.mediaId === slide.dataset.mediaId));
+        if (counter) counter.textContent = String(index + 1);
+      }, 80);
+    }, { passive: true });
+    const active = slidesWrap.querySelector('.is-active');
+    if (active && mobile.matches) showMedia(active.dataset.mediaId, { instant: true });
+  }
+
   if (productForm && variantsJson) {
     const variants = JSON.parse(variantsJson.textContent);
     const idInput = productForm.querySelector('[data-variant-id]');
     const addButton = productForm.querySelector('[data-add-button]');
-    const priceEl = document.querySelector('[data-product-price] .price__current');
-    const compareEl = document.querySelector('[data-product-price] .price__compare');
-    const money = (cents) => {
-      const format = (window.Shopify && window.Shopify.currency && window.Shopify.currency.active) || 'USD';
-      return new Intl.NumberFormat(document.documentElement.lang || undefined, { style: 'currency', currency: format }).format(cents / 100);
-    };
+    const priceWrap = document.querySelector('[data-product-price]');
+    const saveEl = document.querySelector('[data-price-save]');
+    const fieldsets = Array.from(productForm.querySelectorAll('.product-form__option'));
+    const stickyPrice = document.querySelector('[data-sticky-price]');
+    const stickyVariant = document.querySelector('[data-sticky-variant]');
+    const stickyButton = document.querySelector('[data-sticky-button]');
+
+    const selectedOptions = () => fieldsets.map((fs) => (fs.querySelector('input:checked') || {}).value);
+
+    function markAvailability() {
+      const selected = selectedOptions();
+      fieldsets.forEach((fs, position) => {
+        fs.querySelectorAll('[data-option-input]').forEach((input) => {
+          const candidate = selected.slice();
+          candidate[position] = input.value;
+          const match = variants.find((v) => v.options.every((opt, i) => opt === candidate[i]));
+          const label = input.closest('.pill');
+          if (label) {
+            label.classList.toggle('is-unavailable', !match || !match.available);
+            label.classList.toggle('is-missing', !match);
+          }
+        });
+        const value = fs.querySelector('[data-selected-value]');
+        if (value) value.textContent = selected[position] || '';
+      });
+    }
+
+    function setButtons(variant) {
+      const label = !variant ? strings.unavailable : (variant.available ? strings.addToCart : strings.soldOut);
+      [addButton, stickyButton].forEach((b) => {
+        if (!b) return;
+        b.disabled = !variant || !variant.available;
+        b.textContent = label;
+      });
+    }
+
+    function updatePrice(variant) {
+      if (!priceWrap || !variant) return;
+      const current = priceWrap.querySelector('.price__current');
+      const compare = priceWrap.querySelector('.price__compare');
+      const price = priceWrap.querySelector('.price');
+      if (current) current.textContent = money(variant.price);
+      const onSale = variant.compare_at_price && variant.compare_at_price > variant.price;
+      if (compare) { compare.textContent = onSale ? money(variant.compare_at_price) : ''; compare.hidden = !onSale; }
+      else if (onSale && price) {
+        const s = document.createElement('s');
+        s.className = 'price__compare';
+        s.textContent = money(variant.compare_at_price);
+        price.appendChild(s);
+      }
+      if (price) price.classList.toggle('price--sale', !!onSale);
+      if (saveEl) {
+        if (onSale) {
+          const pct = Math.round(((variant.compare_at_price - variant.price) * 100) / variant.compare_at_price);
+          saveEl.textContent = (strings.savePercent || 'Save [percent]%').replace('[percent]', pct);
+          saveEl.hidden = false;
+        } else {
+          saveEl.hidden = true;
+        }
+      }
+      if (stickyPrice) stickyPrice.textContent = money(variant.price);
+      if (stickyVariant) stickyVariant.textContent = variant.title;
+    }
 
     productForm.addEventListener('change', (event) => {
       if (!event.target.matches('[data-option-input]')) return;
-      const selected = Array.from(productForm.querySelectorAll('.product-form__option')).map(
-        (fieldset) => (fieldset.querySelector('input:checked') || {}).value
-      );
+      const selected = selectedOptions();
       const variant = variants.find((v) => v.options.every((opt, i) => opt === selected[i]));
-      if (!variant) {
-        addButton.disabled = true;
-        addButton.textContent = 'Unavailable';
-        return;
-      }
+      markAvailability();
+      setButtons(variant);
+      if (!variant) return;
       idInput.value = variant.id;
-      addButton.disabled = !variant.available;
-      addButton.textContent = variant.available ? 'Add to cart' : 'Sold out';
-      if (priceEl) priceEl.textContent = money(variant.price);
-      if (compareEl) compareEl.textContent = variant.compare_at_price > variant.price ? money(variant.compare_at_price) : '';
+      updatePrice(variant);
+      if (variant.featured_media && variant.featured_media.id) showMedia(variant.featured_media.id);
       const url = new URL(window.location.href);
       url.searchParams.set('variant', variant.id);
       window.history.replaceState({}, '', url);
     });
+
+    markAvailability();
   }
 
-  // Product gallery thumbnails
-  document.querySelectorAll('[data-thumb]').forEach((thumb) => {
-    thumb.addEventListener('click', () => {
-      const main = document.querySelector('[data-main-image]');
-      if (!main) return;
-      main.removeAttribute('srcset');
-      main.src = thumb.dataset.thumb;
-      document.querySelectorAll('[data-thumb]').forEach((t) => t.classList.toggle('is-active', t === thumb));
+  // Quantity steppers
+  document.querySelectorAll('[data-qty]').forEach((wrap) => {
+    const input = wrap.querySelector('input');
+    wrap.querySelectorAll('[data-qty-step]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const next = Math.max(parseInt(input.min || '1', 10), (parseInt(input.value, 10) || 1) + parseInt(btn.dataset.qtyStep, 10));
+        input.value = next;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      });
     });
   });
 
-  // WaggleKin TV: load the video only when play is pressed
+  // Sticky add-to-cart bar: shows once the main button scrolls out of view
+  const sticky = document.querySelector('[data-sticky-atc]');
+  const mainAdd = productForm && productForm.querySelector('[data-add-button]');
+  if (sticky && mainAdd && 'IntersectionObserver' in window) {
+    const footer = document.querySelector('.site-footer');
+    let mainVisible = true;
+    let footerVisible = false;
+    const sync = () => {
+      const show = !mainVisible && !footerVisible;
+      sticky.hidden = !show;
+      sticky.setAttribute('aria-hidden', String(!show));
+      const btn = sticky.querySelector('[data-sticky-button]');
+      if (btn) btn.tabIndex = show ? 0 : -1;
+      document.documentElement.classList.toggle('has-sticky-atc', show);
+    };
+    new IntersectionObserver((entries) => { mainVisible = entries[0].isIntersecting || entries[0].boundingClientRect.top > 0; sync(); }).observe(mainAdd);
+    if (footer) new IntersectionObserver((entries) => { footerVisible = entries[0].isIntersecting; sync(); }).observe(footer);
+  }
+
+  // Delivery estimate: "Order today, estimated delivery Tue, Nov 18 – Fri, Nov 21" (business days, skips weekends)
+  document.querySelectorAll('[data-delivery-estimate]').forEach((el) => {
+    const min = parseInt(el.dataset.minDays, 10);
+    const max = parseInt(el.dataset.maxDays, 10);
+    if (!min || !max) return;
+    const handling = 1; // orders are processed by the warehouse the next business day
+    const addBusinessDays = (date, days) => {
+      const d = new Date(date);
+      let added = 0;
+      while (added < days) {
+        d.setDate(d.getDate() + 1);
+        const day = d.getDay();
+        if (day !== 0 && day !== 6) added += 1;
+      }
+      return d;
+    };
+    const fmt = new Intl.DateTimeFormat(document.documentElement.lang || 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const now = new Date();
+    const from = addBusinessDays(now, min + handling);
+    const to = addBusinessDays(now, max + handling);
+    const range = el.querySelector('[data-delivery-range]');
+    if (range) range.textContent = `${fmt.format(from)} – ${fmt.format(to)}`;
+    el.hidden = false;
+  });
+
+  /* ---------------------------------------------------------------- WaggleKin TV */
   document.querySelectorAll('[data-video-player]').forEach((player) => {
     const play = player.querySelector('[data-video-play]');
     const template = player.querySelector('[data-video-template]');

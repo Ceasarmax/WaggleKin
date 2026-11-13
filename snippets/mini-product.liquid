@@ -1,0 +1,34 @@
+{%- comment -%}
+  Compact product row used for "Pairs well with" (product page) and the cart upsell.
+  Single-variant products get a one-tap Add button; products with options link to the product page.
+  Usage: {% render 'mini-product', product: product %}
+{%- endcomment -%}
+{%- liquid
+  assign v = product.selected_or_first_available_variant
+  assign single = false
+  if product.has_only_default_variant or product.variants.size == 1
+    assign single = true
+  endif
+-%}
+<div class="mini-product">
+  <a href="{{ product.url }}" class="mini-product__media" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_media -%}
+      {{ product.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
+    {%- endif -%}
+  </a>
+  <div class="mini-product__info">
+    <a href="{{ product.url }}" class="mini-product__title">{{ product.title }}</a>
+    <span class="mini-product__price">
+      {%- if product.price_varies -%}{%- assign min_price = product.price_min | money -%}{{ 'products.from_price' | t: price: min_price }}{%- else -%}{{ v.price | money }}{%- endif -%}
+      {%- if v.compare_at_price > v.price -%} <s>{{ v.compare_at_price | money }}</s>{%- endif -%}
+    </span>
+  </div>
+  {%- if single and v.available -%}
+    {%- form 'product', product, class: 'js-add-to-cart mini-product__form' -%}
+      <input type="hidden" name="id" value="{{ v.id }}">
+      <button type="submit" class="btn btn--outline btn--sm">{{ 'products.add_short' | t }}</button>
+    {%- endform -%}
+  {%- elsif product.available -%}
+    <a href="{{ product.url }}" class="btn btn--outline btn--sm">{{ 'products.choose' | t }}</a>
+  {%- endif -%}
+</div>

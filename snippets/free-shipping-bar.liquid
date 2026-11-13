@@ -1,0 +1,28 @@
+{%- comment -%}
+  Free-shipping progress bar for the cart drawer and cart page.
+  The threshold comes from Theme settings → Shipping → "Free shipping threshold (number)".
+  It must match the free-shipping rate in Shopify's shipping settings ($49 for the US).
+{%- endcomment -%}
+{%- liquid
+  assign threshold_cents = settings.free_shipping_amount | times: 100
+  assign remaining = threshold_cents | minus: cart.total_price
+  assign pct = 100
+  if threshold_cents > 0 and remaining > 0
+    assign pct = cart.total_price | times: 100 | divided_by: threshold_cents
+  endif
+-%}
+{%- if threshold_cents > 0 -%}
+  <div class="free-ship{% if remaining <= 0 %} free-ship--done{% endif %}">
+    <p class="free-ship__text">
+      {%- if remaining > 0 -%}
+        {%- assign remaining_money = remaining | money -%}
+        {{ 'cart.free_shipping_remaining_html' | t: amount: remaining_money }}
+      {%- else -%}
+        {{ 'cart.free_shipping_unlocked_html' | t }}
+      {%- endif -%}
+    </p>
+    <div class="free-ship__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ pct }}" aria-label="{{ 'cart.free_shipping_progress' | t }}">
+      <span style="width: {{ pct }}%"></span>
+    </div>
+  </div>
+{%- endif -%}

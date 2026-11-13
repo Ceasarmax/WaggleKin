@@ -1,0 +1,46 @@
+{%- comment -%}
+  "Complete the order" picks for the cart drawer and cart page.
+  theme.js requests this file through Shopify's Product Recommendations API:
+  /recommendations/products?section_id=cart-upsell&product_id=<last item>&limit=6&intent=related
+  Products already in the cart are skipped. If Shopify has no picks yet, it falls back to the
+  "Pack favourites" collection.
+{%- endcomment -%}
+{%- liquid
+  assign in_cart = ''
+  for item in cart.items
+    assign in_cart = in_cart | append: ',' | append: item.product_id | append: ','
+  endfor
+  assign shown = 0
+  assign shown_ids = ''
+-%}
+<div data-upsell-body>
+  <h3 class="cart-upsell__title">{{ 'cart.upsell_heading' | t }}</h3>
+  <ul class="mini-list">
+    {%- if recommendations.performed and recommendations.products_count > 0 -%}
+      {%- for rec in recommendations.products -%}
+        {%- assign key = ',' | append: rec.id | append: ',' -%}
+        {%- unless in_cart contains key or shown_ids contains key or rec.available == false -%}
+          <li>{% render 'mini-product', product: rec %}</li>
+          {%- assign shown = shown | plus: 1 -%}
+          {%- assign shown_ids = shown_ids | append: key -%}
+          {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+    {%- if shown < 3 -%}
+      {%- for rec in collections['pack-favourites'].products -%}
+        {%- assign key = ',' | append: rec.id | append: ',' -%}
+        {%- unless in_cart contains key or shown_ids contains key or rec.available == false -%}
+          <li>{% render 'mini-product', product: rec %}</li>
+          {%- assign shown = shown | plus: 1 -%}
+          {%- assign shown_ids = shown_ids | append: key -%}
+          {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+  </ul>
+</div>
+
+{% schema %}
+{ "name": "Cart upsell" }
+{% endschema %}

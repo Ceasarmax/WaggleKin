@@ -20,7 +20,9 @@
     "continue_shopping": "Continue shopping",
     "home": "Home",
     "page_not_found": "Page not found",
-    "page_not_found_text": "This page wandered off. Let's get you back to the pack."
+    "page_not_found_text": "This page wandered off. Let's get you back to the pack.",
+    "breadcrumbs": "Breadcrumbs",
+    "payment_methods": "Payment methods"
   },
   "accessibility": {
     "skip_to_content": "Skip to content",
@@ -42,7 +44,25 @@
     "ship_global": "Value pick: ships internationally",
     "business_days": "business days",
     "ship_us_note": "In stock in our US warehouse, so it reaches you fast.",
-    "ship_global_note": "Shipped from our international warehouse. It takes a little longer to arrive, which is why it costs less."
+    "ship_global_note": "Shipped from our international warehouse. It takes a little longer to arrive, which is why it costs less.",
+    "gallery": "Product images",
+    "thumbnails": "Product image thumbnails",
+    "show_image": "Show image {{ number }}",
+    "decrease_quantity": "Decrease quantity",
+    "increase_quantity": "Increase quantity",
+    "arrives": "Order today, estimated delivery",
+    "pairs_well_with": "Pairs well with",
+    "description": "Description",
+    "shipping_heading": "Shipping & delivery",
+    "delivery_window": "Estimated delivery: {{ days }} business days after dispatch.",
+    "shipping_cost_note": "Shipping is free on US orders over {{ threshold }}; otherwise $5.99. You'll get a tracking number by email as soon as your order ships.",
+    "shipping_policy_link": "Read our shipping policy",
+    "returns_heading": "Returns & guarantee",
+    "returns_note": "Not the right fit for your pet? You have 30 days from delivery to request a return.",
+    "returns_policy_link": "Read our return policy",
+    "add_short": "Add",
+    "choose": "Choose",
+    "choose_options": "Choose options"
   },
   "collections": {
     "empty": "No products here yet — check back soon.",
@@ -60,7 +80,17 @@
     "remove": "Remove",
     "update": "Update",
     "taxes_and_shipping": "Taxes and shipping calculated at checkout.",
-    "note": "Order note"
+    "note": "Order note",
+    "free_shipping_remaining_html": "You're <strong>{{ amount }}</strong> away from free US shipping",
+    "free_shipping_unlocked_html": "<strong>You've unlocked free US shipping!</strong>",
+    "free_shipping_progress": "Progress towards free shipping",
+    "taxes_and_shipping_drawer": "Taxes and shipping are calculated at checkout.",
+    "shop_dogs": "Shop dogs",
+    "shop_cats": "Shop cats",
+    "upsell_heading": "Complete your order",
+    "secure_checkout": "Secure checkout",
+    "returns_short": "30-day returns",
+    "error": "Something went wrong. Please try again."
   },
   "search": {
     "placeholder": "Search for beds, toys, fountains…",

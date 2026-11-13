@@ -1,74 +1,211 @@
 {%- capture threshold -%}{% render 'shipping-threshold' %}{%- endcapture -%}
 {%- liquid
   assign variant = product.selected_or_first_available_variant
+  assign active_media = variant.featured_media | default: product.featured_media
   capture illo
     render 'product-illustration-key', product: product
   endcapture
   assign illo_parts = illo | strip | split: '|'
+
+  assign ship = ''
+  if product.tags contains 'ship:us'
+    assign ship = 'us'
+  elsif product.tags contains 'ship:global'
+    assign ship = 'global'
+  endif
+
+  assign breadcrumb_collection = collection
+  if breadcrumb_collection == blank
+    for c in product.collections
+      unless c.handle == 'frontpage' or c.handle == 'all'
+        assign breadcrumb_collection = c
+        break
+      endunless
+    endfor
+  endif
+
+  assign image_count = 0
+  for media in product.media
+    if media.media_type == 'image'
+      assign image_count = image_count | plus: 1
+    endif
+  endfor
 -%}
-<section class="section product-page">
-  <div class="page-width product-page__grid">
-    <div class="product-gallery">
-      {%- if product.media.size > 0 -%}
-        <div class="product-gallery__main product-card__media--{{ illo_parts[1] }}">
-          {{ product.featured_media | image_url: width: 1200 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '600, 900, 1200', loading: 'eager', data-main-image: true }}
-        </div>
-        {%- if product.media.size > 1 -%}
-          <ul class="product-gallery__thumbs">
+<section class="section section--tight product-page" data-product-section data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <nav class="breadcrumbs" aria-label="{{ 'general.breadcrumbs' | t }}">
+      <ol>
+        <li><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a></li>
+        {%- if breadcrumb_collection != blank -%}
+          <li><a href="{{ breadcrumb_collection.url }}">{{ breadcrumb_collection.title }}</a></li>
+        {%- endif -%}
+        <li aria-current="page">{{ product.title }}</li>
+      </ol>
+    </nav>
+
+    <div class="product-page__grid">
+      <div class="product-gallery" data-gallery>
+        {%- if image_count > 0 -%}
+          <ul class="product-gallery__slides" data-gallery-slides aria-label="{{ 'products.gallery' | t }}">
             {%- for media in product.media -%}
               {%- if media.media_type == 'image' -%}
-                <li><button type="button" data-thumb="{{ media | image_url: width: 1200 }}">{{ media | image_url: width: 160 | image_tag: loading: 'lazy' }}</button></li>
+                {%- liquid
+                  assign is_active = false
+                  if media.id == active_media.id
+                    assign is_active = true
+                  endif
+                -%}
+                <li class="product-gallery__slide product-card__media--{{ illo_parts[1] }}{% if is_active %} is-active{% endif %}" data-media-id="{{ media.id }}">
+                  {%- if is_active -%}
+                    {{ media | image_url: width: 1400 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '500, 700, 1000, 1400', loading: 'eager', fetchpriority: 'high', alt: media.alt | default: product.title }}
+                  {%- else -%}
+                    {{ media | image_url: width: 1400 | image_tag: sizes: '(min-width: 990px) 50vw, 100vw', widths: '500, 700, 1000, 1400', loading: 'lazy', alt: media.alt | default: product.title }}
+                  {%- endif -%}
+                </li>
               {%- endif -%}
             {%- endfor -%}
           </ul>
+          {%- if image_count > 1 -%}
+            <p class="product-gallery__counter" aria-hidden="true"><span data-gallery-index>1</span> / {{ image_count }}</p>
+            <ul class="product-gallery__thumbs" aria-label="{{ 'products.thumbnails' | t }}">
+              {%- for media in product.media -%}
+                {%- if media.media_type == 'image' -%}
+                  <li>
+                    <button type="button" class="{% if media.id == active_media.id %}is-active{% endif %}" data-thumb data-media-id="{{ media.id }}" aria-label="{{ 'products.show_image' | t: number: forloop.index }}"{% if media.id == active_media.id %} aria-current="true"{% endif %}>
+                      {{ media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
+                    </button>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        {%- else -%}
+          <div class="product-gallery__placeholder product-card__media--{{ illo_parts[1] }}">
+            {% render 'illustration', name: illo_parts[0] %}
+          </div>
         {%- endif -%}
-      {%- else -%}
-        <div class="product-gallery__main product-card__media--{{ illo_parts[1] }}">
-          {% render 'illustration', name: illo_parts[0] %}
+      </div>
+
+      <div class="product-info">
+        {%- if product.type != blank -%}<p class="product-card__type">{{ product.type }}</p>{%- endif -%}
+        <h1 class="product-info__title">{{ product.title }}</h1>
+
+        <div class="product-info__price" data-product-price>
+          {% render 'price', product: product, variant: variant %}
+          <span class="price__save" data-price-save{% unless variant.compare_at_price > variant.price %} hidden{% endunless %}>
+            {%- if variant.compare_at_price > variant.price -%}
+              {%- assign saving = variant.compare_at_price | minus: variant.price | times: 100.0 | divided_by: variant.compare_at_price | round -%}
+              {{ 'products.save_percent' | t: percent: saving }}
+            {%- endif -%}
+          </span>
         </div>
-      {%- endif -%}
+
+        {% render 'delivery-badge', product: product, full: true %}
+
+        {%- form 'product', product, class: 'product-form js-add-to-cart', data-product-form: '', id: 'ProductForm' -%}
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              <fieldset class="product-form__option" data-option-position="{{ forloop.index0 }}">
+                <legend>{{ option.name }}: <span class="product-form__selected" data-selected-value>{{ option.selected_value }}</span></legend>
+                <div class="pill-group">
+                  {%- for value in option.values -%}
+                    <label class="pill">
+                      <input type="radio" name="option-{{ forloop.parentloop.index0 }}" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %} data-option-input>
+                      <span>{{ value }}</span>
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endfor -%}
+          {%- endunless -%}
+          <input type="hidden" name="id" value="{{ variant.id }}" data-variant-id>
+
+          <div class="product-form__row">
+            <div class="qty" data-qty>
+              <button type="button" class="qty__btn" data-qty-step="-1" aria-label="{{ 'products.decrease_quantity' | t }}">&minus;</button>
+              <label class="visually-hidden" for="Quantity-{{ section.id }}">{{ 'products.quantity' | t }}</label>
+              <input id="Quantity-{{ section.id }}" class="qty__input" type="number" name="quantity" value="1" min="1" inputmode="numeric">
+              <button type="button" class="qty__btn" data-qty-step="1" aria-label="{{ 'products.increase_quantity' | t }}">+</button>
+            </div>
+            <button type="submit" class="btn btn--orange btn--lg" data-add-button {% unless variant.available %}disabled{% endunless %}>
+              {%- if variant.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
+            </button>
+          </div>
+          {{ form | payment_button }}
+        {%- endform -%}
+
+        <div class="product-info__shipping">
+          {%- if ship != '' -%}
+            {%- liquid
+              if ship == 'global'
+                assign day_range = settings.delivery_days_global
+              else
+                assign day_range = settings.delivery_days_us
+              endif
+              assign min_days = day_range | split: '–' | first | split: '-' | first | strip
+              assign max_days = day_range | split: '–' | last | split: '-' | last | strip
+            -%}
+            <p class="delivery-estimate" data-delivery-estimate data-min-days="{{ min_days }}" data-max-days="{{ max_days }}" hidden>
+              {% render 'icon', name: 'truck', icon_size: 18 %}
+              <span>{{ 'products.arrives' | t }} <strong data-delivery-range></strong></span>
+            </p>
+          {%- endif -%}
+          <p class="product-info__free-ship">{{ section.settings.perk_1 | replace: '[threshold]', threshold }}</p>
+        </div>
+
+        <ul class="product-info__perks">
+          <li>{% render 'icon', name: 'return' %} {{ section.settings.perk_2 | replace: '[threshold]', threshold }}</li>
+          <li>{% render 'icon', name: 'lock' %} {{ section.settings.perk_3 | replace: '[threshold]', threshold }}</li>
+        </ul>
+        {%- if shop.enabled_payment_types.size > 0 -%}
+          <ul class="payment-icons" aria-label="{{ 'general.payment_methods' | t }}">
+            {%- for type in shop.enabled_payment_types -%}
+              <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- comment -%} Filled by theme.js from the product-recommendations section (intent=complementary). Hidden when empty. {%- endcomment -%}
+        <div class="product-complementary" data-complementary data-product-id="{{ product.id }}" hidden></div>
+
+        <div class="accordion">
+          <details class="accordion__item" open>
+            <summary>{{ 'products.description' | t }}</summary>
+            <div class="accordion__body rte">{{ product.description }}</div>
+          </details>
+          <details class="accordion__item">
+            <summary>{{ 'products.shipping_heading' | t }}</summary>
+            <div class="accordion__body rte">
+              {%- if ship == 'global' -%}
+                <p>{{ 'products.ship_global_note' | t }} {{ 'products.delivery_window' | t: days: settings.delivery_days_global }}</p>
+              {%- else -%}
+                <p>{{ 'products.ship_us_note' | t }} {{ 'products.delivery_window' | t: days: settings.delivery_days_us }}</p>
+              {%- endif -%}
+              <p>{{ 'products.shipping_cost_note' | t: threshold: threshold }}</p>
+              <p><a href="{{ shop.shipping_policy.url | default: '/policies/shipping-policy' }}">{{ 'products.shipping_policy_link' | t }}</a></p>
+            </div>
+          </details>
+          <details class="accordion__item">
+            <summary>{{ 'products.returns_heading' | t }}</summary>
+            <div class="accordion__body rte">
+              <p>{{ 'products.returns_note' | t }}</p>
+              <p><a href="{{ shop.refund_policy.url | default: '/policies/refund-policy' }}">{{ 'products.returns_policy_link' | t }}</a></p>
+            </div>
+          </details>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="product-info">
-      {%- if product.type != blank -%}<p class="product-card__type">{{ product.type }}</p>{%- endif -%}
-      <h1 class="product-info__title">{{ product.title }}</h1>
-      <div class="product-info__price" data-product-price>{% render 'price', product: product, variant: variant %}</div>
-      {% render 'delivery-badge', product: product, full: true %}
-
-      {%- form 'product', product, class: 'product-form js-add-to-cart', data-product-form: '' -%}
-        {%- unless product.has_only_default_variant -%}
-          {%- for option in product.options_with_values -%}
-            <fieldset class="product-form__option">
-              <legend>{{ option.name }}</legend>
-              <div class="pill-group">
-                {%- for value in option.values -%}
-                  <label class="pill">
-                    <input type="radio" name="option-{{ forloop.parentloop.index0 }}" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %} data-option-input>
-                    <span>{{ value }}</span>
-                  </label>
-                {%- endfor -%}
-              </div>
-            </fieldset>
-          {%- endfor -%}
-        {%- endunless -%}
-        <input type="hidden" name="id" value="{{ variant.id }}" data-variant-id>
-        <div class="product-form__row">
-          <label class="visually-hidden" for="Quantity">{{ 'products.quantity' | t }}</label>
-          <input id="Quantity" class="input input--qty" type="number" name="quantity" value="1" min="1">
-          <button type="submit" class="btn btn--orange btn--lg" data-add-button {% unless variant.available %}disabled{% endunless %}>
-            {%- if variant.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
-          </button>
-        </div>
-        {{ form | payment_button }}
-      {%- endform -%}
-
-      <div class="product-info__description rte">{{ product.description }}</div>
-
-      <ul class="product-info__perks">
-        <li>{% render 'icon', name: 'truck' %} {{ section.settings.perk_1 | replace: '[threshold]', threshold }}</li>
-        <li>{% render 'icon', name: 'return' %} {{ section.settings.perk_2 | replace: '[threshold]', threshold }}</li>
-        <li>{% render 'icon', name: 'lock' %} {{ section.settings.perk_3 | replace: '[threshold]', threshold }}</li>
-      </ul>
+  <div class="sticky-atc" data-sticky-atc aria-hidden="true" hidden>
+    <div class="sticky-atc__inner">
+      <div class="sticky-atc__info">
+        <p class="sticky-atc__title">{{ product.title }}</p>
+        <p class="sticky-atc__meta"><span data-sticky-price>{{ variant.price | money }}</span>{% unless product.has_only_default_variant %} · <span data-sticky-variant>{{ variant.title }}</span>{% endunless %}</p>
+      </div>
+      <button type="submit" form="ProductForm" class="btn btn--orange" data-sticky-button tabindex="-1" {% unless variant.available %}disabled{% endunless %}>
+        {%- if variant.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
+      </button>
     </div>
   </div>
 
@@ -77,13 +214,44 @@
   </script>
 </section>
 
+{%- comment -%} Structured data for search engines (Google Shopping rich results) {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "url": {{ request.origin | append: product.url | json }},
+  {%- if product.featured_media -%}
+  "image": [{{ product.featured_media | image_url: width: 1200 | prepend: 'https:' | json }}],
+  {%- endif -%}
+  "description": {{ product.description | strip_html | strip | truncate: 500 | json }},
+  {%- if product.selected_or_first_available_variant.sku != blank -%}
+  "sku": {{ product.selected_or_first_available_variant.sku | json }},
+  {%- endif -%}
+  "brand": { "@type": "Brand", "name": {{ product.vendor | json }} },
+  "offers": [
+    {%- for v in product.variants -%}
+    {
+      "@type": "Offer",
+      {%- if v.sku != blank -%}"sku": {{ v.sku | json }},{%- endif -%}
+      "url": {{ request.origin | append: v.url | json }},
+      "price": {{ v.price | divided_by: 100.0 | json }},
+      "priceCurrency": {{ cart.currency.iso_code | json }},
+      "availability": "http://schema.org/{% if v.available %}InStock{% else %}OutOfStock{% endif %}",
+      "itemCondition": "http://schema.org/NewCondition"
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}
+</script>
+
 {% schema %}
 {
   "name": "Product",
   "settings": [
-    { "type": "text", "id": "perk_1", "label": "Perk 1", "default": "Free shipping over [threshold]" },
-    { "type": "text", "id": "perk_2", "label": "Perk 2", "default": "30-day happy-pet returns" },
-    { "type": "text", "id": "perk_3", "label": "Perk 3", "default": "Secure checkout" }
+    { "type": "text", "id": "perk_1", "label": "Shipping line", "default": "Free US shipping on orders over [threshold]" },
+    { "type": "text", "id": "perk_2", "label": "Perk 1", "default": "30-day happy-pet returns" },
+    { "type": "text", "id": "perk_3", "label": "Perk 2", "default": "Secure checkout with Shop Pay, Apple Pay & cards" }
   ]
 }
 {% endschema %}
