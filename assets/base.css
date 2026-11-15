@@ -700,9 +700,10 @@ html.has-sticky-atc .toast { bottom: 88px; }
 /* Carousels: "You may also like", "Recently viewed", cart "Complete your order" */
 .carousel__head { align-items: center; }
 .carousel { position: relative; }
-.carousel__track { display: flex; gap: 16px; list-style: none; margin: 0; padding: 4px 2px 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+/* position: relative keeps absolutely positioned children (e.g. visually-hidden labels) inside the scroller, so off-screen slides never widen the page */
+.carousel__track { position: relative; display: flex; gap: 16px; list-style: none; margin: 0; padding: 4px 2px 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .carousel__track::-webkit-scrollbar { display: none; }
-.carousel__slide { flex: 0 0 calc((100% - 3 * 16px) / 4); min-width: 0; display: flex; scroll-snap-align: start; }
+.carousel__slide { position: relative; flex: 0 0 calc((100% - 3 * 16px) / 4); min-width: 0; display: flex; scroll-snap-align: start; }
 .carousel__slide > * { width: 100%; }
 .carousel__slide .product-card { height: 100%; }
 .carousel__nav { display: flex; gap: 8px; }
