@@ -200,8 +200,57 @@
           </ul>
         {%- endif -%}
 
-        {%- comment -%} Filled by theme.js from the product-recommendations section (intent=complementary). Hidden when empty. {%- endcomment -%}
-        <div class="product-complementary" data-complementary data-product-id="{{ product.id }}" hidden></div>
+        {%- comment -%}
+          "Pairs well with": AI-curated add-ons from the product's wagglekin.complementary metafield (editable in admin).
+          Up to 6 candidates are rendered; theme.js shows the best 3 for this shopper and hides any already in the cart.
+          With no curated list, theme.js falls back to Shopify's complementary picks (Search & Discovery app).
+        {%- endcomment -%}
+        {%- liquid
+          assign pdp_in_cart = ''
+          for item in cart.items
+            assign pdp_in_cart = pdp_in_cart | append: ',' | append: item.product_id | append: ','
+          endfor
+          assign comp_count = 0
+          assign view_profile = product.metafields.wagglekin.profile.value
+          assign view_pet = view_profile.pet
+          if view_pet == blank
+            if product.tags contains 'Dogs' and product.tags contains 'Cats'
+              assign view_pet = 'both'
+            elsif product.tags contains 'Cats'
+              assign view_pet = 'cat'
+            elsif product.tags contains 'Dogs'
+              assign view_pet = 'dog'
+            endif
+          endif
+        -%}
+        <script type="application/json" data-product-view>
+          {
+            "id": {{ product.id | json }},
+            "handle": {{ product.handle | json }},
+            "pet": {{ view_pet | default: '' | json }},
+            "need": {{ view_profile.need | default: '' | json }},
+            "size": {{ view_profile.size | default: '' | json }},
+            "price": {{ product.price_min | json }}
+          }
+        </script>
+        {%- capture comp_items -%}
+          {%- for rec in product.metafields.wagglekin.complementary.value -%}
+            {%- if comp_count >= 6 -%}{%- break -%}{%- endif -%}
+            {%- assign comp_key = ',' | append: rec.id | append: ',' -%}
+            {%- if rec.available and rec.id != product.id -%}
+              {%- unless rec.metafields.wagglekin.profile.value.recommend == false -%}
+                {%- assign comp_count = comp_count | plus: 1 -%}
+                <li {% render 'rec-data', product: rec, rank: comp_count %}{% if pdp_in_cart contains comp_key %} data-in-cart hidden{% elsif comp_count > 3 %} hidden{% endif %}>{% render 'mini-product', product: rec %}</li>
+              {%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        <div class="product-complementary" data-complementary data-product-id="{{ product.id }}" data-title="{{ 'products.pairs_well_with' | t | escape }}"{% if comp_count == 0 %} hidden{% endif %}>
+          {%- if comp_count > 0 -%}
+            <h2 class="product-complementary__title">{{ 'products.pairs_well_with' | t }}</h2>
+            <ul class="mini-list" data-rec-pool data-limit="3" role="list">{{ comp_items }}</ul>
+          {%- endif -%}
+        </div>
 
         <div class="accordion">
           <details class="accordion__item" open>

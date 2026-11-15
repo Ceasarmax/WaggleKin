@@ -1,7 +1,8 @@
 {
   "sections": {
     "main": { "type": "main-product", "settings": {} },
-    "recommendations": { "type": "product-recommendations", "settings": { "heading": "You may also like", "limit": 4 } }
+    "recommendations": { "type": "product-recommendations", "settings": { "heading": "You may also like", "limit": 8, "use_shopify": false } },
+    "recently_viewed": { "type": "recently-viewed", "settings": { "heading": "Recently viewed", "limit": 8 } }
   },
-  "order": ["main", "recommendations"]
+  "order": ["main", "recommendations", "recently_viewed"]
 }

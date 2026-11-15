@@ -338,6 +338,7 @@
           return null;
         }
         const added = (data.items && data.items[0]) || {};
+        document.dispatchEvent(new CustomEvent('wk:added', { detail: added }));
         if (useDrawer && data.sections) {
           renderDrawer(data.sections[DRAWER_SECTION]);
           openDrawer();
@@ -357,6 +358,7 @@
             if (!cartOk) return;
             setCartCount(cart.item_count);
             refreshFreeShipLine(cart.total_price);
+            document.dispatchEvent(new CustomEvent('wk:cart', { detail: cart }));
           })
           .catch(() => {});
       })
@@ -367,49 +369,246 @@
       });
   });
 
-  /* ---------------------------------------------------------------- Recommendations */
+  /* ---------------------------------------------------------------- Recommendations & personalization */
+  // What this shopper has browsed is kept only in their own browser (localStorage) and is never sent anywhere.
+  // It re-ranks the AI-curated suggestions that Liquid renders: e.g. someone who has been looking at cat
+  // products sees cat items first, and items already in the cart are hidden.
+  const Intent = (function () {
+    const KEY = 'wk_intent_v1';
+    function allowed() {
+      if (T.personalize === false) return false;
+      try {
+        const cp = window.Shopify && window.Shopify.customerPrivacy;
+        if (cp && typeof cp.preferencesProcessingAllowed === 'function' && cp.preferencesProcessingAllowed() === false) return false;
+      } catch (e) { /* ignore */ }
+      return true;
+    }
+    function data() {
+      let d = {};
+      try { d = JSON.parse(window.localStorage.getItem(KEY) || '{}') || {}; } catch (e) { d = {}; }
+      if (typeof d !== 'object') d = {};
+      d.views = Array.isArray(d.views) ? d.views : [];
+      d.pet = d.pet || {};
+      d.need = d.need || {};
+      d.size = d.size || {};
+      d.prices = Array.isArray(d.prices) ? d.prices : [];
+      return d;
+    }
+    function save(d) {
+      try { window.localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { /* storage full or blocked */ }
+    }
+    function bump(map, key, by) {
+      if (!key) return;
+      map[key] = Math.min(60, Math.round(((map[key] || 0) + by) * 10) / 10);
+    }
+    // weight: 1 = viewed the product page, 3 = added to cart
+    function record(p, weight) {
+      if (!allowed() || !p || !p.id) return;
+      const d = data();
+      const id = String(p.id);
+      if (p.handle) d.views = [{ id, h: p.handle, t: Date.now() }].concat(d.views.filter((v) => v.id !== id)).slice(0, 20);
+      if (p.pet === 'dog' || p.pet === 'cat') bump(d.pet, p.pet, weight);
+      else if (p.pet === 'both') { bump(d.pet, 'dog', weight * 0.3); bump(d.pet, 'cat', weight * 0.3); }
+      bump(d.need, p.need, weight);
+      if (p.size && p.size !== 'any') bump(d.size, p.size, weight);
+      const price = Number(p.price) || 0;
+      if (price) d.prices = [price].concat(d.prices).slice(0, 12);
+      save(d);
+    }
+    function share(map, key) {
+      if (!key) return 0;
+      const total = Object.keys(map).reduce((sum, k) => sum + (map[k] || 0), 0);
+      return total >= 2 ? (map[key] || 0) / total : 0;
+    }
+    // Curated order is the base; the shopper's signals nudge it. weight < 1 softens personalization (cart add-ons).
+    function score(el, kind, weight) {
+      const rank = parseFloat(el.dataset.rank) || 50;
+      let s = 100 - rank * 4;
+      if (!allowed()) return s;
+      const w = typeof weight === 'number' ? weight : 1;
+      const d = data();
+      const pet = el.dataset.pet;
+      if (pet === 'dog' || pet === 'cat') s += w * (14 * share(d.pet, pet) - 10 * share(d.pet, pet === 'dog' ? 'cat' : 'dog'));
+      s += w * 10 * share(d.need, el.dataset.need);
+      if (el.dataset.size && el.dataset.size !== 'any') s += w * 6 * share(d.size, el.dataset.size);
+      if (d.prices.length >= 2) {
+        const avg = d.prices.reduce((a, b) => a + b, 0) / d.prices.length;
+        if ((Number(el.dataset.price) || 0) > avg * 3) s -= w * 6;
+      }
+      // "You may also like" favours things they haven't looked at yet
+      if (kind === 'related' && d.views.some((v) => v.id === el.dataset.id)) s -= 8;
+      return s;
+    }
+    return { allowed, record, score, data };
+  })();
+
+  let cartProductIds = new Set();
+
+  // Re-rank one pool of [data-rec-item] elements and show the best `data-limit` of them
+  function rerankPool(pool) {
+    if (!pool) return 0;
+    const limit = parseInt(pool.dataset.limit, 10) || 8;
+    const list = pool.closest('[data-rec-list]');
+    const kind = list ? list.dataset.recList : pool.closest('[data-cart-upsell]') ? 'upsell' : 'complementary';
+    const items = Array.from(pool.children).filter((el) => el.hasAttribute('data-rec-item'));
+    if (!items.length) return 0;
+    const ranked = items
+      .map((el) => ({ el, out: el.hasAttribute('data-in-cart') || cartProductIds.has(el.dataset.id), s: Intent.score(el, kind, kind === 'upsell' ? 0.5 : 1) }))
+      .sort((a, b) => (a.out === b.out ? b.s - a.s : a.out ? 1 : -1));
+    let shown = 0;
+    ranked.forEach(({ el, out }) => {
+      pool.appendChild(el);
+      const show = !out && shown < limit;
+      el.hidden = !show;
+      if (show) shown += 1;
+    });
+    return shown;
+  }
+
+  // Horizontal carousels: native swipe/scroll with snap points, plus previous/next buttons when it overflows
+  function initCarousel(root) {
+    if (!root) return;
+    const track = root.querySelector('[data-carousel-track]');
+    if (!track) return;
+    const scope = root.parentElement;
+    const nav = scope ? scope.querySelector('[data-carousel-nav]') || (scope.parentElement && scope.parentElement.querySelector('[data-carousel-nav]')) : null;
+    const prev = nav && nav.querySelector('[data-carousel-prev]');
+    const next = nav && nav.querySelector('[data-carousel-next]');
+    function update() {
+      const max = track.scrollWidth - track.clientWidth;
+      if (nav) nav.hidden = max <= 4;
+      if (prev) prev.disabled = track.scrollLeft <= 2;
+      if (next) next.disabled = track.scrollLeft >= max - 2;
+    }
+    if (!root.dataset.carouselReady) {
+      root.dataset.carouselReady = '1';
+      const step = (dir) => {
+        const slide = Array.from(track.children).find((el) => !el.hidden);
+        const gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+        const width = slide ? slide.getBoundingClientRect().width + gap : track.clientWidth;
+        const perView = Math.max(1, Math.floor((track.clientWidth + gap) / width));
+        track.scrollBy({ left: dir * perView * width, behavior: 'smooth' });
+      };
+      if (prev) prev.addEventListener('click', () => step(-1));
+      if (next) next.addEventListener('click', () => step(1));
+      track.addEventListener('scroll', () => window.requestAnimationFrame(update), { passive: true });
+      window.addEventListener('resize', update);
+    }
+    update();
+  }
+
   const recSection = document.querySelector('[data-recommendations]');
   function recUrl(productId, intent, limit, sectionId) {
     return `${routes.recommendations}?section_id=${encodeURIComponent(sectionId)}&product_id=${encodeURIComponent(productId)}&limit=${limit}&intent=${intent}`;
   }
 
-  if (recSection && recSection.dataset.productId) {
-    const sectionId = recSection.dataset.sectionId;
-    const productId = recSection.dataset.productId;
-    const limit = recSection.dataset.limit || 4;
-    const body = recSection.querySelector('[data-recommendations-body]');
+  // Product page: remember this view (pet, need, size, price) before ranking anything
+  const viewEl = document.querySelector('[data-product-view]');
+  let viewedProduct = null;
+  if (viewEl) {
+    try { viewedProduct = JSON.parse(viewEl.textContent); } catch (e) { viewedProduct = null; }
+    if (viewedProduct) Intent.record(viewedProduct, 1);
+  }
 
-    // "You may also like": optionally swap the same-category picks for Shopify's related picks
-    if (recSection.dataset.useShopify === 'true') fetch(recUrl(productId, 'related', limit, sectionId))
-      .then((r) => r.text())
-      .then((html) => {
-        const related = parseHTML(html).querySelector('[data-recommendations-related]');
-        // Keep China-shipped "Value Picks" out of recommendations for US-shipped products
-        if (related && recSection.dataset.ship === 'us') {
-          related.querySelectorAll('.product-card').forEach((card) => { if (card.querySelector('.delivery-badge--global')) card.remove(); });
-        }
-        if (related && body && related.querySelectorAll('.product-card').length >= 2) {
-          body.innerHTML = related.innerHTML;
-        }
-        if (body && !body.querySelector('.product-card')) recSection.hidden = true;
-      })
-      .catch(() => { if (body && !body.querySelector('.product-card')) recSection.hidden = true; });
-
-    // "Pairs well with" on the product page (complementary products from Search & Discovery)
-    const complementary = document.querySelector('[data-complementary]');
-    if (complementary) {
-      fetch(recUrl(productId, 'complementary', 3, sectionId))
+  // "Pairs well with" beside the buy button: AI-curated, re-ranked; Shopify's complementary picks as a fallback
+  const complementary = document.querySelector('[data-complementary]');
+  if (complementary) {
+    const pool = complementary.querySelector('[data-rec-pool]');
+    if (pool) {
+      complementary.hidden = rerankPool(pool) === 0;
+    } else if (recSection && recSection.dataset.productId) {
+      fetch(recUrl(recSection.dataset.productId, 'complementary', 6, recSection.dataset.sectionId))
         .then((r) => r.text())
         .then((html) => {
           const block = parseHTML(html).querySelector('[data-recommendations-complementary]');
-          if (block && block.querySelector('.mini-product')) {
-            complementary.innerHTML = block.innerHTML;
-            complementary.hidden = false;
-          }
+          if (!block || !block.querySelector('[data-rec-item]')) return;
+          complementary.innerHTML = `<h2 class="product-complementary__title"></h2><ul class="mini-list" data-rec-pool data-limit="3" role="list">${block.innerHTML}</ul>`;
+          complementary.querySelector('h2').textContent = complementary.dataset.title || 'Pairs well with';
+          complementary.hidden = rerankPool(complementary.querySelector('[data-rec-pool]')) === 0;
         })
         .catch(() => {});
     }
   }
+
+  // "You may also like": AI-curated pool, re-ranked; optionally blended with Shopify's order-based picks
+  if (recSection && recSection.dataset.productId) {
+    const pool = recSection.querySelector('[data-rec-pool]');
+    if (!pool) {
+      recSection.hidden = true;
+    } else {
+      rerankPool(pool);
+      initCarousel(recSection.querySelector('[data-carousel]'));
+      if (recSection.dataset.useShopify === 'true') {
+        fetch(recUrl(recSection.dataset.productId, 'related', 8, recSection.dataset.sectionId))
+          .then((r) => r.text())
+          .then((html) => {
+            const list = parseHTML(html).querySelector('[data-recommendations-related]');
+            if (!list) return;
+            const have = new Set(Array.from(pool.children).map((el) => el.dataset.id));
+            Array.from(list.children).forEach((li, i) => {
+              if (!li.dataset.id || have.has(li.dataset.id)) return;
+              // keep China-shipped "Value Picks" out of US-shipped products' recommendations
+              if (recSection.dataset.ship === 'us' && li.querySelector('.delivery-badge--global')) return;
+              li.dataset.rank = String(i * 2 + 1.5); // interleave with the curated picks
+              pool.appendChild(document.importNode(li, true));
+            });
+            rerankPool(pool);
+            initCarousel(recSection.querySelector('[data-carousel]'));
+          })
+          .catch(() => {});
+      }
+    }
+  }
+
+  // "Recently viewed": cards fetched one by one through the Section Rendering API
+  document.querySelectorAll('[data-recently-viewed]').forEach((section) => {
+    if (!Intent.allowed()) return;
+    const limit = parseInt(section.dataset.limit, 10) || 8;
+    const current = section.dataset.currentId || '';
+    const views = Intent.data().views.filter((v) => v.h && v.id !== current).slice(0, limit);
+    if (!views.length) return;
+    const track = section.querySelector('[data-carousel-track]');
+    const base = (routes.root || '/').replace(/\/$/, '');
+    Promise.all(views.map((v) => fetch(`${base}/products/${encodeURIComponent(v.h)}?section_id=product-card-fragment`)
+      .then((r) => (r.ok ? r.text() : ''))
+      .catch(() => '')))
+      .then((pages) => {
+        let count = 0;
+        pages.forEach((html) => {
+          const card = html && parseHTML(html).querySelector('[data-card-fragment] .product-card');
+          if (!card) return;
+          const li = document.createElement('li');
+          li.className = 'carousel__slide';
+          li.appendChild(document.importNode(card, true));
+          track.appendChild(li);
+          count += 1;
+        });
+        if (count) {
+          section.hidden = false;
+          initCarousel(section.querySelector('[data-carousel]'));
+        }
+      });
+  });
+
+  // Keep suggestions in step with the cart, and learn from what gets added
+  document.addEventListener('wk:cart', (event) => {
+    const cart = event.detail || {};
+    cartProductIds = new Set((cart.items || []).map((item) => String(item.product_id)));
+    document.querySelectorAll('[data-complementary] [data-rec-pool], [data-recommendations] [data-rec-pool]').forEach((pool) => {
+      const shown = rerankPool(pool);
+      const box = pool.closest('[data-complementary]');
+      if (box) box.hidden = shown === 0;
+      const carousel = pool.closest('[data-carousel]');
+      if (carousel) initCarousel(carousel);
+    });
+  });
+  document.addEventListener('wk:added', (event) => {
+    const id = String((event.detail || {}).product_id || '');
+    if (!id) return;
+    if (viewedProduct && String(viewedProduct.id) === id) { Intent.record(viewedProduct, 3); return; }
+    const el = document.querySelector(`[data-rec-item][data-id="${CSS.escape(id)}"]`);
+    if (el) Intent.record({ id, pet: el.dataset.pet, need: el.dataset.need, size: el.dataset.size, price: el.dataset.price }, 2);
+  });
 
   // "Complete your order" in the cart drawer / cart page
   function loadUpsells(scope) {
@@ -421,10 +620,11 @@
         .then((r) => r.text())
         .then((html) => {
           const upsell = parseHTML(html).querySelector('[data-upsell-body]');
-          if (upsell && upsell.querySelector('.mini-product')) {
-            box.innerHTML = upsell.innerHTML;
-            box.hidden = false;
-          }
+          if (!upsell || !upsell.querySelector('[data-rec-item]')) return;
+          box.innerHTML = upsell.innerHTML;
+          box.hidden = false;
+          if (rerankPool(box.querySelector('[data-rec-pool]')) === 0) { box.hidden = true; return; }
+          initCarousel(box.querySelector('[data-carousel]'));
         })
         .catch(() => {});
     });

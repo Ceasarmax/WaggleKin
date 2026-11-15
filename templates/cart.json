@@ -1,6 +1,7 @@
 {
   "sections": {
-    "main": { "type": "main-cart", "settings": {} }
+    "main": { "type": "main-cart", "settings": {} },
+    "recently_viewed": { "type": "recently-viewed", "settings": { "heading": "Recently viewed", "limit": 8 } }
   },
-  "order": ["main"]
+  "order": ["main", "recently_viewed"]
 }

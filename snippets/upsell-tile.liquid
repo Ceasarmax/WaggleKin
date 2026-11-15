@@ -1,0 +1,31 @@
+{%- comment -%}
+  Compact vertical product tile for the "Complete your order" carousel (cart drawer and cart page).
+  Single-variant products get a one-tap Add button; products with options link to the product page.
+  Usage: {% render 'upsell-tile', product: product %}
+{%- endcomment -%}
+{%- liquid
+  assign v = product.selected_or_first_available_variant
+  assign single = false
+  if product.has_only_default_variant or product.variants.size == 1
+    assign single = true
+  endif
+-%}
+<div class="upsell-tile">
+  <a href="{{ product.url }}" class="upsell-tile__media" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_media -%}
+      {{ product.featured_media | image_url: width: 300 | image_tag: loading: 'lazy', widths: '150, 300', sizes: '150px', alt: '' }}
+    {%- endif -%}
+  </a>
+  <a href="{{ product.url }}" class="upsell-tile__title">{{ product.title }}</a>
+  <span class="upsell-tile__price">
+    {%- if product.price_varies -%}{%- assign min_price = product.price_min | money -%}{{ 'products.from_price' | t: price: min_price }}{%- else -%}{{ v.price | money }}{%- endif -%}
+  </span>
+  {%- if single and v.available -%}
+    {%- form 'product', product, class: 'js-add-to-cart upsell-tile__form' -%}
+      <input type="hidden" name="id" value="{{ v.id }}">
+      <button type="submit" class="btn btn--outline btn--sm">{{ 'products.add_short' | t }}<span class="visually-hidden"> {{ product.title }}</span></button>
+    {%- endform -%}
+  {%- elsif product.available -%}
+    <a href="{{ product.url }}" class="btn btn--outline btn--sm">{{ 'products.choose' | t }}<span class="visually-hidden"> {{ product.title }}</span></a>
+  {%- endif -%}
+</div>

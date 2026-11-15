@@ -139,5 +139,21 @@
         "default": true
       }
     ]
+  },
+  {
+    "name": "Recommendations",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Product pages and the cart suggest products from each product's AI-curated 'Pairs well with' and 'Similar products' lists (product Metafields, editable in admin)."
+      },
+      {
+        "type": "checkbox",
+        "id": "personalize_recommendations",
+        "label": "Personalize suggestions for each shopper",
+        "info": "Reorders suggestions using what the shopper has viewed and added in this browser (dog or cat, product type, pet size), and shows 'Recently viewed'. Kept only in the shopper's browser; nothing is sent to a server.",
+        "default": true
+      }
+    ]
   }
 ]

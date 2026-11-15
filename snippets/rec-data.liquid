@@ -1,0 +1,19 @@
+{%- comment -%}
+  Data attributes on a recommended product, used by theme.js to re-rank picks for the shopper.
+  They describe the product's pet, need, pet size and price, from the AI-curated `wagglekin.profile` metafield.
+  Usage: <li {% render 'rec-data', product: rec, rank: forloop.index %}>
+{%- endcomment -%}
+{%- liquid
+  assign prof = product.metafields.wagglekin.profile.value
+  assign pet = prof.pet
+  if pet == blank
+    if product.tags contains 'Dogs' and product.tags contains 'Cats'
+      assign pet = 'both'
+    elsif product.tags contains 'Cats'
+      assign pet = 'cat'
+    elsif product.tags contains 'Dogs'
+      assign pet = 'dog'
+    endif
+  endif
+-%}
+data-rec-item data-id="{{ product.id }}" data-rank="{{ rank }}" data-pet="{{ pet }}" data-need="{{ prof.need }}" data-size="{{ prof.size }}" data-price="{{ product.price_min }}"

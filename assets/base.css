@@ -570,9 +570,6 @@ html.has-sticky-atc .toast { bottom: 88px; }
 .cart-page .free-ship { margin-bottom: 20px; }
 .cart-summary__trust { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; color: var(--color-muted); }
 .cart-upsell--page { margin-top: 32px; padding: 20px; border-radius: var(--radius); background: #fff; border: 1px solid var(--color-line); }
-.cart-upsell--page .mini-list { grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.cart-upsell--page .mini-product { grid-template-columns: 56px 1fr; }
-.cart-upsell--page .mini-product > :last-child { grid-column: 1 / -1; justify-self: start; }
 
 @media (max-width: 989px) {
   .product-gallery__slides { display: flex; aspect-ratio: auto; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: var(--radius); }
@@ -582,9 +579,6 @@ html.has-sticky-atc .toast { bottom: 88px; }
   .product-gallery__thumbs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .product-gallery__thumbs button { width: 56px; height: 56px; }
   .product-info__title { font-size: clamp(24px, 6vw, 32px); }
-  .cart-upsell--page .mini-list { grid-template-columns: 1fr; }
-  .cart-upsell--page .mini-product { grid-template-columns: 56px 1fr auto; }
-  .cart-upsell--page .mini-product > :last-child { grid-column: auto; }
 }
 @media (max-width: 640px) {
   .product-form__row { gap: 10px; }
@@ -702,3 +696,44 @@ html.has-sticky-atc .toast { bottom: 88px; }
 .drawer-item__soldout { font-size: 12.5px; font-weight: 600; color: #B42318; }
 @media (max-width: 989px) { html.has-nav-open { overflow: hidden; } }
 .product-recommendations:not(:has(.product-card)) { display: none; }
+
+/* Carousels: "You may also like", "Recently viewed", cart "Complete your order" */
+.carousel__head { align-items: center; }
+.carousel { position: relative; }
+.carousel__track { display: flex; gap: 16px; list-style: none; margin: 0; padding: 4px 2px 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.carousel__track::-webkit-scrollbar { display: none; }
+.carousel__slide { flex: 0 0 calc((100% - 3 * 16px) / 4); min-width: 0; display: flex; scroll-snap-align: start; }
+.carousel__slide > * { width: 100%; }
+.carousel__slide .product-card { height: 100%; }
+.carousel__nav { display: flex; gap: 8px; }
+.carousel__btn { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--color-line); background: #fff; color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color .15s ease, opacity .15s ease; }
+.carousel__btn:hover:not(:disabled) { border-color: var(--color-navy); }
+.carousel__btn:disabled { opacity: .35; cursor: default; }
+.recently-viewed { padding-top: clamp(32px, 5vw, 56px); }
+.product-recommendations + .recently-viewed { padding-top: 8px; }
+@media (max-width: 989px) {
+  .carousel__track { gap: 12px; }
+  .carousel__slide { flex-basis: calc((100% - 2 * 12px) / 3); }
+}
+@media (max-width: 749px) {
+  .carousel__track { gap: 10px; margin-right: calc(var(--gutter) * -1); padding-right: var(--gutter); scroll-padding-left: 0; }
+  .carousel__slide { flex-basis: 46%; }
+  .carousel__nav { display: none; }
+}
+
+/* Cart add-on tiles */
+.cart-upsell__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.cart-upsell__head .cart-upsell__title { margin: 0; }
+.carousel--tiles .carousel__track { gap: 10px; padding-bottom: 4px; margin-right: 0; padding-right: 0; }
+.carousel--tiles .carousel__slide { flex: 0 0 138px; }
+.cart-upsell--page .carousel--tiles .carousel__slide { flex-basis: 170px; }
+.cart-drawer .carousel__btn { width: 32px; height: 32px; }
+.cart-drawer .carousel__nav { display: flex; }
+.upsell-tile { display: grid; grid-template-rows: auto 1fr auto auto; gap: 6px; padding: 8px; border: 1px solid var(--color-line); border-radius: 14px; background: #fff; height: 100%; }
+.upsell-tile__media { display: block; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #fff; }
+.upsell-tile__media img { width: 100%; height: 100%; object-fit: contain; }
+.upsell-tile__title { font-size: 12.5px; font-weight: 600; line-height: 1.3; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.upsell-tile__title:hover { text-decoration: underline; }
+.upsell-tile__price { font-size: 13px; font-weight: 700; }
+.upsell-tile__form { margin: 0; }
+.upsell-tile .btn { width: 100%; padding-left: 8px; padding-right: 8px; }

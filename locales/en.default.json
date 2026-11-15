@@ -24,7 +24,9 @@
     "breadcrumbs": "Breadcrumbs",
     "payment_methods": "Payment methods",
     "all_rights": "All rights reserved.",
-    "region": "Region"
+    "region": "Region",
+    "carousel_previous": "Previous products",
+    "carousel_next": "Next products"
   },
   "accessibility": {
     "skip_to_content": "Skip to content",

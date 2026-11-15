@@ -50,6 +50,7 @@
         },
         cartType: {% if settings.cart_ajax %}"drawer"{% else %}"page"{% endif %},
         freeShippingThreshold: {{ settings.free_shipping_amount | times: 100 | json }},
+        personalize: {{ settings.personalize_recommendations | json }},
         strings: {
           addToCart: {{ 'products.add_to_cart' | t | json }},
           soldOut: {{ 'products.sold_out' | t | json }},

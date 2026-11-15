@@ -1,0 +1,27 @@
+{%- comment -%}
+  "Recently viewed" carousel. Filled by theme.js from the shopper's own browsing history, which is kept only
+  in their browser (localStorage) and never sent anywhere. Each card is rendered by the product-card-fragment section.
+  Hidden until there is at least one product to show. Works on product pages, the cart page or any template.
+{%- endcomment -%}
+<section class="section recently-viewed" data-recently-viewed data-current-id="{{ product.id }}" data-limit="{{ section.settings.limit }}" hidden>
+  <div class="page-width">
+    <div class="section__head carousel__head">
+      <h2 class="section__title">{{ section.settings.heading }}</h2>
+      {% render 'carousel-nav' %}
+    </div>
+    <div class="carousel" data-carousel>
+      <ul class="carousel__track" data-carousel-track role="list"></ul>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Recently viewed" },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 4, "max": 12, "step": 1, "default": 8 }
+  ],
+  "presets": [{ "name": "Recently viewed" }]
+}
+{% endschema %}
