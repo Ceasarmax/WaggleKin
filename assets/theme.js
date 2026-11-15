@@ -80,15 +80,20 @@
     event.preventDefault();
     const button = form.querySelector('[type="submit"]');
     if (button) button.classList.add('is-loading');
+    const formData = new FormData(form);
 
     fetch(root + 'cart/add.js', {
       method: 'POST',
       headers: { Accept: 'application/json' },
-      body: new FormData(form),
+      body: formData,
     })
       .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
       .then(({ ok, data }) => {
         if (!ok) throw new Error(data.description || data.message || 'Could not add to cart');
+        // Picked up by assets/tracking.js (add-to-cart events for analytics and ad pixels)
+        document.dispatchEvent(new CustomEvent('wagglekin:add-to-cart', {
+          detail: { response: data, quantity: Number(formData.get('quantity')) || 1 },
+        }));
         return updateCartCount().then(() => {
           showToast(`${escapeHtml(data.product_title || 'Item')} added &middot; <a href="${root}cart">View cart</a>`);
         });

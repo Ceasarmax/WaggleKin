@@ -41,6 +41,7 @@
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
 
     {{ content_for_header }}
+    {% render 'tracking' %}
     <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
   </head>
 

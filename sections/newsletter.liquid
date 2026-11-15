@@ -8,7 +8,7 @@
       {%- form 'customer', class: 'newsletter__form', id: 'NewsletterForm' -%}
         <input type="hidden" name="contact[tags]" value="newsletter">
         {%- if form.posted_successfully? -%}
-          <p class="newsletter__success" role="status">{{ 'newsletter.success' | t }}</p>
+          <p class="newsletter__success" role="status" data-track-lead>{{ 'newsletter.success' | t }}</p>
         {%- else -%}
           <label for="NewsletterEmail" class="visually-hidden">{{ 'newsletter.label' | t }}</label>
           <input id="NewsletterEmail" class="input input--pill" type="email" name="contact[email]" placeholder="{{ 'newsletter.placeholder' | t }}" autocomplete="email" required>

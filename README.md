@@ -47,6 +47,10 @@ Each market's checkout needs a shipping zone (Settings → Shipping and delivery
 - **15% off 3+ items:** the theme only advertises this. Create an automatic discount in Shopify admin → Discounts (15% off, minimum quantity 3).
 - **Newsletter:** signs people up as customers tagged `newsletter`, with email marketing consent. Send the 10% welcome code from Shopify Email or your email app.
 
+## Tracking & analytics
+
+Google Analytics 4, Google Ads, Meta pixel, TikTok pixel and Microsoft Clarity are built in. Paste the IDs in **Theme settings → Tracking & analytics**. Then add the checkout pixel (`docs/tracking/shopify-custom-pixel.js`) in Settings → Customer events, so purchases are tracked. Full steps, the event list and test instructions: [`docs/tracking.md`](docs/tracking.md).
+
 ## Before launch
 
 The mockup copy says "$49" and "US, UK, Canada & Australia", while the store currency is EUR (Malta). Update the announcement bar, trust bar and footer text in the theme editor to match your real shipping offer.

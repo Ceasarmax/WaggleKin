@@ -42,4 +42,5 @@
 - Check every description against the samples (dimensions, materials, the brush's self-cleaning mechanism).
 - Decide the lick-mat price (€19.99 suggested) and ask CJ to confirm the set contains 2 mats.
 - Switch the store currency to USD if the US LLC goes ahead, and re-enter prices.
+- Tracking: create WaggleKin's own GA4, Google Ads, Meta, TikTok and Clarity accounts (the connected Meta/TikTok ad accounts are DanceLife X's). Paste the IDs into the theme and the checkout pixel. See [tracking.md](tracking.md).
 - Syncee and Spocket have no official Claude connector. Import Syncee products via its Shopify app, then set them up here.

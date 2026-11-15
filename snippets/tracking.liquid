@@ -1,0 +1,68 @@
+{%- comment -%}
+  Storefront tracking: Google Analytics 4, Google Ads, Meta pixel, TikTok pixel, Microsoft Clarity.
+  IDs come from Theme settings → Tracking & analytics. Nothing loads when every ID is empty, or inside
+  the theme editor. The logic (consent, loading, events) lives in assets/tracking.js.
+  Checkout and purchase events come from the custom pixel in docs/tracking/shopify-custom-pixel.js.
+{%- endcomment -%}
+{%- liquid
+  assign ga4 = settings.ga4_measurement_id | strip
+  assign google_ads = settings.google_ads_id | strip
+  assign meta = settings.meta_pixel_id | strip
+  assign tiktok = settings.tiktok_pixel_id | strip
+  assign clarity = settings.clarity_project_id | strip
+  assign any_id = ga4 | append: google_ads | append: meta | append: tiktok | append: clarity
+-%}
+{%- unless request.design_mode or any_id == blank -%}
+  <script type="application/json" id="wk-tracking">
+    {
+      "ids": {
+        "ga4": {{ ga4 | json }},
+        "googleAds": {{ google_ads | json }},
+        "meta": {{ meta | json }},
+        "tiktok": {{ tiktok | json }},
+        "clarity": {{ clarity | json }}
+      },
+      "currency": {{ cart.currency.iso_code | json }},
+      "pageType": {{ request.page_type | json }},
+      {%- case request.page_type -%}
+        {%- when 'product' -%}
+          "product": {% render 'tracking-item', product: product, variant: product.selected_or_first_available_variant, quantity: 1 %},
+        {%- when 'collection' -%}
+          "list": {
+            "id": {{ collection.handle | json }},
+            "name": {{ collection.title | json }},
+            "items": [
+              {%- for item in collection.products limit: 20 -%}
+                {% render 'tracking-item', product: item, variant: item.selected_or_first_available_variant, quantity: 1 %}{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            ]
+          },
+        {%- when 'search' -%}
+          {%- if search.performed -%}
+            "search": {
+              "terms": {{ search.terms | json }},
+              "items": [
+                {%- assign separator = '' -%}
+                {%- for item in search.results limit: 20 -%}
+                  {%- if item.object_type == 'product' -%}
+                    {{ separator }}{% render 'tracking-item', product: item, variant: item.selected_or_first_available_variant, quantity: 1 %}
+                    {%- assign separator = ',' -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              ]
+            },
+          {%- endif -%}
+        {%- when 'cart' -%}
+          "cart": {
+            "items": [
+              {%- for line in cart.items -%}
+                {% render 'tracking-item', product: line.product, variant: line.variant, quantity: line.quantity %}{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            ]
+          },
+      {%- endcase -%}
+      "version": 1
+    }
+  </script>
+  <script src="{{ 'tracking.js' | asset_url }}" defer></script>
+{%- endunless -%}

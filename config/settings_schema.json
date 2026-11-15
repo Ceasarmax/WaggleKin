@@ -132,5 +132,49 @@
         "default": true
       }
     ]
+  },
+  {
+    "name": "Tracking & analytics",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Paste an ID to switch a tag on; leave it empty to switch it off. Tags respect the visitor's privacy choices. These cover the storefront. Checkout and purchases are tracked by the WaggleKin custom pixel in Settings → Customer events (see docs/tracking.md)."
+      },
+      {
+        "type": "text",
+        "id": "ga4_measurement_id",
+        "label": "Google Analytics 4 measurement ID",
+        "placeholder": "G-XXXXXXXXXX",
+        "info": "Google Analytics → Admin → Data streams → Web."
+      },
+      {
+        "type": "text",
+        "id": "google_ads_id",
+        "label": "Google Ads tag ID",
+        "placeholder": "AW-XXXXXXXXXX",
+        "info": "Google Ads → Goals → Conversions → Settings → Google tag. Used for remarketing audiences."
+      },
+      {
+        "type": "text",
+        "id": "meta_pixel_id",
+        "label": "Meta pixel (dataset) ID",
+        "placeholder": "123456789012345",
+        "info": "Meta Events Manager → Data sources. Numbers only."
+      },
+      {
+        "type": "text",
+        "id": "tiktok_pixel_id",
+        "label": "TikTok pixel ID",
+        "placeholder": "CXXXXXXXXXXXXXXXXXXX",
+        "info": "TikTok Ads Manager → Tools → Events → Web events."
+      },
+      {
+        "type": "text",
+        "id": "clarity_project_id",
+        "label": "Microsoft Clarity project ID",
+        "placeholder": "abcd1234ef",
+        "info": "Clarity → Settings → Overview → Project ID."
+      }
+    ]
   }
 ]

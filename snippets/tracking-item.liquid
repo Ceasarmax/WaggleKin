@@ -1,0 +1,5 @@
+{%- comment -%}
+  One product as JSON for assets/tracking.js. Usage: {% render 'tracking-item', product: product, variant: variant, quantity: 1 %}
+  Item IDs are Shopify variant IDs, which is what Meta and TikTok product catalogs synced from Shopify use.
+{%- endcomment -%}
+{"id":{{ variant.id | json }},"productId":{{ product.id | json }},"name":{{ product.title | json }},"variant":{% if product.has_only_default_variant %}null{% else %}{{ variant.title | json }}{% endif %},"brand":{{ product.vendor | json }},"category":{{ product.type | json }},"sku":{{ variant.sku | default: '' | json }},"priceCents":{{ variant.price | default: 0 }},"quantity":{{ quantity | default: 1 }}}
