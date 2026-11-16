@@ -1,6 +1,7 @@
 {%- comment -%}
   Product card used in grids. Usage: {% render 'product-card', product: product %}
-  Badge: tag "badge:Bestseller" / "badge:New", or automatic "Save X%" when on sale.
+  Badge: tag "badge:New" (or another factual label), or automatic "Save X%" when on sale.
+  Ranking or endorsement claims (best-seller, #1, top, popular, trending, vet) are never shown.
   Pass eager: true for the first row of a grid so the largest above-the-fold image isn't lazy-loaded.
 {%- endcomment -%}
 {%- liquid
@@ -18,6 +19,10 @@
       assign badge = tag | remove: 'badge:' | strip
     endif
   endfor
+  assign badge_check = badge | downcase
+  if badge_check contains 'best' or badge_check contains '#1' or badge_check contains 'top' or badge_check contains 'popular' or badge_check contains 'trending' or badge_check contains 'vet'
+    assign badge = ''
+  endif
   assign variant = product.selected_or_first_available_variant
   if badge == '' and variant.compare_at_price > variant.price
     assign saving = variant.compare_at_price | minus: variant.price | times: 100.0 | divided_by: variant.compare_at_price | round

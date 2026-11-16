@@ -27,7 +27,7 @@ Tip: make the collections **automated** on product tags (e.g. `dogs` = tag is `D
 ## Products
 
 - **Pet label** above the title (e.g. "DOGS & CATS") is the product's **Product type**.
-- **Badges:** add a tag `badge:Bestseller` or `badge:New`. Products with a compare-at price automatically show "Save X%".
+- **Badges:** add a tag `badge:New` (or another factual label). Ranking or endorsement claims such as "Bestseller", "#1", "Top", "Popular", "Trending" or "Vet" are ignored on purpose. Products with a compare-at price automatically show "Save X%".
 - **No photos yet?** Cards show a brand illustration picked from the product handle (bed, brush, fountain, lick mat, feeder, wand, gel mat, bottle). Override with tags `illo:fountain` and `bg:mint` / `bg:peach` / `bg:yellow` / `bg:pink`. Once you upload product photos, they replace the illustration.
 
 ## Markets & country selector

@@ -6,6 +6,8 @@
   --color-white: #FFFFFF;
   --color-line: #F1E3D3;
   --color-muted: #4A5468;
+  /* Focus ring: deeper teal, 3:1+ against white, cream, peach and navy (brand teal is 2.6:1 on white) */
+  --color-focus: #1F8A7E;
   --font-heading: 'Nunito', ui-rounded, 'Arial Rounded MT Bold', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --radius-sm: 12px;
@@ -41,7 +43,7 @@ ul { list-style: none; margin: 0; padding: 0; }
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 .skip-link:focus { position: fixed !important; top: 8px; left: 8px; width: auto; height: auto; clip: auto; z-index: 100; background: #fff; padding: 8px 14px; border-radius: 8px; }
-:focus-visible { outline: 3px solid var(--color-teal); outline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
 
 .page-width { max-width: calc(var(--page-width) + var(--gutter) * 2); margin: 0 auto; padding: 0 var(--gutter); }
 .page-width--narrow { max-width: calc(820px + var(--gutter) * 2); }
@@ -309,7 +311,7 @@ span.tv__play:hover { transform: none; }
 .pill input { position: absolute; opacity: 0; pointer-events: none; }
 .pill span { display: inline-block; padding: 8px 16px; border: 1.5px solid #E4D6C6; border-radius: 999px; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
 .pill input:checked + span { border-color: var(--color-navy); background: var(--color-navy); color: #fff; }
-.pill input:focus-visible + span { outline: 3px solid var(--color-teal); outline-offset: 2px; }
+.pill input:focus-visible + span { outline: 3px solid var(--color-focus); outline-offset: 2px; }
 .product-form__row { display: flex; gap: 12px; }
 .product-form__row .btn { flex: 1; }
 .product-info__description { color: var(--color-muted); }
@@ -655,7 +657,7 @@ html.has-sticky-atc .toast { bottom: 88px; }
 @media (max-width: 989px) {
   .site-nav.is-open { max-height: calc(100dvh - 72px); overflow-y: auto; overscroll-behavior: contain; box-shadow: var(--shadow); }
 }
-.input:focus-visible { outline: 3px solid var(--color-teal); outline-offset: 2px; }
+.input:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
 
 /* Contact page */
 .contact-form { display: grid; gap: 16px; margin-top: 24px; }
