@@ -957,6 +957,13 @@
       play.remove();
       const poster = player.querySelector('.tv__poster');
       if (poster) poster.remove();
+      player.classList.add('is-playing');
+      // Shopify-hosted video: start it inside the click so browsers allow sound
+      const video = player.querySelector('video');
+      if (video) {
+        const started = video.play();
+        if (started && started.catch) started.catch(() => {});
+      }
     });
   });
 })();
