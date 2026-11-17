@@ -17,7 +17,7 @@ const CONFIG = {
   googleAdsId: '', //            'AW-XXXXXXXXXX'  Google Ads → Goals → Conversions → Settings → Google tag
   googleAdsPurchaseLabel: '', // 'AbCdEfGhIjK'    The part after the slash in send_to 'AW-XXXXXXXXXX/AbCdEfGhIjK'
   //                                              (Google Ads → your "Purchase" conversion → Tag setup → Install the tag yourself)
-  metaPixelId: '', //            '123456789012345' Meta Events Manager → Data sources
+  metaPixelId: '', //            Leave empty: Meta already runs through the Facebook & Instagram app (would double-count)
   tiktokPixelId: '', //          'CXXXXXXXXXXXXXXXXXXX' TikTok Ads Manager → Tools → Events → Web events
 };
 

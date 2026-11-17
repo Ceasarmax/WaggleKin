@@ -159,7 +159,7 @@
         "id": "meta_pixel_id",
         "label": "Meta pixel (dataset) ID",
         "placeholder": "123456789012345",
-        "info": "Meta Events Manager → Data sources. Numbers only."
+        "info": "Leave empty while the Facebook & Instagram app is connected: it already runs the WaggleKin pixel, and filling this in would count every event twice."
       },
       {
         "type": "text",

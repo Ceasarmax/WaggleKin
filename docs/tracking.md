@@ -28,13 +28,15 @@ Shopify doesn't run theme code on the checkout and thank-you pages. Checkout eve
 
 ## Step 1: Create the accounts and get the IDs
 
-The connected Meta and TikTok ad accounts belong to DanceLife X. Create WaggleKin's own, so audiences and conversions don't mix.
+**Meta is already done.** The WaggleKin pixel (dataset `3054148364924633`, in the WaggleKin ad account) runs through Shopify's **Facebook & Instagram** app. Leave the Meta ID **empty** in the theme and in the custom pixel, or every event counts twice. One thing to change: the app sends browser events only so far. In Shopify admin → Facebook & Instagram → Settings → Data sharing, choose **Maximum** to add server-side events (Conversions API).
+
+The connected TikTok ad account belongs to DanceLife X. Create a WaggleKin one, so audiences and conversions don't mix.
 
 | Platform | Where to create it | ID to copy |
 |---|---|---|
 | **Google Analytics 4** | analytics.google.com → Admin → Create property "WaggleKin" (US, USD) → Web data stream for `wagglekin.com` | Measurement ID, `G-XXXXXXXXXX` |
 | **Google Ads** | ads.google.com → Goals → Conversions → New conversion action → Website → add manually → Category **Purchase**, "Use different values for each conversion", Count **Every**. Then Tag setup → Install the tag yourself | The tag ID `AW-XXXXXXXXXX`, and the **conversion label**: the text after the slash in `send_to: 'AW-XXXXXXXXXX/AbCdEfGh123'` |
-| **Meta pixel** | business.facebook.com → a WaggleKin business portfolio → Events Manager → Connect data sources → Web → name it "WaggleKin" | Dataset (pixel) ID: 15–16 digits |
+| **Meta pixel** | Already set up through the Facebook & Instagram app | Nothing to copy: leave the Meta fields empty |
 | **TikTok pixel** | ads.tiktok.com (WaggleKin ad account) → Tools → Events → Web events → Set up web events → Manual setup | Pixel ID: starts with `C`, about 20 characters |
 | **Microsoft Clarity** | clarity.microsoft.com → New project → `wagglekin.com` | Settings → Overview → Project ID |
 
