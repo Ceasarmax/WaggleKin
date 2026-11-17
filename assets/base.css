@@ -740,3 +740,11 @@ html.has-sticky-atc .toast { bottom: 88px; }
 .upsell-tile__price { font-size: 13px; font-weight: 700; }
 .upsell-tile__form { margin: 0; }
 .upsell-tile .btn { width: 100%; padding-left: 8px; padding-right: 8px; }
+
+/* Kit pages (templates/collection.kit.json) */
+.kit-summary { display: grid; gap: 6px; margin: 4px 0 20px; padding: 18px 20px; background: var(--color-mint); border-radius: var(--radius); max-width: 640px; }
+.kit-summary p { margin: 0; }
+.kit-summary__total { font-family: var(--font-heading); font-weight: 900; font-size: 1.5rem; color: var(--color-navy); }
+.kit-summary__ship { color: var(--color-navy); }
+.kit-summary__hint { color: var(--color-muted); font-size: .9rem; }
+.kit-summary .delivery-badge { justify-self: start; }

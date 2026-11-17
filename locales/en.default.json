@@ -89,7 +89,12 @@
     "active_filters": "Active filters",
     "remove_filter": "Remove filter",
     "pagination": "Pagination",
-    "no_matches": "No products match these filters."
+    "no_matches": "No products match these filters.",
+    "kit_total": "All {{ count }} for {{ price }}",
+    "kit_total_from": "All {{ count }} from {{ price }}",
+    "kit_free_ship": "Together they qualify for free US shipping on orders over {{ amount }}.",
+    "kit_add_more": "Add {{ amount }} more for free US shipping.",
+    "kit_hint": "Choose a size or colour for each item below, then add it to your cart."
   },
   "cart": {
     "title": "Your cart",

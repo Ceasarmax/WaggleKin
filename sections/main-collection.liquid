@@ -27,6 +27,54 @@
       </div>
     </div>
 
+    {%- if section.settings.kit_summary -%}
+      {%- comment -%} Kit pages: the live total of the kit's items and whether it clears free US shipping. {%- endcomment -%}
+      {%- liquid
+        assign kit_total = 0
+        assign kit_count = 0
+        assign kit_varies = false
+        assign kit_all_us = true
+        for p in collection.products
+          if p.available
+            assign kit_total = kit_total | plus: p.price_min
+            assign kit_count = kit_count | plus: 1
+            if p.price_varies
+              assign kit_varies = true
+            endif
+            unless p.tags contains 'ship:us'
+              assign kit_all_us = false
+            endunless
+          endif
+        endfor
+        assign kit_threshold = settings.free_shipping_amount | times: 100
+      -%}
+      {%- if kit_count > 1 -%}
+        <div class="kit-summary">
+          <p class="kit-summary__total">
+            {%- if kit_varies -%}
+              {{ 'collections.kit_total_from' | t: count: kit_count, price: kit_total | money }}
+            {%- else -%}
+              {{ 'collections.kit_total' | t: count: kit_count, price: kit_total | money }}
+            {%- endif -%}
+          </p>
+          <p class="kit-summary__ship">
+            {%- if kit_total >= kit_threshold -%}
+              {{ 'collections.kit_free_ship' | t: amount: kit_threshold | money_without_trailing_zeros }}
+            {%- else -%}
+              {{ 'collections.kit_add_more' | t: amount: kit_threshold | minus: kit_total | money }}
+            {%- endif -%}
+          </p>
+          {%- if kit_all_us -%}
+            <p class="delivery-badge delivery-badge--us">
+              {% render 'icon', name: 'truck', icon_size: 16 %}
+              <span><strong>{{ 'products.ship_us' | t }}</strong> · {{ settings.delivery_days_us }} {{ 'products.business_days' | t }}</span>
+            </p>
+          {%- endif -%}
+          <p class="kit-summary__hint">{{ 'collections.kit_hint' | t }}</p>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
     <div class="collection-toolbar">
       {%- if collection.filters.size > 0 -%}
         <details class="facets-toggle" data-facets{% if active_count > 0 %} open{% endif %}>
@@ -138,7 +186,8 @@
 {
   "name": "Collection",
   "settings": [
-    { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 }
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "checkbox", "id": "kit_summary", "label": "Show kit total", "info": "For kit collections: shows what the items cost together and whether that clears free US shipping.", "default": false }
   ],
   "blocks": [{ "type": "@app" }]
 }
