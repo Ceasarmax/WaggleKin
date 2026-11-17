@@ -1,0 +1,180 @@
+{%- comment -%}
+  "You may also like" carousel on product pages.
+
+  Where the picks come from, in order:
+  1. The AI-curated "Similar products" list on the product (metafield wagglekin.related, editable in Shopify admin).
+  2. Rule-based picks from the same category, pet and shipping speed, to fill any gaps.
+  3. Optional: Shopify's own "related" picks (learned from orders), blended in by theme.js when the
+     "Use Shopify's automatic recommendations" setting is on.
+
+  Liquid renders a pool of candidates in curated order. theme.js re-ranks them for the shopper, using
+  the pets and needs they've browsed and what's already in their cart, then shows the top ones.
+  With JavaScript off, the first ones in curated order show.
+{%- endcomment -%}
+{%- liquid
+  assign limit = section.settings.limit
+  assign pool_max = limit | plus: 6
+  assign skip_handles = 'frontpage,all,fast-us-shipping,value-picks,new-arrivals,pack-favourites,holiday-shop,gifts,bundles,dogs,cats' | split: ','
+
+  assign in_cart = ''
+  for item in cart.items
+    assign in_cart = in_cart | append: ',' | append: item.product_id | append: ','
+  endfor
+-%}
+<section class="section product-recommendations" data-recommendations data-rec-list="related" data-section-id="{{ section.id }}" data-url="{{ routes.product_recommendations_url }}" data-product-id="{{ product.id }}" data-limit="{{ limit }}" data-ship="{% if product.tags contains 'ship:us' %}us{% elsif product.tags contains 'ship:global' %}global{% endif %}" data-use-shopify="{{ section.settings.use_shopify }}">
+  {%- if recommendations.performed -%}
+    {%- comment -%} Shopify Recommendations API response (requested by theme.js); merged into the pool client-side. {%- endcomment -%}
+    {%- if recommendations.intent == 'complementary' -%}
+      <ul data-recommendations-complementary>
+        {%- for rec in recommendations.products -%}
+          {%- if rec.available -%}
+            {%- unless rec.metafields.wagglekin.profile.value.recommend == false -%}
+              <li {% render 'rec-data', product: rec, rank: forloop.index %} data-source="shopify">{% render 'mini-product', product: rec %}</li>
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <ul data-recommendations-related>
+        {%- for rec in recommendations.products -%}
+          {%- if rec.available -%}
+            {%- unless rec.metafields.wagglekin.profile.value.recommend == false -%}
+              <li class="carousel__slide" {% render 'rec-data', product: rec, rank: forloop.index %} data-source="shopify">{% render 'product-card', product: rec %}</li>
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  {%- elsif product != blank -%}
+    {%- liquid
+      assign is_cat = false
+      assign is_dog = false
+      if product.tags contains 'Cats'
+        assign is_cat = true
+      endif
+      if product.tags contains 'Dogs'
+        assign is_dog = true
+      endif
+      assign is_food = false
+      if product.tags contains 'Food'
+        assign is_food = true
+      endif
+      assign max_price = product.price_max | times: 4
+      if max_price < 6000
+        assign max_price = 6000
+      endif
+
+      assign source = nil
+      for c in product.collections
+        unless skip_handles contains c.handle
+          if c.products_count > 1
+            assign source = c
+            break
+          endif
+        endunless
+      endfor
+
+      # The first few "Pairs well with" picks already show beside the buy button; don't repeat them here.
+      assign shown_ids = ',' | append: product.id | append: ','
+      assign comp_seen = 0
+      for c in product.metafields.wagglekin.complementary.value
+        if comp_seen >= 3
+          break
+        endif
+        if c.available
+          assign shown_ids = shown_ids | append: c.id | append: ','
+          assign comp_seen = comp_seen | plus: 1
+        endif
+      endfor
+      assign shown = 0
+    -%}
+    {%- capture rec_items -%}
+      {%- for pass in (1..3) -%}
+        {%- if shown >= pool_max -%}{%- break -%}{%- endif -%}
+        {%- liquid
+          case pass
+            when 1
+              assign pool = product.metafields.wagglekin.related.value
+            when 2
+              assign pool = source.products
+            else
+              if is_cat and is_dog == false
+                assign pool = collections['cats'].products
+              elsif is_dog and is_cat == false
+                assign pool = collections['dogs'].products
+              else
+                assign pool = collections['pack-favourites'].products
+              endif
+          endcase
+        -%}
+        {%- for rec in pool -%}
+          {%- if shown >= pool_max -%}{%- break -%}{%- endif -%}
+          {%- liquid
+            assign key = ',' | append: rec.id | append: ','
+            assign skip_rec = false
+            if shown_ids contains key or rec.available == false or in_cart contains key
+              assign skip_rec = true
+            endif
+            if rec.metafields.wagglekin.profile.value.recommend == false
+              assign skip_rec = true
+            endif
+            # Curated picks (pass 1) were chosen with these rules in mind; the rule-based fill applies them strictly.
+            if pass > 1
+              if product.tags contains 'ship:us' and rec.tags contains 'ship:global'
+                assign skip_rec = true
+              endif
+              if is_cat and is_dog == false
+                unless rec.tags contains 'Cats'
+                  assign skip_rec = true
+                endunless
+              endif
+              if is_dog and is_cat == false
+                unless rec.tags contains 'Dogs'
+                  assign skip_rec = true
+                endunless
+              endif
+              if is_food == false and rec.tags contains 'Food'
+                assign skip_rec = true
+              endif
+              if rec.price_min > max_price
+                assign skip_rec = true
+              endif
+            endif
+          -%}
+          {%- unless skip_rec -%}
+            {%- assign shown = shown | plus: 1 -%}
+            <li class="carousel__slide" {% render 'rec-data', product: rec, rank: shown %} data-source="{% if pass == 1 %}curated{% else %}rules{% endif %}"{% if shown > limit %} hidden{% endif %}>
+              {% render 'product-card', product: rec %}
+            </li>
+            {%- assign shown_ids = shown_ids | append: key -%}
+          {%- endunless -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+    {%- if shown > 0 -%}
+      <div class="page-width">
+        <div class="section__head carousel__head">
+          <h2 class="section__title">{{ section.settings.heading }}</h2>
+          {% render 'carousel-nav' %}
+        </div>
+        <div class="carousel" data-carousel>
+          <ul class="carousel__track" data-carousel-track data-rec-pool data-limit="{{ limit }}" role="list">
+            {{ rec_items }}
+          </ul>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 4, "max": 12, "step": 1, "default": 8 },
+    { "type": "checkbox", "id": "use_shopify", "label": "Blend in Shopify's automatic recommendations", "info": "Picks come from the AI-curated 'Similar products' list on each product (editable in the product's Metafields). Turn this on once the store has a few months of sales, so Shopify's purchase-based picks are mixed in.", "default": false }
+  ],
+  "presets": [{ "name": "Product recommendations" }]
+}
+{% endschema %}

@@ -1,0 +1,233 @@
+{%- comment -%}
+  "Complete your order" carousel for the cart drawer and cart page.
+  theme.js requests this file through Shopify's Product Recommendations API:
+  /recommendations/products?section_id=cart-upsell&product_id=<first cart item>&limit=8&intent=complementary
+
+  Where the picks come from, in order:
+  1. AI-curated "Pairs well with" lists (metafield wagglekin.complementary) of every item in the cart. A pick
+     suggested by several cart items ranks higher.
+  2. Shopify's complementary picks (Search & Discovery app), when set up.
+  3. The newest item's category, then the pet's main collection / Pack favourites.
+
+  Picks must be:
+  - in stock and not already in the cart;
+  - for the same pet as the cart, and not food;
+  - US-shipped, unless the cart already has Value Picks;
+  - a sensible add-on price: roughly the amount still needed for free shipping, $35 max;
+  - from the same warehouse as the cart until it qualifies for free shipping, since items from another
+    warehouse ship, and are charged, separately.
+{%- endcomment -%}
+{%- liquid
+  assign max_tiles = 8
+  assign in_cart = ''
+  assign cart_has_global = false
+  assign has_cat = false
+  assign has_dog = false
+  assign has_td = false
+  assign has_cj = false
+  for item in cart.items
+    if item.product.tags contains 'topdawg-fulfilled'
+      assign has_td = true
+    else
+      assign has_cj = true
+    endif
+    assign in_cart = in_cart | append: ',' | append: item.product_id | append: ','
+    if item.product.tags contains 'ship:global'
+      assign cart_has_global = true
+    endif
+    if item.product.tags contains 'Cats'
+      assign has_cat = true
+    endif
+    if item.product.tags contains 'Dogs'
+      assign has_dog = true
+    endif
+  endfor
+
+  assign threshold_cents = settings.free_shipping_amount | times: 100
+  assign remaining = threshold_cents | minus: cart.total_price
+  assign price_cap = 3500
+  if remaining > 0
+    assign price_cap = remaining | plus: 1500
+    if price_cap < 1500
+      assign price_cap = 1500
+    endif
+    if price_cap > 3500
+      assign price_cap = 3500
+    endif
+  endif
+
+  # Curated "pairs well with" ids from every cart item; a pick suggested by 2+ items goes first.
+  assign curated_once = ''
+  assign curated_twice = ''
+  for item in cart.items
+    for c in item.product.metafields.wagglekin.complementary.value
+      assign ck = ',' | append: c.id | append: ','
+      if curated_once contains ck
+        unless curated_twice contains ck
+          assign curated_twice = curated_twice | append: ck
+        endunless
+      else
+        assign curated_once = curated_once | append: ck
+      endif
+    endfor
+  endfor
+
+  assign skip_handles = 'frontpage,all,fast-us-shipping,value-picks,new-arrivals,pack-favourites,holiday-shop,gifts,bundles,dogs,cats' | split: ','
+  assign category = nil
+  assign first_item = cart.items.first
+  for c in first_item.product.collections
+    unless skip_handles contains c.handle
+      assign category = c
+      break
+    endunless
+  endfor
+
+  if has_cat and has_dog == false
+    assign species_pool = collections['cats'].products
+  elsif has_dog and has_cat == false
+    assign species_pool = collections['dogs'].products
+  else
+    assign species_pool = collections['pack-favourites'].products
+  endif
+
+  assign shown = 0
+  assign shown_ids = ''
+-%}
+<div data-upsell-body>
+  <div class="cart-upsell__head carousel__head">
+    <h3 class="cart-upsell__title">{{ 'cart.upsell_heading' | t }}</h3>
+    {% render 'carousel-nav' %}
+  </div>
+  <div class="carousel carousel--tiles" data-carousel>
+    <ul class="carousel__track" data-carousel-track data-rec-pool data-limit="{{ max_tiles }}" role="list">
+      {%- comment -%} Passes 1–2: the curated lists of every cart item (pass 1 keeps only picks shared by 2+ items). {%- endcomment -%}
+      {%- for pass in (1..2) -%}
+        {%- for item in cart.items -%}
+          {%- for rec in item.product.metafields.wagglekin.complementary.value -%}
+            {%- if shown >= max_tiles -%}{%- break -%}{%- endif -%}
+            {%- liquid
+              assign skip_rec = false
+              assign key = ',' | append: rec.id | append: ','
+              if pass == 1
+                unless curated_twice contains key
+                  assign skip_rec = true
+                endunless
+              endif
+              assign key = ',' | append: rec.id | append: ','
+              if in_cart contains key or shown_ids contains key or rec.available == false
+                assign skip_rec = true
+              endif
+              if rec.metafields.wagglekin.profile.value.recommend == false
+                assign skip_rec = true
+              endif
+              if cart_has_global == false and rec.tags contains 'ship:global'
+                assign skip_rec = true
+              endif
+              if has_cat and has_dog == false
+                unless rec.tags contains 'Cats'
+                  assign skip_rec = true
+                endunless
+              endif
+              if has_dog and has_cat == false
+                unless rec.tags contains 'Dogs'
+                  assign skip_rec = true
+                endunless
+              endif
+              if rec.tags contains 'Food'
+                assign skip_rec = true
+              endif
+              if remaining > 0
+                if has_cj and has_td == false and rec.tags contains 'topdawg-fulfilled'
+                  assign skip_rec = true
+                endif
+                if has_td and has_cj == false
+                  unless rec.tags contains 'topdawg-fulfilled'
+                    assign skip_rec = true
+                  endunless
+                endif
+              endif
+              if rec.price_min > price_cap
+                assign skip_rec = true
+              endif
+            -%}
+            {%- unless skip_rec -%}
+              {%- assign shown = shown | plus: 1 -%}
+              <li class="carousel__slide" {% render 'rec-data', product: rec, rank: shown %}>{% render 'upsell-tile', product: rec %}</li>
+              {%- assign shown_ids = shown_ids | append: key -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      {%- endfor -%}
+      {%- comment -%} Passes 3–6: Shopify's complementary picks, then the category, the pet's collection and Pack favourites. {%- endcomment -%}
+      {%- for pass in (3..6) -%}
+        {%- if shown >= max_tiles -%}{%- break -%}{%- endif -%}
+        {%- liquid
+          assign pool = nil
+          case pass
+            when 3
+              if recommendations.performed
+                assign pool = recommendations.products
+              endif
+            when 4
+              assign pool = category.products
+            when 5
+              assign pool = species_pool
+            else
+              assign pool = collections['pack-favourites'].products
+          endcase
+        -%}
+        {%- for rec in pool -%}
+          {%- if shown >= max_tiles -%}{%- break -%}{%- endif -%}
+          {%- liquid
+            assign skip_rec = false
+              assign key = ',' | append: rec.id | append: ','
+              if in_cart contains key or shown_ids contains key or rec.available == false
+                assign skip_rec = true
+              endif
+              if rec.metafields.wagglekin.profile.value.recommend == false
+                assign skip_rec = true
+              endif
+              if cart_has_global == false and rec.tags contains 'ship:global'
+                assign skip_rec = true
+              endif
+              if has_cat and has_dog == false
+                unless rec.tags contains 'Cats'
+                  assign skip_rec = true
+                endunless
+              endif
+              if has_dog and has_cat == false
+                unless rec.tags contains 'Dogs'
+                  assign skip_rec = true
+                endunless
+              endif
+              if rec.tags contains 'Food'
+                assign skip_rec = true
+              endif
+              if remaining > 0
+                if has_cj and has_td == false and rec.tags contains 'topdawg-fulfilled'
+                  assign skip_rec = true
+                endif
+                if has_td and has_cj == false
+                  unless rec.tags contains 'topdawg-fulfilled'
+                    assign skip_rec = true
+                  endunless
+                endif
+              endif
+              if rec.price_min > price_cap
+                assign skip_rec = true
+              endif
+          -%}
+            {%- unless skip_rec -%}
+              {%- assign shown = shown | plus: 1 -%}
+              <li class="carousel__slide" {% render 'rec-data', product: rec, rank: shown %}>{% render 'upsell-tile', product: rec %}</li>
+              {%- assign shown_ids = shown_ids | append: key -%}
+            {%- endunless -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Cart upsell" }
+{% endschema %}

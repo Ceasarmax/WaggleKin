@@ -4,7 +4,7 @@
   endif
 -%}
 <div class="price{% if variant.compare_at_price > variant.price %} price--sale{% endif %}">
-  <span class="visually-hidden">{{ 'products.sale_price' | t }}</span>
+  <span class="visually-hidden">{% if variant.compare_at_price > variant.price %}{{ 'products.sale_price' | t }}{% else %}{{ 'products.regular_price' | t }}{% endif %}</span>
   <span class="price__current">
     {%- if product.price_varies and show_from -%}
       {%- assign min_price = product.price_min | money -%}

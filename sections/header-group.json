@@ -14,7 +14,7 @@
     "announcement": {
       "type": "announcement-bar",
       "settings": {
-        "text": "Free US shipping on orders over [threshold] · Most orders ship from our US warehouse · 30-day happy-pet returns"
+        "text": "Free US shipping on orders over [threshold] · Most orders ship from our US warehouse · Easy 30-day returns"
       }
     },
     "header": {

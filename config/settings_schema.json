@@ -101,6 +101,13 @@
         "default": "$49"
       },
       {
+        "type": "number",
+        "id": "free_shipping_amount",
+        "label": "Free shipping threshold (number, for the cart progress bar)",
+        "info": "Must match the free-shipping rate in Settings → Shipping and delivery (US: 49).",
+        "default": 49
+      },
+      {
         "type": "header",
         "content": "Delivery times"
       },
@@ -128,7 +135,23 @@
       {
         "type": "checkbox",
         "id": "cart_ajax",
-        "label": "Add to cart without leaving the page",
+        "label": "Open a slide-out cart when items are added",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Recommendations",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Product pages and the cart suggest products from each product's AI-curated 'Pairs well with' and 'Similar products' lists (product Metafields, editable in admin)."
+      },
+      {
+        "type": "checkbox",
+        "id": "personalize_recommendations",
+        "label": "Personalize suggestions for each shopper",
+        "info": "Reorders suggestions using what the shopper has viewed and added in this browser (dog or cat, product type, pet size), and shows 'Recently viewed'. Kept only in the shopper's browser; nothing is sent to a server.",
         "default": true
       }
     ]
