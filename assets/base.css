@@ -751,3 +751,6 @@ html.has-sticky-atc .toast { bottom: 88px; }
 .kit-summary__ship { color: var(--color-navy); }
 .kit-summary__hint { color: var(--color-muted); font-size: .9rem; }
 .kit-summary .delivery-badge { justify-self: start; }
+
+.product-info__perk-link { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--color-line); }
+.product-info__perk-link:hover { text-decoration-color: currentColor; }

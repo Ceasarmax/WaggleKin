@@ -189,7 +189,7 @@
         </div>
 
         <ul class="product-info__perks">
-          <li>{% render 'icon', name: 'return' %} {{ section.settings.perk_2 | replace: '[threshold]', threshold }}</li>
+          <li>{% render 'icon', name: 'return' %} {% if pages['returns'] != empty %}<a href="{{ pages['returns'].url }}" class="product-info__perk-link">{{ section.settings.perk_2 | replace: '[threshold]', threshold }}</a>{% else %}{{ section.settings.perk_2 | replace: '[threshold]', threshold }}{% endif %}</li>
           <li>{% render 'icon', name: 'lock' %} {{ section.settings.perk_3 | replace: '[threshold]', threshold }}</li>
         </ul>
         {%- if shop.enabled_payment_types.size > 0 -%}
