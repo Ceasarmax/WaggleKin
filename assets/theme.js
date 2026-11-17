@@ -48,8 +48,19 @@
     dd.addEventListener('toggle', () => {
       if (dd.open) dropdowns.forEach((other) => { if (other !== dd) other.open = false; });
     });
-    dd.parentElement.addEventListener('mouseenter', () => { if (desktop.matches) { dd.open = true; dd.dataset.hoverOpened = '1'; } });
-    dd.parentElement.addEventListener('mouseleave', () => { if (desktop.matches) { dd.open = false; delete dd.dataset.hoverOpened; } });
+    // Hover menus: open at once, but wait a moment before closing so a mouse that drifts off the
+    // menu for a second (or cuts a corner on the way to a link) doesn't lose it.
+    let closeTimer = null;
+    dd.parentElement.addEventListener('mouseenter', () => {
+      if (!desktop.matches) return;
+      clearTimeout(closeTimer);
+      if (!dd.open) { dd.open = true; dd.dataset.hoverOpened = '1'; }
+    });
+    dd.parentElement.addEventListener('mouseleave', () => {
+      if (!desktop.matches) return;
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(() => { dd.open = false; delete dd.dataset.hoverOpened; }, 450);
+    });
     const summary = dd.querySelector('summary');
     if (summary) {
       summary.addEventListener('click', (event) => {

@@ -428,12 +428,15 @@ span.tv__play:hover { transform: none; }
 .site-nav__caret { width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s ease; }
 .site-nav__dropdown[open] .site-nav__caret { transform: rotate(-135deg) translateY(-1px); }
 .site-nav__submenu { position: absolute; top: calc(100% + 10px); left: -16px; z-index: 40; min-width: 220px; display: grid; gap: 2px; padding: 10px; background: #fff; border: 1px solid var(--color-line); border-radius: 14px; box-shadow: var(--shadow); }
+/* Invisible bridge over the 10px gap between the menu label and the panel, so moving down into it keeps it open */
+.site-nav__submenu::before { content: ''; position: absolute; left: 0; right: 0; top: -14px; height: 14px; }
 .site-nav__sublink { display: block; padding: 8px 10px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
 .site-nav__sublink:hover, .site-nav__sublink.is-active { background: var(--color-peach); }
 .site-nav__sublink--all { font-weight: 700; }
 @media (max-width: 989px) {
   .site-nav__dropdown > summary { display: flex; justify-content: space-between; width: 100%; padding: 12px 0; border-bottom: 1px solid var(--color-line); }
   .site-nav__submenu { position: static; min-width: 0; padding: 4px 0 8px 12px; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+  .site-nav__submenu::before { display: none; }
   .site-nav__sublink { padding: 10px 0; white-space: normal; }
 }
 .site-nav__list { align-items: center; }
