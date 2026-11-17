@@ -47,21 +47,24 @@
           endif
         endfor
         assign kit_threshold = settings.free_shipping_amount | times: 100
+        assign kit_total_money = kit_total | money
+        assign kit_threshold_money = kit_threshold | money_without_trailing_zeros
+        assign kit_gap_money = kit_threshold | minus: kit_total | money
       -%}
       {%- if kit_count > 1 -%}
         <div class="kit-summary">
           <p class="kit-summary__total">
             {%- if kit_varies -%}
-              {{ 'collections.kit_total_from' | t: count: kit_count, price: kit_total | money }}
+              {{ 'collections.kit_total_from' | t: count: kit_count, price: kit_total_money }}
             {%- else -%}
-              {{ 'collections.kit_total' | t: count: kit_count, price: kit_total | money }}
+              {{ 'collections.kit_total' | t: count: kit_count, price: kit_total_money }}
             {%- endif -%}
           </p>
           <p class="kit-summary__ship">
             {%- if kit_total >= kit_threshold -%}
-              {{ 'collections.kit_free_ship' | t: amount: kit_threshold | money_without_trailing_zeros }}
+              {{ 'collections.kit_free_ship' | t: amount: kit_threshold_money }}
             {%- else -%}
-              {{ 'collections.kit_add_more' | t: amount: kit_threshold | minus: kit_total | money }}
+              {{ 'collections.kit_add_more' | t: amount: kit_gap_money }}
             {%- endif -%}
           </p>
           {%- if kit_all_us -%}
