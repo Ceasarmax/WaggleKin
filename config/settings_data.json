@@ -8,7 +8,33 @@
  * ------------------------------------------------------------
  */
 {
-  "current": "Default",
+  "current": {
+    "color_navy": "#1F2A44",
+    "color_orange": "#F18C2B",
+    "color_teal": "#2DB3A3",
+    "color_cream": "#FFF7EF",
+    "color_peach": "#FDEBD7",
+    "color_gold": "#F5C842",
+    "color_rust": "#B5561A",
+    "logo_width": 150,
+    "free_shipping_thresholds": "US:$49, CA:C$69, GB:£39, AU:A$75",
+    "free_shipping_default": "$49",
+    "cart_ajax": true,
+    "sections": {
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {}
+      }
+    },
+    "content_for_index": [],
+    "blocks": {
+      "2567389343055140935": {
+        "type": "shopify://apps/microsoft-clarity/blocks/clarity_js/31c3d126-8116-4b4a-8ba1-baeda7c4aeea",
+        "disabled": true,
+        "settings": {}
+      }
+    }
+  },
   "presets": {
     "Default": {
       "color_navy": "#1F2A44",
