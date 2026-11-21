@@ -315,14 +315,31 @@
     else line.textContent = strings.freeShipUnlocked || '';
   }
 
-  // AJAX add to cart → open the drawer (falls back to the toast, then to a normal form post)
+  // AJAX add to cart → open the drawer (falls back to the toast, then to a normal form post).
+  // The add starts from the button's click, which cancels the native submit. Shopify's pixel manager
+  // reports an add to cart both for a submitted /cart/add form and for the /cart/add.js request, so
+  // starting from the 'submit' event sent every add to Meta (and every other pixel) twice.
+  // The 'submit' listener stays for submits that don't come from a button click.
+  const canAjaxAdd = () => !!(window.fetch && window.FormData);
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('button, input[type="submit"]');
+    const form = button && button.type === 'submit' ? button.form : null;
+    if (!form || !form.classList.contains('js-add-to-cart') || !canAjaxAdd()) return;
+    if (!form.checkValidity()) return; // the browser shows what's missing; an invalid form doesn't submit
+    event.preventDefault();
+    ajaxAdd(form, button);
+  });
   document.addEventListener('submit', (event) => {
     const form = event.target.closest('.js-add-to-cart');
-    if (!form || !window.fetch || !window.FormData) return;
+    if (!form || !canAjaxAdd()) return;
     event.preventDefault();
+    ajaxAdd(form, event.submitter);
+  });
+
+  function ajaxAdd(form, submitter) {
     if (form.dataset.busy) return;
     form.dataset.busy = '1';
-    const submitter = event.submitter || form.querySelector('[type="submit"]');
+    submitter = submitter || form.querySelector('[type="submit"]');
     const buttons = [submitter].concat(Array.from(document.querySelectorAll('[data-sticky-button]'))).filter(Boolean);
     buttons.forEach((b) => b.classList.add('is-loading'));
 
@@ -381,7 +398,7 @@
         delete form.dataset.busy;
         buttons.forEach((b) => b.classList.remove('is-loading'));
       });
-  });
+  }
 
   /* ---------------------------------------------------------------- Recommendations & personalization */
   // What this shopper has browsed is kept only in their own browser (localStorage) and is never sent anywhere.
