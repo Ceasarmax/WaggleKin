@@ -30,7 +30,11 @@
   },
   "accessibility": {
     "skip_to_content": "Skip to content",
-    "play_video": "Play video"
+    "play_video": "Play video",
+    "pause_video": "Pause video",
+    "sound_on": "Turn sound on",
+    "sound_off": "Turn sound off",
+    "play_episode": "Play {{ title }}"
   },
   "products": {
     "add_to_cart": "Add to cart",

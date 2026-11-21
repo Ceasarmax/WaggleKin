@@ -1,9 +1,24 @@
+{%- liquid
+  assign hosted_video = section.settings.video_file
+  assign has_video = false
+  if hosted_video != blank or section.settings.video != blank
+    assign has_video = true
+  endif
+  assign shape_class = ''
+  if hosted_video != blank
+    assign shape_class = ' tv__player--' | append: section.settings.video_shape
+  endif
+-%}
 <section class="tv" id="wagglekin-tv">
   <div class="page-width tv__grid">
-    <div class="tv__player" data-video-player>
+    <div class="tv__player{{ shape_class }}" data-video-player>
       {%- if section.settings.episode_label != blank -%}<span class="tv__label">{{ section.settings.episode_label }}</span>{%- endif -%}
 
-      {%- if section.settings.video != blank -%}
+      {%- if hosted_video != blank -%}
+        <template data-video-template>
+          {{ hosted_video | video_tag: controls: true, playsinline: true, preload: 'auto', image_size: '1080x' }}
+        </template>
+      {%- elsif section.settings.video != blank -%}
         <template data-video-template>
           {%- if section.settings.video.type == 'youtube' -%}
             <iframe src="https://www.youtube-nocookie.com/embed/{{ section.settings.video.id }}?autoplay=1&rel=0" title="{{ section.settings.episode_label | escape }}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
@@ -16,12 +31,14 @@
       <div class="tv__poster">
         {%- if section.settings.poster != blank -%}
           {{ section.settings.poster | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'tv__poster-img' }}
+        {%- elsif hosted_video.preview_image != blank -%}
+          {{ hosted_video.preview_image | image_url: width: 1080 | image_tag: loading: 'lazy', class: 'tv__poster-img', alt: '' }}
         {%- else -%}
           {% render 'illustration', name: 'tv-bubbles' %}
         {%- endif -%}
       </div>
 
-      {%- if section.settings.video != blank -%}
+      {%- if has_video -%}
         <button type="button" class="tv__play" data-video-play>
           <span class="visually-hidden">{{ 'accessibility.play_video' | t }}</span>
           {% render 'icon', name: 'play', icon_size: 24 %}
@@ -42,7 +59,7 @@
       {%- if section.settings.text != blank -%}<div class="tv__text">{{ section.settings.text }}</div>{%- endif -%}
 
       {%- if section.settings.products != blank -%}
-        <ul class="tv__products">
+        <ul class="tv__products" role="list">
           {%- for product in section.settings.products -%}
             <li><a href="{{ product.url }}"><span>{{ product.title }}</span><span>{{ product.price | money }}</span></a></li>
           {%- endfor -%}
@@ -65,9 +82,14 @@
     { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Our talking-pet sitcom, with new episodes every week on YouTube, TikTok and Instagram. Spotted something in the show? Shop it below.</p>" },
     { "type": "header", "content": "Episode" },
     { "type": "text", "id": "episode_label", "label": "Episode label", "default": "Episode 1 · [Episode title]" },
+    { "type": "video", "id": "video_file", "label": "Video (uploaded to Shopify)", "info": "Plays on the site with sound when pressed. Used instead of the YouTube/Vimeo URL." },
+    { "type": "select", "id": "video_shape", "label": "Video shape", "default": "square", "options": [
+      { "value": "square", "label": "Square (1:1)" },
+      { "value": "portrait", "label": "Portrait (9:16)" }
+    ] },
     { "type": "video_url", "id": "video", "label": "YouTube or Vimeo URL", "accept": ["youtube", "vimeo"] },
     { "type": "url", "id": "watch_link", "label": "Watch link (if no video above)", "info": "e.g. a TikTok or Instagram post" },
-    { "type": "image_picker", "id": "poster", "label": "Poster image", "info": "Optional. Replaces the talking-pets illustration." },
+    { "type": "image_picker", "id": "poster", "label": "Poster image", "info": "Optional. Replaces the video's first frame or the talking-pets illustration." },
     { "type": "product_list", "id": "products", "label": "Products in this episode", "limit": 4 },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the episode" },
     { "type": "url", "id": "button_link", "label": "Button link" }

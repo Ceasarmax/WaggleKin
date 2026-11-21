@@ -965,6 +965,12 @@
   });
 
   /* ---------------------------------------------------------------- WaggleKin TV */
+  const pauseOtherVideos = (current) => {
+    document.querySelectorAll('[data-video-player] video, [data-hero-video] video').forEach((v) => {
+      if (v !== current && !v.paused) v.pause();
+    });
+  };
+
   document.querySelectorAll('[data-video-player]').forEach((player) => {
     const play = player.querySelector('[data-video-play]');
     const template = player.querySelector('[data-video-template]');
@@ -974,6 +980,61 @@
       play.remove();
       const poster = player.querySelector('.tv__poster');
       if (poster) poster.remove();
+      player.classList.add('is-playing');
+      // Shopify-hosted video: start it inside the click so browsers allow sound
+      const video = player.querySelector('video');
+      if (video) {
+        video.addEventListener('play', () => pauseOtherVideos(video));
+        video.focus({ preventScroll: true });
+        const started = video.play();
+        if (started && started.catch) started.catch(() => {});
+      }
     });
+  });
+
+  /* Hero video: muted loop with pause + sound buttons. No autoplay for reduced motion. */
+  document.querySelectorAll('[data-hero-video]').forEach((wrap) => {
+    const video = wrap.querySelector('video');
+    const toggle = wrap.querySelector('[data-hero-toggle]');
+    const sound = wrap.querySelector('[data-hero-sound]');
+    if (!video || !toggle || !sound) return;
+    let userPaused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    video.muted = true;
+    const sync = () => {
+      toggle.classList.toggle('is-paused', video.paused);
+      toggle.setAttribute('aria-label', video.paused ? toggle.dataset.labelPlay : toggle.dataset.labelPause);
+      sound.classList.toggle('is-unmuted', !video.muted);
+      sound.setAttribute('aria-label', video.muted ? sound.dataset.labelOn : sound.dataset.labelOff);
+    };
+    const start = () => {
+      const started = video.play();
+      if (started && started.catch) started.catch(sync);
+    };
+    ['play', 'pause', 'volumechange'].forEach((type) => video.addEventListener(type, sync));
+    // A pause while the page is visible (button, or another video starting) is sticky
+    video.addEventListener('pause', () => { if (!document.hidden) userPaused = true; });
+    video.addEventListener('play', () => { if (!video.muted) pauseOtherVideos(video); });
+    toggle.addEventListener('click', () => {
+      if (video.paused) {
+        userPaused = false;
+        start();
+      } else {
+        video.pause();
+      }
+    });
+    sound.addEventListener('click', () => {
+      video.muted = !video.muted;
+      if (!video.muted) {
+        userPaused = false;
+        pauseOtherVideos(video);
+        start();
+      }
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) video.pause();
+      else if (!userPaused) start();
+    });
+    sync();
+    if (!userPaused) start();
   });
 })();

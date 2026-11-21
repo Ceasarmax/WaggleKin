@@ -1,3 +1,4 @@
+{%- assign hero_video = section.settings.video -%}
 <section class="hero">
   <div class="page-width hero__grid">
     <div class="hero__content">
@@ -11,8 +12,22 @@
       </div>
     </div>
 
-    <div class="hero__visual">
-      {%- if section.settings.image != blank -%}
+    <div class="hero__visual{% if hero_video != blank %} hero__visual--video{% endif %}">
+      {%- if hero_video != blank -%}
+        <div class="hero__video" data-hero-video role="group" aria-label="{{ hero_video.alt | default: section.settings.chip_eyebrow | escape }}">
+          {{ hero_video | video_tag: muted: true, loop: true, playsinline: true, preload: 'metadata', image_size: '1080x' }}
+          <div class="video-controls">
+            <button type="button" class="video-btn" data-hero-toggle data-label-play="{{ 'accessibility.play_video' | t }}" data-label-pause="{{ 'accessibility.pause_video' | t }}" aria-label="{{ 'accessibility.pause_video' | t }}">
+              {%- render 'icon', name: 'pause', icon_size: 18 -%}
+              {%- render 'icon', name: 'play', icon_size: 18 -%}
+            </button>
+            <button type="button" class="video-btn" data-hero-sound data-label-on="{{ 'accessibility.sound_on' | t }}" data-label-off="{{ 'accessibility.sound_off' | t }}" aria-label="{{ 'accessibility.sound_on' | t }}">
+              {%- render 'icon', name: 'sound-off', icon_size: 18 -%}
+              {%- render 'icon', name: 'sound-on', icon_size: 18 -%}
+            </button>
+          </div>
+        </div>
+      {%- elsif section.settings.image != blank -%}
         {{ section.settings.image | image_url: width: 1200 | image_tag: class: 'hero__image', sizes: '(min-width: 990px) 45vw, 100vw', widths: '600, 900, 1200', loading: 'eager' }}
       {%- else -%}
         {% render 'illustration', name: 'hero-pets' %}
@@ -47,7 +62,8 @@
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Pet supplies for the whole pack" },
     { "type": "textarea", "id": "heading", "label": "Heading", "default": "Everything your cats & dogs need. Plus a show they’d star in." },
     { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Comfy beds, clever feeders, toys and grooming gear — picked for multi-pet homes and shipped to your door.</p>" },
-    { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional. Replaces the cat & dog illustration." },
+    { "type": "video", "id": "video", "label": "Video (uploaded to Shopify)", "info": "Plays muted on a loop in a square frame, with pause and sound buttons. Used instead of the image and illustration. Visitors who turn off motion see it paused." },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional. Replaces the cat & dog illustration when no video is set." },
     { "type": "header", "content": "Top chip" },
     { "type": "text", "id": "chip_eyebrow", "label": "Chip label", "default": "WaggleKin TV" },
     { "type": "text", "id": "chip_title", "label": "Chip title", "default": "New episode every Friday" },

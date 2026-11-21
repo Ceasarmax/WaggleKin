@@ -14,15 +14,17 @@
       "settings": {
         "eyebrow": "WaggleKin TV",
         "heading": "The pack has a lot to say.",
-        "text": "<p>Our talking-pet sitcom starring Daisy, a golden retriever who has seen it all, and Casper, a schemer with very big ears. Episode 1 is coming soon to YouTube, TikTok and Instagram. Meanwhile, shop the cast's favourite gear below.</p>",
-        "episode_label": "Episode 1 · Coming soon",
+        "text": "<p>Our talking-pet sitcom starring Daisy, a golden retriever who has seen it all, and Casper, a schemer with very big ears. Press play, then scroll down for every episode. Spotted something in the show? Shop the cast’s favourite gear below.</p>",
+        "episode_label": "Now showing · The Bath, Part 1",
         "products": [
           "felt-cat-cottage-bed-with-hanging-ball",
           "3-tier-spinning-puzzle-feeder-for-dogs",
           "whisper-quiet-water-fountain"
         ],
         "button_label": "Shop pack favourites",
-        "button_link": "shopify://collections/pack-favourites"
+        "button_link": "shopify://collections/pack-favourites",
+        "video_file": "shopify://files/videos/The_Bath_Part_1_WaggleKin_HD.mp4",
+        "video_shape": "square"
       }
     },
     "main": {
@@ -32,10 +34,185 @@
     "newsletter": {
       "type": "newsletter",
       "settings": {}
+    },
+    "episodes": {
+      "type": "wagglekin-tv-episodes",
+      "settings": {
+        "heading": "All episodes",
+        "text": "<p>Every episode of WaggleKin TV, in order. Press play to watch with sound.</p>",
+        "video_shape": "square"
+      },
+      "blocks": {
+        "watchdog-1": {
+          "type": "episode",
+          "settings": {
+            "title": "Watch Dog",
+            "part": "Part 1",
+            "video": "shopify://files/videos/Watch_Dog_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "watchdog-2": {
+          "type": "episode",
+          "settings": {
+            "title": "Watch Dog",
+            "part": "Part 2",
+            "video": "shopify://files/videos/Watch_Dog_Part_2_WaggleKin_HD.mp4"
+          }
+        },
+        "pill-1": {
+          "type": "episode",
+          "settings": {
+            "title": "The Pill",
+            "part": "Part 1",
+            "video": "shopify://files/videos/The_Pill_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "pill-2": {
+          "type": "episode",
+          "settings": {
+            "title": "The Pill",
+            "part": "Part 2",
+            "video": "shopify://files/videos/The_Pill_Part_2_WaggleKin_HD.mp4"
+          }
+        },
+        "camera-1": {
+          "type": "episode",
+          "settings": {
+            "title": "Confirm The Camera",
+            "part": "Part 1",
+            "video": "shopify://files/videos/Confirm_The_Camera_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "camera-2": {
+          "type": "episode",
+          "settings": {
+            "title": "Confirm The Camera",
+            "part": "Part 2",
+            "video": "shopify://files/videos/Confirm_The_Camera_Part_2_WaggleKin_HD.mp4"
+          }
+        },
+        "diet-1": {
+          "type": "episode",
+          "settings": {
+            "title": "The Diet",
+            "part": "Part 1",
+            "video": "shopify://files/videos/The_Diet_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "diet-2": {
+          "type": "episode",
+          "settings": {
+            "title": "The Diet",
+            "part": "Part 2",
+            "video": "shopify://files/videos/The_Diet_Part_2_WaggleKin_HD.mp4"
+          }
+        },
+        "limp-1": {
+          "type": "episode",
+          "settings": {
+            "title": "The Limp",
+            "part": "Part 1",
+            "video": "shopify://files/videos/The_Limp_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "limp-2": {
+          "type": "episode",
+          "settings": {
+            "title": "The Limp",
+            "part": "Part 2",
+            "video": "shopify://files/videos/The_Limp_Part_2_WaggleKin_HD.mp4"
+          }
+        },
+        "zoom-1": {
+          "type": "episode",
+          "settings": {
+            "title": "The Zoom Call",
+            "part": "Part 1",
+            "video": "shopify://files/videos/The_Zoom_Call_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "zoom-2": {
+          "type": "episode",
+          "settings": {
+            "title": "The Zoom Call",
+            "part": "Part 2",
+            "video": "shopify://files/videos/The_Zoom_Call_Part_2_WaggleKin_HD.mp4"
+          }
+        },
+        "bath-1": {
+          "type": "episode",
+          "settings": {
+            "title": "The Bath",
+            "part": "Part 1",
+            "video": "shopify://files/videos/The_Bath_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "bath-2": {
+          "type": "episode",
+          "settings": {
+            "title": "The Bath",
+            "part": "Part 2",
+            "video": "shopify://files/videos/The_Bath_Part_2_WaggleKin_HD.mp4"
+          }
+        },
+        "obedience-1": {
+          "type": "episode",
+          "settings": {
+            "title": "The Obedience Class",
+            "part": "Part 1",
+            "video": "shopify://files/videos/The_Obedience_Class_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "obedience-2": {
+          "type": "episode",
+          "settings": {
+            "title": "The Obedience Class",
+            "part": "Part 2",
+            "video": "shopify://files/videos/The_Obedience_Class_Part_2_WaggleKin_HD.mp4"
+          }
+        },
+        "robot-1": {
+          "type": "episode",
+          "settings": {
+            "title": "The Robot",
+            "part": "Part 1",
+            "video": "shopify://files/videos/The_Robot_Part_1_WaggleKin_HD.mp4"
+          }
+        },
+        "robot-2": {
+          "type": "episode",
+          "settings": {
+            "title": "The Robot",
+            "part": "Part 2",
+            "video": "shopify://files/videos/The_Robot_Part_2_WaggleKin_HD.mp4"
+          }
+        }
+      },
+      "block_order": [
+        "watchdog-1",
+        "watchdog-2",
+        "pill-1",
+        "pill-2",
+        "camera-1",
+        "camera-2",
+        "diet-1",
+        "diet-2",
+        "limp-1",
+        "limp-2",
+        "zoom-1",
+        "zoom-2",
+        "bath-1",
+        "bath-2",
+        "obedience-1",
+        "obedience-2",
+        "robot-1",
+        "robot-2"
+      ]
     }
   },
   "order": [
     "tv",
+    "episodes",
     "main",
     "newsletter"
   ]

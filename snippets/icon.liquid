@@ -19,6 +19,9 @@
     {%- when 'travel' -%}<rect x="3.5" y="8" width="17" height="11.5" rx="2.5"/><path d="M9 8V6h6v2"/><path d="M3.5 13h17"/>
     {%- when 'walk' -%}<circle cx="6.5" cy="6.5" r="2.5"/><path d="M8.3 8.3l9.2 9.2"/><path d="M15.5 19.5l2-2 2 2-2 2z"/>
     {%- when 'paw' -%}<ellipse cx="12" cy="15.5" rx="4.2" ry="3.5"/><circle cx="6.5" cy="11" r="1.7"/><circle cx="9.5" cy="7.5" r="1.7"/><circle cx="14.5" cy="7.5" r="1.7"/><circle cx="17.5" cy="11" r="1.7"/>
+    {%- when 'pause' -%}<rect x="6.5" y="5.5" width="3.8" height="13" rx="1" fill="currentColor" stroke="none"/><rect x="13.7" y="5.5" width="3.8" height="13" rx="1" fill="currentColor" stroke="none"/>
+    {%- when 'sound-off' -%}<path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M16 9.5l4.5 5M20.5 9.5l-4.5 5"/>
+    {%- when 'sound-on' -%}<path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4.5 4.5 0 010 6M18 6.5a8 8 0 010 11"/>
     {%- else -%}<circle cx="12" cy="12" r="8"/>
   {%- endcase -%}
 </svg>
